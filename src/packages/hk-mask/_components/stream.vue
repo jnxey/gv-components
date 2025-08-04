@@ -1,21 +1,11 @@
 <template>
-  <div class="stream" id="divPlugin"></div>
+  <iframe src="http://localhost:8090/video/index.html"></iframe>
 </template>
 <script setup>
 import { onMounted } from 'vue';
 import { clickGetDigitalChannelInfo, clickStartRealPlay } from '@/packages/hk-mask/_tools/hk.js';
 
-onMounted(() => {
-  setTimeout(() => {
-    clickStartRealPlay({
-      szDeviceIdentify: '192.168.1.108_80',
-      iRtspPort: 554,
-      iChannelID: 1,
-      bZeroChannel: false,
-      iStreamType: 1
-    });
-  }, 500);
-});
+onMounted(() => {});
 </script>
 <style scoped>
 .stream {
