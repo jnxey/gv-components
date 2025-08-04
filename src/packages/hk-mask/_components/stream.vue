@@ -1,6 +1,7 @@
 <template>
   <div class="stream"></div>
 </template>
+<script setup></script>
 <style scoped>
 .stream {
   position: absolute;

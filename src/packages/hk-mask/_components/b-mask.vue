@@ -2,21 +2,14 @@
   <div class="b-mask">
     <!-- 控制按钮 -->
     <div class="toolbar">
-      <button @click="addPoint">➕ 添加点</button>
-      <button @click="removePoint" :disabled="points.length <= 3">➖ 删除点</button>
+      <button class="plain" @click="addPoint">添加点</button>
+      <button class="plain" @click="removePoint" :disabled="points.length <= 3">删除点</button>
+      <button class="plain" @click="setCancel">取消</button>
+      <button @click="setPoint">保存</button>
     </div>
 
     <!-- SVG画布 -->
-    <svg
-      ref="svgRef"
-      width="100%"
-      height="100%"
-      @mousedown="onMouseDown"
-      @mousemove="onMouseMove"
-      @mouseup="onMouseUp"
-      @mouseleave="onMouseUp"
-      style="border: 1px solid #ccc; display: block; width: 100%; height: 100%"
-    >
+    <svg ref="svgRef" width="100%" height="100%" @mousedown="onMouseDown" @mousemove="onMouseMove" @mouseup="onMouseUp" @mouseleave="onMouseUp">
       <!-- 多边形 -->
       <polygon :points="polygonPoints" fill="rgba(100, 149, 237, 0.5)" stroke="cornflowerblue" stroke-width="2" cursor="move" />
 
@@ -40,11 +33,13 @@
 <script setup>
 import { ref, reactive, computed } from 'vue';
 
-const points = reactive([
-  [200, 150],
-  [300, 150],
-  [250, 250]
-]);
+const deepCopy = (original) => JSON.parse(JSON.stringify(original));
+
+const emits = defineEmits(['cancel', 'save']);
+
+const props = defineProps({ def: Array });
+
+const points = reactive(deepCopy(props.def));
 
 const draggingIndex = ref(null);
 const draggingAll = ref(false);
@@ -91,6 +86,7 @@ const startDraggingPoint = (index, e) => {
   lastMouse.value = [e.clientX, e.clientY];
 };
 
+// 添加点位
 const addPoint = () => {
   const len = points.length;
   const [x1, y1] = points[len - 1];
@@ -99,10 +95,21 @@ const addPoint = () => {
   points.splice(len, 0, mid);
 };
 
+// 移除点位
 const removePoint = () => {
   if (points.length > 3) {
     points.pop();
   }
+};
+
+// 取消
+const setCancel = () => {
+  emits('cancel', null);
+};
+
+// 保存
+const setPoint = () => {
+  emits('save', deepCopy(points));
 };
 </script>
 
@@ -122,10 +129,33 @@ const removePoint = () => {
   z-index: 10;
 }
 button {
+  padding: 8px 15px;
   margin-right: 8px;
-  padding: 4px 10px;
-  font-size: 14px;
+  border-radius: 4px;
   cursor: pointer;
+  background-color: #4caf50;
+  color: white;
+  border: none;
+  transition: background-color 0.3s;
+}
+
+button.plain {
+  border: 1px solid #4caf50;
+  background-color: rgba(76, 175, 80, 0.55);
+}
+
+button:hover:not(:disabled) {
+  background-color: #45a049;
+}
+
+button:disabled {
+  background-color: #a5d6a7;
+  cursor: not-allowed;
+}
+
+button.active {
+  background-color: #2e7d32;
+  font-weight: bold;
 }
 
 svg {
