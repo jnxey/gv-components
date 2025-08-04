@@ -7,9 +7,6 @@ import { clickGetDigitalChannelInfo, clickStartRealPlay } from '@/packages/hk-ma
 
 onMounted(() => {
   setTimeout(() => {
-    clickGetDigitalChannelInfo('192.168.1.108_80', (res) => {
-      console.log(res, '-------------------channels');
-    });
     clickStartRealPlay({
       szDeviceIdentify: '192.168.1.108_80',
       iRtspPort: 554,
