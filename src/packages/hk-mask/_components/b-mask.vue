@@ -144,6 +144,12 @@ button.plain {
   background-color: rgba(76, 175, 80, 0.55);
 }
 
+button.default {
+  color: #4caf50;
+  border: 1px solid #4caf50;
+  background-color: rgba(255, 255, 255, 0.5);
+}
+
 button:hover:not(:disabled) {
   background-color: #45a049;
 }

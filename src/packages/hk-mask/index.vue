@@ -1,9 +1,10 @@
 <template>
   <div class="hk-mask" :style="wrapStyle">
     <stream :width="width" :height="height" />
-    <b-place :current="current" :points="defPoint" @selected="setCurrent" />
+    <b-place :current="current" :points="pointsMap" @selected="setCurrent" />
+    <b-clip v-if="!current" :points="pointsMap" :width="width" :height="height" />
     <template v-if="!!current">
-      <b-mask :def="defPoint[current]" @cancel="setCurrent" @save="setSave" />
+      <b-mask :def="pointsMap[current]" @cancel="setCurrent" @save="setSave" />
     </template>
   </div>
 </template>
@@ -15,6 +16,7 @@ import BMask from './_components/b-mask.vue';
 import Stream from './_components/stream.vue';
 import { computed, reactive, ref } from 'vue';
 import BPlace from '@/packages/hk-mask/_components/b-place.vue';
+import BClip from '@/packages/hk-mask/_components/b-clip.vue';
 
 const props = defineProps({ width: Number, height: Number });
 
@@ -24,7 +26,7 @@ const wrapStyle = computed(() => {
   return { width: `${props.width}px`, height: `${props.height}px` };
 });
 
-const defPoint = reactive({
+const pointsMap = reactive({
   b: [
     [373, 220],
     [473, 220],
@@ -44,7 +46,7 @@ const setCurrent = (p) => {
 };
 
 const setSave = (point) => {
-  defPoint[current.value] = point;
+  pointsMap[current.value] = point;
   current.value = null;
 };
 </script>
