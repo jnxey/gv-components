@@ -1,5 +1,6 @@
 <template>
   <gv-hk-mask class="hk-box" :width="sWidth" :height="sHeight" />
+  <div id="image"></div>
 </template>
 <script setup>
 import GvHkMask from '@/packages/hk-mask/index.vue';
