@@ -2,7 +2,7 @@
 var g_iWndIndex = 0; //可以不用设置这个变量，有窗口参数的接口中，不用传值，开发包会默认使用当前选择窗口
 var version = 'websdk3.220191023';
 var FileTemp = null;
-const ErrorCodes = {
+var ErrorCodes = {
   1001: '码流传输过程异常',
   1002: '回放结束',
   1003: '取流失败，连接被动断开',
@@ -44,7 +44,6 @@ export function initHKPlugin() {
     iWndowType: 1,
     bNoPlugin: true,
     cbSelWnd: function (xmlDoc) {
-      // g_iWndIndex = parseInt($(xmlDoc).find("SelectWnd").eq(0).text(), 10);
       var szInfo = '当前选择的窗口编号：' + g_iWndIndex;
       console.log('showCBInfo', szInfo);
     },
@@ -128,6 +127,10 @@ export function clickLogin({ szIP, szPort, szUsername, szPassword }) {
     var iRet = WebVideoCtrl.I_Login(szIP, 1, szPort, szUsername, szPassword, {
       success: function (xmlDoc) {
         console.log('showOPInfo', szDeviceIdentify + ' 登录成功！');
+        setTimeout(() => {
+          getChannelInfo(szDeviceIdentify);
+          getDevicePort(szDeviceIdentify);
+        }, 10);
         resolve();
       },
       error: function (status, xmlDoc) {
@@ -142,8 +145,62 @@ export function clickLogin({ szIP, szPort, szUsername, szPassword }) {
   });
 }
 
+// 获取通道
+export function getChannelInfo(szDeviceIdentify) {
+  var oSel = [];
+
+  if (null == szDeviceIdentify) {
+    return;
+  }
+
+  // 模拟通道
+  WebVideoCtrl.I_GetAnalogChannelInfo(szDeviceIdentify, {
+    async: false,
+    success: function (xmlDoc) {
+      console.log('showOPInfo', szDeviceIdentify + ' 获取模拟通道成功！');
+    },
+    error: function (status, xmlDoc) {
+      console.log('showOPInfo', szDeviceIdentify + ' 获取模拟通道失败！', status, xmlDoc);
+    }
+  });
+  // 数字通道
+  WebVideoCtrl.I_GetDigitalChannelInfo(szDeviceIdentify, {
+    async: false,
+    success: function (xmlDoc) {
+      console.log('showOPInfo', szDeviceIdentify + ' 获取数字通道成功！');
+    },
+    error: function (status, xmlDoc) {
+      console.log('showOPInfo', szDeviceIdentify + ' 获取数字通道失败！', status, xmlDoc);
+    }
+  });
+  // 零通道
+  WebVideoCtrl.I_GetZeroChannelInfo(szDeviceIdentify, {
+    async: false,
+    success: function (xmlDoc) {
+      console.log('showOPInfo', szDeviceIdentify + ' 获取零通道成功！');
+    },
+    error: function (status, xmlDoc) {
+      console.log('showOPInfo', szDeviceIdentify + ' 获取零通道失败！', status, xmlDoc);
+    }
+  });
+}
+
+// 获取端口
+export function getDevicePort(szDeviceIdentify) {
+  if (null == szDeviceIdentify) {
+    return;
+  }
+
+  var oPort = WebVideoCtrl.I_GetDevicePort(szDeviceIdentify);
+  if (oPort != null) {
+    console.log('showOPInfo', szDeviceIdentify + ' 获取端口成功！');
+  } else {
+    console.log('showOPInfo', szDeviceIdentify + ' 获取端口失败！');
+  }
+}
+
 // 停止录像
-function clickStopRecord(szType, iWndIndex) {
+export function clickStopRecord(szType, iWndIndex) {
   if ('undefined' === typeof iWndIndex) {
     iWndIndex = g_iWndIndex;
   }
@@ -176,6 +233,8 @@ function clickStopRecord(szType, iWndIndex) {
 export function clickStartRealPlay({ szDeviceIdentify, iRtspPort, iChannelID, bZeroChannel, iStreamType }) {
   var oWndInfo = WebVideoCtrl.I_GetWindowStatus(g_iWndIndex),
     szInfo = '';
+
+  console.log({ szDeviceIdentify, iRtspPort, iChannelID, bZeroChannel, iStreamType });
 
   if (null == szDeviceIdentify) {
     return;
@@ -214,85 +273,44 @@ export function clickStartRealPlay({ szDeviceIdentify, iRtspPort, iChannelID, bZ
   }
 }
 
-// 抓图
-function clickCapturePic(type, szChannelID) {
+function uint8ArrayToBase64(uint8Array) {
+  return new Promise((resolve) => {
+    const blob = new Blob([uint8Array]);
+    const reader = new FileReader();
+    reader.onload = () => {
+      const dataUrl = reader.result;
+      const base64 = dataUrl.split(',')[1];
+      resolve(base64);
+    };
+    reader.readAsDataURL(blob);
+  });
+}
+
+// 抓图数据
+export function clickCapturePicData(szChannelID, callback) {
   var oWndInfo = WebVideoCtrl.I_GetWindowStatus(g_iWndIndex),
     szInfo = '';
 
   if (oWndInfo != null) {
     var szPicName = oWndInfo.szDeviceIdentify + '_' + szChannelID + '_' + new Date().getTime();
 
-    szPicName += type;
+    szPicName += '.jpg';
 
-    WebVideoCtrl.I2_CapturePic(szPicName, {}).then(
+    WebVideoCtrl.I2_CapturePic(szPicName, {
+      cbCallback: (uint8Array) => {
+        uint8ArrayToBase64(uint8Array).then((base64String) => {
+          callback(base64String);
+        });
+      }
+    }).then(
       function () {
-        szInfo = '抓图成功！';
+        szInfo = '抓图数据打印成功！';
         console.log('showOPInfo', oWndInfo.szDeviceIdentify + ' ' + szInfo);
       },
       function () {
-        szInfo = '抓图失败！';
+        szInfo = '抓图数据打印失败！';
         console.log('showOPInfo', oWndInfo.szDeviceIdentify + ' ' + szInfo);
       }
     );
   }
-}
-
-// 获取设备信息
-export function clickGetDeviceInfo() {
-  var szDeviceIdentify = $('#ip').val();
-
-  if (null == szDeviceIdentify) {
-    return;
-  }
-
-  WebVideoCtrl.I_GetDeviceInfo(szDeviceIdentify, {
-    success: function (xmlDoc) {
-      var arrStr = [];
-      arrStr.push('设备名称：' + $(xmlDoc).find('deviceName').eq(0).text() + '\r\n');
-      arrStr.push('设备ID：' + $(xmlDoc).find('deviceID').eq(0).text() + '\r\n');
-      arrStr.push('型号：' + $(xmlDoc).find('model').eq(0).text() + '\r\n');
-      arrStr.push('设备序列号：' + $(xmlDoc).find('serialNumber').eq(0).text() + '\r\n');
-      arrStr.push('MAC地址：' + $(xmlDoc).find('macAddress').eq(0).text() + '\r\n');
-      arrStr.push('主控版本：' + $(xmlDoc).find('firmwareVersion').eq(0).text() + ' ' + $(xmlDoc).find('firmwareReleasedDate').eq(0).text() + '\r\n');
-      arrStr.push('编码版本：' + $(xmlDoc).find('encoderVersion').eq(0).text() + ' ' + $(xmlDoc).find('encoderReleasedDate').eq(0).text() + '\r\n');
-
-      console.log('showOPInfo', szDeviceIdentify + ' 获取设备信息成功！');
-      alert(arrStr.join(''));
-    },
-    error: function (status, xmlDoc) {
-      console.log('showOPInfo', szDeviceIdentify + ' 获取设备信息失败！', status, xmlDoc);
-    }
-  });
-}
-
-// 获取数字通道
-export function clickGetDigitalChannelInfo(szDeviceIdentify, callback) {
-  var result = [];
-
-  if (null == szDeviceIdentify) {
-    return;
-  }
-
-  // 数字通道
-  WebVideoCtrl.I_GetDigitalChannelInfo(szDeviceIdentify, {
-    async: false,
-    success: function (xmlDoc) {
-      var oChannels = $(xmlDoc).find('InputProxyChannelStatus');
-
-      $.each(oChannels, function () {
-        var id = parseInt($(this).find('id').eq(0).text(), 10),
-          ipAddress = $(this).find('ipAddress').eq(0).text(),
-          srcInputPort = $(this).find('srcInputPort').eq(0).text(),
-          managePortNo = $(this).find('managePortNo').eq(0).text(),
-          online = $(this).find('online').eq(0).text(),
-          proxyProtocol = $(this).find('proxyProtocol').eq(0).text();
-        result.push({ id, ipAddress, srcInputPort, managePortNo, online, proxyProtocol });
-        if (callback) callback(result);
-      });
-      console.log('showOPInfo', szDeviceIdentify + ' 获取数字通道成功！');
-    },
-    error: function (status, xmlDoc) {
-      console.log('showOPInfo', szDeviceIdentify + ' 没有数字通道！', status, xmlDoc);
-    }
-  });
 }

@@ -15,6 +15,11 @@ export default defineConfig({
   server: {
     port: 8888,
     proxy: {
+      '/adminapi': {
+        target: 'http://192.168.1.102/adminapi',
+        changeOrigin: true,
+        rewrite: (path) => path.replace(/^\/adminapi/, '')
+      },
       '/ISAPI': {
         target: 'http://192.168.1.114:8090/ISAPI',
         changeOrigin: true,

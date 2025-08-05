@@ -1,24 +1,29 @@
 <template>
   <div class="b-clip">
     <button @click="handlerClip">裁剪</button>
+    <button @click="handlerAnalysis">分析</button>
   </div>
 </template>
 <script setup>
 import { clipImageByPolygon } from '@/packages/hk-mask/_tools/index.js';
+import { clickCapturePicData } from '@/packages/hk-mask/_tools/hk.js';
 
 const props = defineProps({ points: Object, width: Number, height: Number });
 
 const handlerClip = () => {
-  const img = new Image();
-  img.src = '/b-zuo-2.jpeg';
-
-  img.onload = function () {
-    Object.keys(props.points).forEach((p) => {
-      const clippedCanvas = clipImageByPolygon(img, { width: props.width, height: props.height }, props.points[p]);
-      document.body.appendChild(clippedCanvas);
-    });
-  };
+  clickCapturePicData(2, (base64String) => {
+    const img = new Image();
+    img.src = 'data:image/jpeg;base64,' + base64String;
+    img.onload = function () {
+      Object.keys(props.points).forEach((p) => {
+        const clippedCanvas = clipImageByPolygon(img, { width: props.width, height: props.height }, props.points[p]);
+        document.body.appendChild(clippedCanvas);
+      });
+    };
+  });
 };
+
+const handlerAnalysis = () => {};
 </script>
 <style scoped>
 .b-clip {
