@@ -25,8 +25,7 @@ onMounted(() => {
   width: 100%;
   height: 100%;
   overflow: hidden;
-  //background-image: url('/b-zuo-2.jpeg');
-  //background-size: 100% 100%;
+  background-color: #4c4b4b;
   z-index: 5;
 }
 </style>
