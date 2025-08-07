@@ -6,13 +6,18 @@ import vueDevTools from 'vite-plugin-vue-devtools';
 
 // https://vite.dev/config/
 export default defineConfig({
-  plugins: [vue(), vueDevTools()],
+  base: '/video-recorder/',
+  build: {
+    outDir: '../game-view/public/video-recorder'
+  },
+  plugins: [vue()],
   resolve: {
     alias: {
       '@': fileURLToPath(new URL('./src', import.meta.url))
     }
   },
   server: {
+    host: '0.0.0.0',
     port: 8888,
     proxy: {
       '/adminapi': {

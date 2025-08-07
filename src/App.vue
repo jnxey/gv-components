@@ -1,24 +1,27 @@
 <template>
-  <gv-hk-mask class="hk-box" :width="sWidth" :height="sHeight" />
-  <div id="image"></div>
+  <gv-hk-mask v-if="mode === 'hk_mask'" />
+  <gv-hk-connection v-if="mode === 'hk_connection'" />
+  <gv-hk-select v-if="mode === 'hk_select'" />
 </template>
 <script setup>
 import GvHkMask from '@/packages/hk-mask/index.vue';
-import { clickLogin, initHKPlugin } from '@/packages/hk-mask/_tools/hk.js';
-import { onMounted } from 'vue';
+import { onBeforeMount, ref } from 'vue';
+import qs from 'qs';
+import GvHkConnection from '@/packages/ hk-connection/index.vue';
+import GvHkSelect from '@/packages/hk-select/index.vue';
 
-const sWidth = 1000;
-const sHeight = 560;
+const mode = ref();
 
-onMounted(() => {
-  initHKPlugin();
-  clickLogin({
-    szIP: '192.168.1.108',
-    szPort: '80',
-    szUsername: 'admin',
-    szPassword: 'Xch2025@'
-  });
+onBeforeMount(() => {
+  const params = qs.parse(window.location.search.substring(1));
+  mode.value = params.mode;
 });
 </script>
 
-<style scoped></style>
+<style>
+html,
+body {
+  margin: 0;
+  padding: 0;
+}
+</style>

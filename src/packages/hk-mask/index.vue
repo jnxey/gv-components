@@ -1,12 +1,13 @@
 <template>
   <div class="hk-mask" :style="wrapStyle">
-    <stream :width="width" :height="height" />
+    <stream :width="sWidth" :height="sHeight" />
     <b-place :current="current" :points="pointsMap" @selected="setCurrent" />
-    <b-clip v-if="!current" :points="pointsMap" :width="width" :height="height" />
+    <b-clip v-if="!current" :points="pointsMap" :width="sWidth" :height="sHeight" />
     <template v-if="!!current">
       <b-mask :def="pointsMap[current]" @cancel="setCurrent" @save="setSave" />
     </template>
   </div>
+  <div id="image"></div>
 </template>
 <script>
 export default { name: 'gv-hk-mask' };
@@ -14,16 +15,18 @@ export default { name: 'gv-hk-mask' };
 <script setup>
 import BMask from './_components/b-mask.vue';
 import Stream from './_components/stream.vue';
-import { computed, reactive, ref } from 'vue';
+import { computed, onMounted, reactive, ref } from 'vue';
 import BPlace from '@/packages/hk-mask/_components/b-place.vue';
 import BClip from '@/packages/hk-mask/_components/b-clip.vue';
+import { clickLogin, initHKPlugin } from '@/packages/hk-mask/_tools/hk.js';
 
-const props = defineProps({ width: Number, height: Number });
+const sWidth = 1000;
+const sHeight = 560;
 
 const current = ref(null);
 
 const wrapStyle = computed(() => {
-  return { width: `${props.width}px`, height: `${props.height}px` };
+  return { width: `${sWidth}px`, height: `${sHeight}px` };
 });
 
 const pointsMap = reactive({
@@ -49,6 +52,16 @@ const setSave = (point) => {
   pointsMap[current.value] = point;
   current.value = null;
 };
+
+onMounted(() => {
+  initHKPlugin();
+  clickLogin({
+    szIP: '192.168.1.108',
+    szPort: '80',
+    szUsername: 'admin',
+    szPassword: 'Xch2025@'
+  });
+});
 </script>
 <style scoped>
 .hk-mask {
