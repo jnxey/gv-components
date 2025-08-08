@@ -9,7 +9,7 @@ export default { name: 'gv-hk-select' };
 <script setup>
 import { onBeforeMount, onMounted, ref } from 'vue';
 import { IframeMessenger } from '@/tools/iframe-message.js';
-import { clickLogin, clickStartRealPlay, initHKPlugin, setWindowLayout } from '@/packages/hk-mask/_tools/hk.js';
+import { clickLogin, clickStartRealPlay, initHKPlugin, setSelectedWindow, setWindowLayout } from '@/packages/hk-mask/_tools/hk.js';
 
 const recorderInfo = ref(null);
 
@@ -29,8 +29,10 @@ const login = async () => {
 // 预览
 const preview = async () => {
   const info = recorderInfo.value ?? {};
+  let selectIndex = null;
   setWindowLayout(window.HK_CHANNEL_LIST.length);
   window.HK_CHANNEL_LIST.forEach((channel, index) => {
+    if (info.channelId === channel.id) selectIndex = index;
     clickStartRealPlay({
       szDeviceIdentify: `${info.ip}_${info.port}`,
       iRtspPort: window.DEVICE_PORT.iRtspPort,
@@ -40,11 +42,17 @@ const preview = async () => {
       windowIndex: index
     });
   });
+  if (selectIndex !== null) {
+    setTimeout(() => {
+      setSelectedWindow(selectIndex);
+    }, 300);
+  }
 };
 
 // 设置选中
 const setSelected = (index) => {
-  messenger.instance.send('send-recorder-selected', window.HK_CHANNEL_LIST[index]);
+  const selected = window.HK_CHANNEL_LIST[index];
+  messenger.instance.send('send-recorder-selected', { channelId: selected.id, channelName: selected.name });
 };
 
 onMounted(() => {

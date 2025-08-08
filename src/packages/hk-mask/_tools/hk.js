@@ -306,3 +306,19 @@ export function setSelectedBorder(windowIndex) {
   const nCur = document.body.querySelector(`#divPluginplayer-container-${windowIndex}`);
   if (!!nCur) nCur.classList.add('hk-selected-mark');
 }
+
+// 设置某个窗口选中
+export function setSelectedWindow(index) {
+  const target = document.body.querySelector(`#divPluginplayer-container-${index}`);
+  if (!!target) {
+    // 创建鼠标事件对象
+    const event = new MouseEvent('mousedown', {
+      bubbles: true, // 事件冒泡
+      cancelable: true, // 事件可取消
+      view: window, // 关联窗口对象
+      clientX: 100, // 自定义点击坐标（可选）
+      clientY: 50
+    });
+    target.dispatchEvent(event);
+  }
+}
