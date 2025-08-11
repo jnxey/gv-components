@@ -25,7 +25,7 @@ const ErrorCodes = {
 };
 
 // 初始化
-export function initHKPlugin({ cbSelWindCallback }) {
+export function initHKPlugin({ cbSelWindCallback } = {}) {
   window.g_iWndIndex = 0; // 可以不用设置这个变量，有窗口参数的接口中，不用传值，开发包会默认使用当前选择窗口
   window.g_szRecordType = ''; // 录像类型
   window.HK_CHANNEL_LIST = []; // 数字通道

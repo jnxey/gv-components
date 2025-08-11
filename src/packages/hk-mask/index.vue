@@ -7,7 +7,6 @@
       <b-mask :def="pointsMap[current]" @cancel="setCurrent" @save="setSave" />
     </template>
   </div>
-  <div id="image"></div>
 </template>
 <script>
 export default { name: 'gv-hk-mask' };
@@ -15,10 +14,11 @@ export default { name: 'gv-hk-mask' };
 <script setup>
 import BMask from './_components/b-mask.vue';
 import Stream from './_components/stream.vue';
-import { computed, onMounted, reactive, ref } from 'vue';
+import { computed, onBeforeMount, onMounted, reactive, ref } from 'vue';
 import BPlace from '@/packages/hk-mask/_components/b-place.vue';
 import BClip from '@/packages/hk-mask/_components/b-clip.vue';
-import { clickLogin, initHKPlugin } from '@/packages/hk-mask/_tools/hk.js';
+import { clickLogin, clickStartRealPlay, initHKPlugin, setSelectedWindow, setWindowLayout } from '@/packages/hk-mask/_tools/hk.js';
+import { IframeMessenger } from '@/tools/iframe-message.js';
 
 const sWidth = 1000;
 const sHeight = 560;
@@ -44,6 +44,35 @@ const pointsMap = reactive({
   ]
 });
 
+const recorderInfo = ref(null);
+
+const messenger = { instance: null };
+
+// 登录
+const login = async () => {
+  const info = recorderInfo.value ?? {};
+  await clickLogin({
+    szIP: info.ip,
+    szPort: String(info.port),
+    szUsername: info.account,
+    szPassword: info.password
+  });
+};
+
+// 预览
+const preview = async () => {
+  const info = recorderInfo.value ?? {};
+  setWindowLayout(1);
+  clickStartRealPlay({
+    szDeviceIdentify: `${info.ip}_${info.port}`,
+    iRtspPort: window.DEVICE_PORT.iRtspPort,
+    iChannelID: info.channelId,
+    bZeroChannel: false,
+    iStreamType: 1,
+    windowIndex: 0
+  });
+};
+
 const setCurrent = (p) => {
   current.value = p;
 };
@@ -55,16 +84,31 @@ const setSave = (point) => {
 
 onMounted(() => {
   initHKPlugin();
-  clickLogin({
-    szIP: '192.168.1.108',
-    szPort: '80',
-    szUsername: 'admin',
-    szPassword: 'Xch2025@'
+  messenger.instance = new IframeMessenger({
+    targetWindow: window.parent,
+    targetOrigin: '*',
+    debug: true
   });
+  messenger.instance.send('get-recorder-info');
+  messenger.instance.on('send-recorder-info', async (data) => {
+    recorderInfo.value = data;
+    await login();
+    await preview();
+  });
+});
+
+onBeforeMount(() => {
+  if (!!messenger.instance?.destroy) {
+    messenger.instance?.destroy();
+    messenger.instance = null;
+  }
 });
 </script>
 <style scoped>
 .hk-mask {
   position: relative;
+  width: 1000px;
+  height: 560px;
+  overflow: hidden;
 }
 </style>

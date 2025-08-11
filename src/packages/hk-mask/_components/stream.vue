@@ -1,22 +1,7 @@
 <template>
   <div class="stream" id="divPlugin"></div>
 </template>
-<script setup>
-import { onMounted } from 'vue';
-import { clickStartRealPlay } from '@/packages/hk-mask/_tools/hk.js';
-
-onMounted(() => {
-  setTimeout(() => {
-    clickStartRealPlay({
-      szDeviceIdentify: '192.168.1.108_80',
-      iRtspPort: 554,
-      iChannelID: 2,
-      bZeroChannel: false,
-      iStreamType: 1
-    });
-  }, 500);
-});
-</script>
+<script setup></script>
 <style scoped>
 .stream {
   position: absolute;

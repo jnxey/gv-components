@@ -77,14 +77,14 @@ onBeforeMount(() => {
   }
 });
 </script>
-<style>
-.hk-selected-mark {
-  border: 4px solid rgb(51.2, 126.4, 204) !important;
-}
-</style>
+<style></style>
 <style scoped>
 .stream {
   width: 1000px;
   height: 560px;
+
+  ::v-deep(.hk-selected-mark) {
+    border: 4px solid rgb(51.2, 126.4, 204) !important;
+  }
 }
 </style>
