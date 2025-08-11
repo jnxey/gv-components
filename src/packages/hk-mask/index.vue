@@ -68,6 +68,8 @@ const setCurrent = (p) => {
 const setSave = (point) => {
   pointsMap.value[current.value].points = point;
   current.value = null;
+  // window.SSS = { ...pointsMap.value };
+  // console.log(JSON.stringify(window.SSS), '-----------------------SSS');
 };
 
 onMounted(() => {

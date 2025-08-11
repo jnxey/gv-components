@@ -1,5 +1,6 @@
 <template>
-  <div class="stream" id="divPlugin"></div>
+  <div class="stream"></div>
+  <div id="divPlugin"></div>
 </template>
 <script setup></script>
 <style scoped>
@@ -12,5 +13,7 @@
   overflow: hidden;
   background-color: #4c4b4b;
   z-index: 5;
+  background-image: url('/b-zuo.png');
+  background-size: 100% 100%;
 }
 </style>
