@@ -4,7 +4,7 @@
       <template v-for="p in pNames" :Key="p">
         <polygon
           v-if="current !== p"
-          :points="getPolygonPoints(points[p])"
+          :points="getPolygonPoints(pointsMap[p].points)"
           fill="rgba(100, 149, 237, 0.5)"
           stroke="cornflowerblue"
           stroke-dasharray="5, 3"
@@ -21,9 +21,9 @@ import { computed } from 'vue';
 
 const emits = defineEmits(['selected']);
 
-const props = defineProps({ points: Object, current: [String, Number] });
+const props = defineProps({ pointsMap: Object, current: [String, Number] });
 
-const pNames = computed(() => Object.keys(props.points));
+const pNames = computed(() => Object.keys(props.pointsMap));
 
 const getPolygonPoints = (point) => {
   return point.map(([x, y]) => `${x},${y}`).join(' ');

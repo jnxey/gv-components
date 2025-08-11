@@ -32,8 +32,7 @@
 
 <script setup>
 import { ref, reactive, computed } from 'vue';
-
-const deepCopy = (original) => JSON.parse(JSON.stringify(original));
+import { deepCopy } from '@/tools/index.js';
 
 const emits = defineEmits(['cancel', 'save']);
 

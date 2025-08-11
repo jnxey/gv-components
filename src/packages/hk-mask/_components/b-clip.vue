@@ -8,17 +8,15 @@ import { clipImageByPolygon } from '@/packages/hk-mask/_tools/index.js';
 import { clickCapturePicData } from '@/packages/hk-mask/_tools/hk.js';
 import axios from 'axios';
 
-const props = defineProps({ points: Object, width: Number, height: Number });
+const props = defineProps({ pointsMap: Object, width: Number, height: Number });
 
 const handlerClip = () => {
   clickCapturePicData(2, (base64String) => {
     const img = new Image();
     img.src = 'data:image/jpeg;base64,' + base64String;
     img.onload = function () {
-      Object.keys(props.points).forEach((p) => {
-        const clippedCanvas = clipImageByPolygon(img, { width: props.width, height: props.height }, props.points[p]);
-        const target = document.querySelector('#image');
-        target.appendChild(clippedCanvas);
+      Object.keys(props.pointsMap).forEach((p) => {
+        const clippedCanvas = clipImageByPolygon(img, { width: props.width, height: props.height }, props.pointsMap[p].points);
         handlerAnalysis(clippedCanvas);
       });
     };
