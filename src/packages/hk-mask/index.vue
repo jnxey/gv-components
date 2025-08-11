@@ -4,7 +4,7 @@
     <b-place v-if="!!pointsMap" :current="current" :points-map="pointsMap" @selected="setCurrent" />
     <b-clip v-if="!!pointsMap && !current" :points-map="pointsMap" :width="sWidth" :height="sHeight" />
     <template v-if="!!pointsMap && !!current">
-      <b-mask :def="pointsMap[current].points" @cancel="setCurrent" @save="setSave" />
+      <b-mask :points-info="pointsMap[current]" @cancel="setCurrent" @save="setSave" />
     </template>
   </div>
 </template>
@@ -14,12 +14,12 @@ export default { name: 'gv-hk-mask' };
 <script setup>
 import BMask from './_components/b-mask.vue';
 import Stream from './_components/stream.vue';
-import { computed, onBeforeMount, onMounted, reactive, ref } from 'vue';
+import { computed, onBeforeMount, onMounted, ref } from 'vue';
 import BPlace from '@/packages/hk-mask/_components/b-place.vue';
 import BClip from '@/packages/hk-mask/_components/b-clip.vue';
-import { clickLogin, clickStartRealPlay, initHKPlugin, setSelectedWindow, setWindowLayout } from '@/packages/hk-mask/_tools/hk.js';
+import { clickLogin, clickStartRealPlay, initHKPlugin, setWindowLayout } from '@/packages/hk-mask/_tools/hk.js';
 import { IframeMessenger } from '@/tools/iframe-message.js';
-import { deepCopy, syncObjectData } from '@/tools/index.js';
+import { deepCopy } from '@/tools/index.js';
 
 const sWidth = 1000;
 const sHeight = 560;

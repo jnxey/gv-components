@@ -5,13 +5,18 @@
         <polygon
           v-if="current !== p"
           :points="getPolygonPoints(pointsMap[p].points)"
-          fill="rgba(100, 149, 237, 0.5)"
-          stroke="cornflowerblue"
+          :fill="pointsMap[p].fill"
+          :stroke="pointsMap[p].color"
           stroke-dasharray="5, 3"
           stroke-width="2"
           cursor="pointer"
           @click="setCurrent(p)"
         />
+        <template v-if="current !== p && !!pointsMap[p].points && !!pointsMap[p].points[0]">
+          <text :x="pointsMap[p].points[0][0] + 5" :y="pointsMap[p].points[0][1] - 10" font-size="16" fill="#ffffff">
+            {{ pointsMap[p].name }}
+          </text>
+        </template>
       </template>
     </svg>
   </div>
@@ -41,8 +46,5 @@ const setCurrent = (p) => {
   width: 100%;
   height: 100%;
   z-index: 8;
-  .place-box {
-    position: absolute;
-  }
 }
 </style>

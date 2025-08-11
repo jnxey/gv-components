@@ -11,7 +11,7 @@
     <!-- SVG画布 -->
     <svg ref="svgRef" width="100%" height="100%" @mousedown="onMouseDown" @mousemove="onMouseMove" @mouseup="onMouseUp" @mouseleave="onMouseUp">
       <!-- 多边形 -->
-      <polygon :points="polygonPoints" fill="rgba(100, 149, 237, 0.5)" stroke="cornflowerblue" stroke-width="2" cursor="move" />
+      <polygon :points="polygonPoints" :fill="pointsInfo.fill" :stroke="pointsInfo.color" stroke-width="2" cursor="move" />
 
       <!-- 拖动点 -->
       <circle
@@ -20,12 +20,17 @@
         :cx="pt[0]"
         :cy="pt[1]"
         r="6"
-        fill="white"
-        stroke="cornflowerblue"
+        fill="#ffffff"
+        :stroke="pointsInfo.color"
         stroke-width="2"
         cursor="pointer"
         @mousedown.stop="startDraggingPoint(index, $event)"
       />
+      <template v-if="!!points && !!points[0]">
+        <text :x="points[0][0] + 5" :y="points[0][1] - 10" font-size="16" fill="#ffffff">
+          {{ pointsInfo.name }}
+        </text>
+      </template>
     </svg>
   </div>
 </template>
@@ -36,9 +41,9 @@ import { deepCopy } from '@/tools/index.js';
 
 const emits = defineEmits(['cancel', 'save']);
 
-const props = defineProps({ def: Array });
+const props = defineProps({ pointsInfo: Object });
 
-const points = reactive(deepCopy(props.def));
+const points = reactive(deepCopy(props.pointsInfo.points));
 
 const draggingIndex = ref(null);
 const draggingAll = ref(false);
