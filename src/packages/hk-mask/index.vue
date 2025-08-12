@@ -14,7 +14,7 @@ export default { name: 'gv-hk-mask' };
 <script setup>
 import BMask from './_components/b-mask.vue';
 import Stream from './_components/stream.vue';
-import { computed, onBeforeMount, onMounted, ref } from 'vue';
+import { computed, nextTick, onBeforeMount, onMounted, ref } from 'vue';
 import BPlace from '@/packages/hk-mask/_components/b-place.vue';
 import BClip from '@/packages/hk-mask/_components/b-clip.vue';
 import { clickLogin, clickStartRealPlay, initHKPlugin, setWindowLayout } from '@/packages/hk-mask/_tools/hk.js';
@@ -61,13 +61,15 @@ const preview = async () => {
   });
 };
 
-const setCurrent = (p) => {
+const setCurrent = async (p) => {
+  current.value = null;
+  await nextTick();
   current.value = p;
 };
 
 const setSave = (point) => {
   pointsMap.value[current.value].points = point;
-  current.value = null;
+  // current.value = null;
   // window.SSS = { ...pointsMap.value };
   // console.log(JSON.stringify(window.SSS), '-----------------------SSS');
 };
@@ -100,6 +102,7 @@ onBeforeMount(() => {
   position: relative;
   width: 1000px;
   height: 560px;
+  user-select: none;
   overflow: hidden;
 }
 </style>

@@ -1,17 +1,16 @@
 <template>
-  <div class="b-mask">
+  <div class="b-mask no-point">
     <!-- 控制按钮 -->
-    <div class="toolbar">
-      <button class="plain" @click="addPoint">添加点</button>
-      <button class="plain" @click="removePoint" :disabled="points.length <= 3">删除点</button>
-      <button class="plain" @click="setCancel">取消</button>
-      <button @click="setPoint">保存</button>
+    <div class="toolbar auto-point">
+      <button @click.stop="addPoint">添加点</button>
+      <button @click.stop="removePoint" :disabled="points.length <= 3">删除点</button>
+      <button @click.stop="setCancel">取消</button>
     </div>
 
     <!-- SVG画布 -->
-    <svg ref="svgRef" width="100%" height="100%" @mousedown="onMouseDown" @mousemove="onMouseMove" @mouseup="onMouseUp" @mouseleave="onMouseUp">
+    <svg ref="svgRef" class="no-point" width="100%" height="100%" @pointerdown="onMouseDown">
       <!-- 多边形 -->
-      <polygon :points="polygonPoints" :fill="pointsInfo.fill" :stroke="pointsInfo.color" stroke-width="2" cursor="move" />
+      <polygon class="auto-point" :points="polygonPoints" :fill="pointsInfo.fill" :stroke="pointsInfo.color" stroke-width="2" cursor="move" />
 
       <!-- 拖动点 -->
       <circle
@@ -19,12 +18,13 @@
         :key="index"
         :cx="pt[0]"
         :cy="pt[1]"
+        class="auto-point"
         r="6"
         fill="#ffffff"
         :stroke="pointsInfo.color"
         stroke-width="2"
         cursor="pointer"
-        @mousedown.stop="startDraggingPoint(index, $event)"
+        @pointerdown.stop="startDraggingPoint(index, $event)"
       />
       <template v-if="!!points && !!points[0]">
         <text :x="points[0][0] + 5" :y="points[0][1] - 10" font-size="16" fill="#ffffff">
@@ -36,7 +36,7 @@
 </template>
 
 <script setup>
-import { ref, reactive, computed } from 'vue';
+import { ref, reactive, computed, onBeforeMount, onBeforeUnmount, onMounted } from 'vue';
 import { deepCopy } from '@/tools/index.js';
 
 const emits = defineEmits(['cancel', 'save']);
@@ -45,6 +45,7 @@ const props = defineProps({ pointsInfo: Object });
 
 const points = reactive(deepCopy(props.pointsInfo.points));
 
+const isDraggingNow = ref(false);
 const draggingIndex = ref(null);
 const draggingAll = ref(false);
 const lastMouse = ref([0, 0]);
@@ -54,6 +55,7 @@ const svgRef = ref(null);
 const polygonPoints = computed(() => points.map(([x, y]) => `${x},${y}`).join(' '));
 
 const onMouseDown = (e) => {
+  isDraggingNow.value = true;
   // 若点击的是polygon区域（非控制点），开启整体拖动
   if (e.target.tagName.toLowerCase() === 'polygon') {
     draggingAll.value = true;
@@ -62,6 +64,7 @@ const onMouseDown = (e) => {
 };
 
 const onMouseMove = (e) => {
+  if (!isDraggingNow.value) return;
   const dx = e.clientX - lastMouse.value[0];
   const dy = e.clientY - lastMouse.value[1];
 
@@ -81,11 +84,15 @@ const onMouseMove = (e) => {
 };
 
 const onMouseUp = () => {
+  if (!isDraggingNow.value) return;
+  isDraggingNow.value = false;
   draggingIndex.value = null;
   draggingAll.value = false;
+  setPoint();
 };
 
 const startDraggingPoint = (index, e) => {
+  isDraggingNow.value = true;
   draggingIndex.value = index;
   lastMouse.value = [e.clientX, e.clientY];
 };
@@ -115,6 +122,18 @@ const setCancel = () => {
 const setPoint = () => {
   emits('save', deepCopy(points));
 };
+
+onMounted(() => {
+  window.addEventListener('pointermove', onMouseMove);
+  window.addEventListener('pointerup', onMouseUp);
+  window.addEventListener('pointerleave', onMouseUp);
+});
+
+onBeforeUnmount(() => {
+  window.removeEventListener('pointermove', onMouseMove);
+  window.removeEventListener('pointerup', onMouseUp);
+  window.removeEventListener('pointerleave', onMouseUp);
+});
 </script>
 
 <style scoped>
@@ -170,5 +189,13 @@ button.active {
 
 svg {
   user-select: none;
+}
+
+.no-point {
+  pointer-events: none;
+}
+
+.auto-point {
+  pointer-events: auto;
 }
 </style>
