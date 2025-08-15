@@ -77,14 +77,26 @@ onBeforeMount(() => {
   }
 });
 </script>
-<style></style>
-<style scoped>
-.stream {
-  width: 1000px;
-  height: 560px;
+<style>
+.hk-select {
+  .stream {
+    width: 1000px;
+    height: 560px;
 
-  ::v-deep(.hk-selected-mark) {
-    border: 4px solid rgb(51.2, 126.4, 204) !important;
+    .hk-selected-mark {
+      border: 4px solid rgb(51.2, 126.4, 204) !important;
+
+      &:after {
+        content: '';
+        position: absolute;
+        bottom: 0;
+        right: 0;
+        width: 34px;
+        height: 30px;
+        background-image: url('/select.png');
+        background-size: 100% 100%;
+      }
+    }
   }
 }
 </style>
