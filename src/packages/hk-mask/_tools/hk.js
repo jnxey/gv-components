@@ -197,35 +197,39 @@ export function clickStopRecord(szType, iWndIndex) {
 
 // 开始预览
 export function clickStartRealPlay({ szDeviceIdentify, iRtspPort, iChannelID, bZeroChannel, iStreamType, windowIndex = window.g_iWndIndex }) {
-  const oWndInfo = WebVideoCtrl.I_GetWindowStatus(windowIndex);
-  let szInfo = '';
-  console.log({ szDeviceIdentify, iRtspPort, iChannelID, bZeroChannel, iStreamType, windowIndex }, '-------------------preview');
-  if (null == szDeviceIdentify) return;
-  var startRealPlay = function () {
-    WebVideoCtrl.I_StartRealPlay(szDeviceIdentify, {
-      iRtspPort: iRtspPort,
-      iStreamType: iStreamType,
-      iChannelID: iChannelID,
-      bZeroChannel: bZeroChannel,
-      iWndIndex: windowIndex,
-      bProxy: false, // ws取流协议是否要过Nginx
-      success: function () {
-        szInfo = '开始预览成功！';
-        console.log('showOPInfo', szDeviceIdentify + ' ' + szInfo);
-      },
-      error: function (status, xmlDoc) {
-        if (403 === status) szInfo = '设备不支持Websocket取流！';
-        else szInfo = '开始预览失败！';
-        console.log('showOPInfo', szDeviceIdentify + ' ' + szInfo);
-      }
-    });
-  };
+  try {
+    const oWndInfo = WebVideoCtrl.I_GetWindowStatus(windowIndex);
+    let szInfo = '';
+    console.log({ szDeviceIdentify, iRtspPort, iChannelID, bZeroChannel, iStreamType, windowIndex }, '-------------------preview');
+    if (null == szDeviceIdentify) return;
+    var startRealPlay = function () {
+      WebVideoCtrl.I_StartRealPlay(szDeviceIdentify, {
+        iRtspPort: iRtspPort,
+        iStreamType: iStreamType,
+        iChannelID: iChannelID,
+        bZeroChannel: bZeroChannel,
+        iWndIndex: windowIndex,
+        bProxy: false, // ws取流协议是否要过Nginx
+        success: function () {
+          szInfo = '开始预览成功！';
+          console.log('showOPInfo', szDeviceIdentify + ' ' + szInfo);
+        },
+        error: function (status, xmlDoc) {
+          if (403 === status) szInfo = '设备不支持Websocket取流！';
+          else szInfo = '开始预览失败！';
+          console.log('showOPInfo', szDeviceIdentify + ' ' + szInfo);
+        }
+      });
+    };
 
-  if (oWndInfo != null) {
-    // 已经在播放了，先停止
-    WebVideoCtrl.I_Stop({ success: () => startRealPlay() });
-  } else {
-    startRealPlay();
+    if (oWndInfo != null) {
+      // 已经在播放了，先停止
+      WebVideoCtrl.I_Stop({ success: () => startRealPlay() });
+    } else {
+      startRealPlay();
+    }
+  } catch (e) {
+    alert('获取窗口失败，可刷新页面重试');
   }
 }
 
@@ -278,22 +282,26 @@ export function clickCapturePicData(szChannelID, callback) {
   <option value="8">8x8</option>64
  */
 export function setWindowLayout(len) {
-  if (len === 1) {
-    WebVideoCtrl.I_ChangeWndNum(1);
-  } else if (len > 1 && len <= 4) {
-    WebVideoCtrl.I_ChangeWndNum(2);
-  } else if (len > 4 && len <= 9) {
-    WebVideoCtrl.I_ChangeWndNum(3);
-  } else if (len > 9 && len <= 16) {
-    WebVideoCtrl.I_ChangeWndNum(4);
-  } else if (len > 16 && len <= 25) {
-    WebVideoCtrl.I_ChangeWndNum(5);
-  } else if (len > 25 && len <= 36) {
-    WebVideoCtrl.I_ChangeWndNum(6);
-  } else if (len > 36 && len <= 49) {
-    WebVideoCtrl.I_ChangeWndNum(7);
-  } else if (len > 49) {
-    WebVideoCtrl.I_ChangeWndNum(8);
+  try {
+    if (len === 1) {
+      WebVideoCtrl.I_ChangeWndNum(1);
+    } else if (len > 1 && len <= 4) {
+      WebVideoCtrl.I_ChangeWndNum(2);
+    } else if (len > 4 && len <= 9) {
+      WebVideoCtrl.I_ChangeWndNum(3);
+    } else if (len > 9 && len <= 16) {
+      WebVideoCtrl.I_ChangeWndNum(4);
+    } else if (len > 16 && len <= 25) {
+      WebVideoCtrl.I_ChangeWndNum(5);
+    } else if (len > 25 && len <= 36) {
+      WebVideoCtrl.I_ChangeWndNum(6);
+    } else if (len > 36 && len <= 49) {
+      WebVideoCtrl.I_ChangeWndNum(7);
+    } else if (len > 49) {
+      WebVideoCtrl.I_ChangeWndNum(8);
+    }
+  } catch (e) {
+    alert('获取窗口失败，可刷新页面重试');
   }
 }
 

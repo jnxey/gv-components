@@ -30,7 +30,9 @@ const login = async () => {
 const preview = async () => {
   const info = recorderInfo.value ?? {};
   let selectIndex = null;
+  console.log('------------------------------------------e1');
   setWindowLayout(window.HK_CHANNEL_LIST.length);
+  console.log('------------------------------------------e2');
   window.HK_CHANNEL_LIST.forEach((channel, index) => {
     if (info.channelId === channel.id) selectIndex = index;
     clickStartRealPlay({
@@ -42,6 +44,7 @@ const preview = async () => {
       windowIndex: index
     });
   });
+  console.log('------------------------------------------e3');
   if (selectIndex !== null) {
     setTimeout(() => {
       setSelectedWindow(selectIndex);
