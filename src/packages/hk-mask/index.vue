@@ -2,7 +2,7 @@
   <div class="hk-mask" :style="wrapStyle">
     <stream :width="sWidth" :height="sHeight" />
     <b-place v-if="!!pointsMap" :current="current" :points-map="pointsMap" @selected="setCurrent" />
-    <b-clip v-if="!!pointsMap && !current" :points-map="pointsMap" :width="sWidth" :height="sHeight" />
+    <!--    <b-clip v-if="!!pointsMap && !current" :points-map="pointsMap" :width="sWidth" :height="sHeight" />-->
     <template v-if="!!pointsMap && !!current">
       <b-mask :points-info="pointsMap[current]" @cancel="setCurrent" @save="setSave" />
     </template>
@@ -19,7 +19,7 @@ import BPlace from '@/packages/hk-mask/_components/b-place.vue';
 import BClip from '@/packages/hk-mask/_components/b-clip.vue';
 import { clickLogin, clickStartRealPlay, initHKPlugin, setWindowLayout } from '@/packages/hk-mask/_tools/hk.js';
 import { IframeMessenger } from '@/tools/iframe-message.js';
-import { deepCopy } from '@/tools/index.js';
+import { deepCopy, delayExec } from '@/tools/index.js';
 
 const sWidth = 1000;
 const sHeight = 560;
@@ -86,7 +86,11 @@ onMounted(() => {
     recorderInfo.value = data;
     pointsMap.value = deepCopy(data.AREA_POINTS);
     await login();
+    await delayExec(300);
     await preview();
+  });
+  messenger.instance.on('get-point-map', async () => {
+    messenger.instance.send('send-point-map', deepCopy(pointsMap.value));
   });
 });
 
