@@ -11,3 +11,13 @@ export const syncObjectData = (target, remote) => {
   });
   return target;
 };
+
+/**
+ * 延时执行
+ */
+export const delayExec = (time) => {
+  let timer = null;
+  return new Promise((resolve) => {
+    timer = setTimeout(() => resolve(), time);
+  });
+};

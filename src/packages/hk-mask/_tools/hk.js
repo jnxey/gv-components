@@ -229,6 +229,7 @@ export function clickStartRealPlay({ szDeviceIdentify, iRtspPort, iChannelID, bZ
       startRealPlay();
     }
   } catch (e) {
+    console.log(e, '------------------------err');
     alert('获取窗口失败，可刷新页面重试');
   }
 }
@@ -301,6 +302,7 @@ export function setWindowLayout(len) {
       WebVideoCtrl.I_ChangeWndNum(8);
     }
   } catch (e) {
+    console.log(e, '------------------------err');
     alert('获取窗口失败，可刷新页面重试');
   }
 }

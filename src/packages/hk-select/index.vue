@@ -10,6 +10,7 @@ export default { name: 'gv-hk-select' };
 import { onBeforeMount, onMounted, ref } from 'vue';
 import { IframeMessenger } from '@/tools/iframe-message.js';
 import { clickLogin, clickStartRealPlay, initHKPlugin, setSelectedWindow, setWindowLayout } from '@/packages/hk-mask/_tools/hk.js';
+import { delayExec } from '@/tools/index.js';
 
 const recorderInfo = ref(null);
 
@@ -69,6 +70,7 @@ onMounted(() => {
   messenger.instance.on('send-recorder-info', async (data) => {
     recorderInfo.value = data;
     await login();
+    await delayExec(300);
     await preview();
   });
 });
