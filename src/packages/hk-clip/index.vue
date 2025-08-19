@@ -1,20 +1,16 @@
 <template>
   <div class="hk-mask" :style="wrapStyle">
-    <stream :width="sWidth" :height="sHeight" />
-    <b-place v-if="!!pointsMap" :current="current" :points-map="pointsMap" @selected="setCurrent" />
-    <template v-if="!!pointsMap && !!current">
-      <b-mask :points-info="pointsMap[current]" @cancel="setCurrent" @save="setSave" />
-    </template>
+    <stream ref="streamRef" :points-map="pointsMap" :width="sWidth" :height="sHeight" />
+    <b-place v-if="!!pointsMap" :points-map="pointsMap" />
   </div>
 </template>
 <script>
-export default { name: 'gv-hk-mask' };
+export default { name: 'gv-hk-clip' };
 </script>
 <script setup>
-import BMask from './_components/b-mask.vue';
 import Stream from './_components/stream.vue';
+import { computed, onBeforeMount, onMounted, ref, shallowRef } from 'vue';
 import BPlace from './_components/b-place.vue';
-import { computed, nextTick, onBeforeMount, onMounted, ref } from 'vue';
 import { clickLogin, clickStartRealPlay, initHKPlugin, setWindowLayout } from '@/tools/hk.js';
 import { IframeMessenger } from '@/tools/iframe-message.js';
 import { deepCopy, delayExec } from '@/tools/index.js';
@@ -22,15 +18,13 @@ import { deepCopy, delayExec } from '@/tools/index.js';
 const sWidth = 1000;
 const sHeight = 560;
 
-const current = ref(null);
-
 const wrapStyle = computed(() => {
   return { width: `${sWidth}px`, height: `${sHeight}px` };
 });
 
 const pointsMap = ref(null);
-
 const recorderInfo = ref(null);
+const streamRef = shallowRef();
 
 const messenger = { instance: null };
 
@@ -59,17 +53,6 @@ const preview = async () => {
   });
 };
 
-const setCurrent = async (p) => {
-  current.value = null;
-  await nextTick();
-  current.value = p;
-};
-
-const setSave = (point) => {
-  pointsMap.value[current.value].points = point;
-  // console.log(JSON.stringify({ ...pointsMap.value }), '-----------------------SSS');
-};
-
 onMounted(() => {
   initHKPlugin();
   messenger.instance = new IframeMessenger({
@@ -82,8 +65,17 @@ onMounted(() => {
     recorderInfo.value = data;
     pointsMap.value = deepCopy(data.AREA_POINTS);
     await login();
-    await delayExec(300);
-    await preview();
+  });
+  messenger.instance.on('clip-card-img', async () => {
+    // await delayExec(300);
+    const info = recorderInfo.value ?? {};
+    streamRef.value?.handlerClip(info);
+  });
+  messenger.instance.on('start-preview', async () => {
+    // await preview();
+  });
+  messenger.instance.on('stop-preview', async () => {
+    // clickStopRealPlay();
   });
   messenger.instance.on('get-point-map', async () => {
     messenger.instance.send('send-point-map', deepCopy(pointsMap.value));

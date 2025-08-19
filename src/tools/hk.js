@@ -1,3 +1,5 @@
+import { delayExec } from '@/tools/index.js';
+
 // 全局保存当前选中窗口
 const ErrorCodes = {
   1001: '码流传输过程异常',
@@ -45,21 +47,8 @@ export function initHKPlugin({ cbSelWindCallback } = {}) {
       setSelectedBorder(window.g_iWndIndex);
       if (!!cbSelWindCallback) cbSelWindCallback(window.g_iWndIndex);
     },
-    cbDoubleClickWnd: function (iWndIndex, bFullScreen) {
-      let szInfo = '当前放大的窗口编号：' + iWndIndex;
-      if (!bFullScreen) szInfo = '当前还原的窗口编号：' + iWndIndex;
-      console.log('showCB', szInfo);
-    },
-    cbEvent: function (iEventType, iParam1, iParam2) {
-      if (2 === iEventType) {
-        // 回放正常结束
-        console.log('showCBInfo', '窗口' + iParam1 + '回放结束！');
-      } else if (-1 === iEventType) {
-        console.log('showCBInfo', '设备' + iParam1 + '网络错误！');
-      } else if (3001 === iEventType) {
-        clickStopRecord(window.g_szRecordType, iParam1);
-      }
-    },
+    cbDoubleClickWnd: function (iWndIndex, bFullScreen) {},
+    cbEvent: function (iEventType, iParam1, iParam2) {},
     cbRemoteConfig: function () {
       console.log('showCBInfo', '关闭远程配置库！');
     },
@@ -172,24 +161,19 @@ export function getDevicePort(szDeviceIdentify) {
   });
 }
 
-// 停止录像
-export function clickStopRecord(szType, iWndIndex) {
-  if ('undefined' === typeof iWndIndex) iWndIndex = window.g_iWndIndex;
-
-  const oWndInfo = WebVideoCtrl.I_GetWindowStatus(iWndIndex);
-  let szInfo = '';
-
+// 停止预览
+function clickStopRealPlay(windowIndex = window.g_iWndIndex) {
+  var oWndInfo = WebVideoCtrl.I_GetWindowStatus(windowIndex);
+  var szInfo = '';
   if (oWndInfo != null) {
-    WebVideoCtrl.I_StopRecord({
+    WebVideoCtrl.I_Stop({
       success: function () {
-        if ('realplay' === szType) szInfo = '停止录像成功！';
-        else if ('playback' === szType) szInfo = '停止剪辑成功！';
-        console.log('showOPInfo', oWndInfo.szDeviceIdentify + ' ' + szInfo);
+        szInfo = '停止预览成功！';
+        showOPInfo(oWndInfo.szDeviceIdentify + ' ' + szInfo);
       },
       error: function () {
-        if ('realplay' === szType) szInfo = '停止录像失败！';
-        else if ('playback' === szType) szInfo = '停止剪辑失败！';
-        console.log('showOPInfo', oWndInfo.szDeviceIdentify + ' ' + szInfo);
+        szInfo = '停止预览失败！';
+        showOPInfo(oWndInfo.szDeviceIdentify + ' ' + szInfo);
       }
     });
   }
@@ -230,7 +214,7 @@ export function clickStartRealPlay({ szDeviceIdentify, iRtspPort, iChannelID, bZ
     }
   } catch (e) {
     console.log(e, '------------------------err');
-    alert('获取窗口失败，可刷新页面重试');
+    // alert('获取窗口失败，可刷新页面重试');
   }
 }
 
@@ -249,12 +233,11 @@ function uint8ArrayToBase64(uint8Array) {
 }
 
 // 抓图数据
-export function clickCapturePicData(szChannelID, callback) {
-  const oWndInfo = WebVideoCtrl.I_GetWindowStatus(window.g_iWndIndex);
-  if (oWndInfo != null) {
-    let szPicName = oWndInfo.szDeviceIdentify + '_' + szChannelID + '_' + new Date().getTime();
-    szPicName += '.jpg';
-    WebVideoCtrl.I2_CapturePic(szPicName, {
+export async function clickCapturePicData(info, callback, current = false) {
+  const szPicName = `${info.ip}_${info.port}_${info.channelId}_${new Date().getTime()}.jpg`;
+  const capture = async (fileName) => {
+    await delayExec(500);
+    WebVideoCtrl.I2_CapturePic(fileName, {
       cbCallback: (uint8Array) => {
         uint8ArrayToBase64(uint8Array).then((base64String) => {
           callback(base64String);
@@ -262,12 +245,34 @@ export function clickCapturePicData(szChannelID, callback) {
       }
     }).then(
       function () {
-        console.log('showOPInfo', oWndInfo.szDeviceIdentify + ' 抓图数据打印成功！');
+        if (!current) WebVideoCtrl.I_Stop({ iWndIndex: window.g_iWndIndex });
+        console.log('showOPInfo', fileName + ' 抓图数据打印成功！');
       },
       function () {
-        console.log('showOPInfo', oWndInfo.szDeviceIdentify + ' 抓图数据打印失败！');
+        if (!current) WebVideoCtrl.I_Stop({ iWndIndex: window.g_iWndIndex });
+        console.log('showOPInfo', fileName + ' 抓图数据打印失败！');
       }
     );
+  };
+  if (!!current) {
+    capture(szPicName);
+  } else {
+    // 开始预览，窗口隐藏
+    WebVideoCtrl.I_StartRealPlay(`${info.ip}_${info.port}`, {
+      iStreamType: 1,
+      iChannelID: info.channelId,
+      bZeroChannel: false,
+      iWndIndex: window.g_iWndIndex,
+      iRtspPort: info.port,
+      bProxy: false, // ws取流协议是否要过Nginx
+      success: function () {
+        console.log('预览成功，开始抓图');
+        capture(szPicName);
+      },
+      error: function () {
+        console.error('预览失败');
+      }
+    });
   }
 }
 

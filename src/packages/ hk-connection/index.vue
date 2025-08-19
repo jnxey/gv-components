@@ -13,7 +13,7 @@ export default { name: 'gv-hk-connection' };
 <script setup>
 import { onBeforeMount, onMounted, ref } from 'vue';
 import { IframeMessenger } from '@/tools/iframe-message.js';
-import { clickLogin, initHKPlugin } from '@/packages/hk-mask/_tools/hk.js';
+import { clickLogin, initHKPlugin } from '@/tools/hk.js';
 
 const recorderInfo = ref(null);
 

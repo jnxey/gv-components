@@ -2,6 +2,7 @@
   <gv-hk-mask v-if="mode === 'hk_mask'" />
   <gv-hk-connection v-if="mode === 'hk_connection'" />
   <gv-hk-select v-if="mode === 'hk_select'" />
+  <gv-hk-clip v-if="mode === 'hk_clip'" />
 </template>
 <script setup>
 import GvHkMask from '@/packages/hk-mask/index.vue';
@@ -9,6 +10,7 @@ import { onBeforeMount, ref } from 'vue';
 import qs from 'qs';
 import GvHkConnection from '@/packages/ hk-connection/index.vue';
 import GvHkSelect from '@/packages/hk-select/index.vue';
+import GvHkClip from '@/packages/hk-clip/index.vue';
 
 const mode = ref();
 

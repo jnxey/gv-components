@@ -9,7 +9,7 @@ export default { name: 'gv-hk-select' };
 <script setup>
 import { onBeforeMount, onMounted, ref } from 'vue';
 import { IframeMessenger } from '@/tools/iframe-message.js';
-import { clickLogin, clickStartRealPlay, initHKPlugin, setSelectedWindow, setWindowLayout } from '@/packages/hk-mask/_tools/hk.js';
+import { clickLogin, clickStartRealPlay, initHKPlugin, setSelectedWindow, setWindowLayout } from '@/tools/hk.js';
 import { delayExec } from '@/tools/index.js';
 
 const recorderInfo = ref(null);
