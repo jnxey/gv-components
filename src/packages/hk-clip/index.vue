@@ -1,9 +1,6 @@
 <template>
   <div class="hk-clip">
-    <poker ref="pokerRef" :style="wrapStyle" :points-map="pointsMap" :width="sWidth" :height="sHeight" />
-    <div class="button-wrap">
-      <button class="gv-button big" @click.stop="scanPoker">扫牌</button>
-    </div>
+    <poker ref="pokerRef" :points-map="pointsMap" :recorder-info="recorderInfo" />
   </div>
 </template>
 <script>
@@ -11,17 +8,10 @@ export default { name: 'gv-hk-clip' };
 </script>
 <script setup>
 import Poker from './_components/poker.vue';
-import { computed, onBeforeMount, onMounted, ref, shallowRef } from 'vue';
+import { onBeforeMount, onMounted, ref, shallowRef } from 'vue';
 import { clickLogin, initHKPlugin } from '@/tools/hk.js';
 import { deepCopy } from '@/tools/index.js';
 import { IframeCommunicator } from '@/tools/iframe-communicator.js';
-
-const sWidth = 1000;
-const sHeight = 560;
-
-const wrapStyle = computed(() => {
-  return { width: `${sWidth}px`, height: `${sHeight}px` };
-});
 
 const pointsMap = ref(null);
 const recorderInfo = ref(null);
@@ -38,13 +28,6 @@ const login = async () => {
     szUsername: info.account,
     szPassword: info.password
   });
-};
-
-// 扫拍
-const scanPoker = () => {
-  if (!recorderInfo.value) return;
-  const info = recorderInfo.value ?? {};
-  pokerRef.value?.handlerClip(info);
 };
 
 onMounted(() => {
@@ -81,13 +64,5 @@ onBeforeMount(() => {
   height: 640px;
   user-select: none;
   overflow: hidden;
-
-  .button-wrap {
-    display: flex;
-    align-items: center;
-    justify-content: end;
-    height: 80px;
-    padding: 0 20px;
-  }
 }
 </style>

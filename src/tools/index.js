@@ -1,4 +1,19 @@
-export const deepCopy = (original) => JSON.parse(JSON.stringify(original));
+/**
+ * 判断数据类型
+ */
+export const getType = (value) => Object.prototype.toString.call(value).slice(8, -1).toLowerCase();
+export const isNumber = (value) => getType(value) === 'number';
+export const isString = (value) => getType(value) === 'string';
+export const isArray = (value) => getType(value) === 'array';
+export const isObject = (value) => getType(value) === 'object';
+export const isBoolean = (value) => getType(value) === 'boolean';
+export const isFunction = (value) => getType(value).toLowerCase().indexOf('function') > -1;
+export const isNull = (value) => getType(value) === 'null';
+export const isUndefined = (value) => getType(value) === 'undefined';
+export const isPromise = (value) => getType(value) === 'promise';
+export const isNode = (value) => !isNull(value) && !isUndefined(value) && Boolean(value.nodeName) && Boolean(value.nodeType);
+export const isElement = (value) => isNode(value) && value.nodeType === 1;
+export const isEmpty = (value) => value === undefined || value === '' || value === null;
 
 /**
  *  同步对象数据
@@ -20,6 +35,25 @@ export const delayExec = (time) => {
   return new Promise((resolve) => {
     timer = setTimeout(() => resolve(), time);
   });
+};
+
+/**
+ * 深度克隆
+ */
+export const deepCopy = (json) => {
+  let obj = null;
+  if (isArray(json)) {
+    obj = [];
+    json.forEach((item) => obj.push(deepCopy(item)));
+  } else if (isObject(json)) {
+    obj = {};
+    for (let key in json) {
+      obj[key] = deepCopy(json[key]);
+    }
+  } else {
+    return json;
+  }
+  return obj;
 };
 
 /**

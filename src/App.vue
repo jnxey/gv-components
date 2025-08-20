@@ -53,7 +53,8 @@ body {
 
 .gv-button.plain {
   border: 1px solid #4caf50;
-  background-color: rgba(76, 175, 80, 0.55);
+  color: #4caf50;
+  background-color: white;
 }
 
 .gv-button.default {
@@ -64,6 +65,10 @@ body {
 
 .gv-button:hover:not(:disabled) {
   background-color: #45a049;
+}
+
+.gv-button.plain:hover:not(:disabled) {
+  background-color: #a5d6a7;
 }
 
 .gv-button:disabled {
