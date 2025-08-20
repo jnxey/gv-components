@@ -12,8 +12,8 @@ import Stream from './_components/stream.vue';
 import { computed, onBeforeMount, onMounted, ref, shallowRef } from 'vue';
 import BPlace from './_components/b-place.vue';
 import { clickLogin, clickStartRealPlay, initHKPlugin, setWindowLayout } from '@/tools/hk.js';
-import { IframeMessenger } from '@/tools/iframe-message.js';
 import { deepCopy, delayExec } from '@/tools/index.js';
+import { IframeCommunicator } from '@/tools/iframe-communicator.js';
 
 const sWidth = 1000;
 const sHeight = 560;
@@ -39,33 +39,23 @@ const login = async () => {
   });
 };
 
-// 预览
-const preview = async () => {
-  const info = recorderInfo.value ?? {};
-  setWindowLayout(1);
-  clickStartRealPlay({
-    szDeviceIdentify: `${info.ip}_${info.port}`,
-    iRtspPort: window.DEVICE_PORT.iRtspPort,
-    iChannelID: info.channelId,
-    bZeroChannel: false,
-    iStreamType: 1,
-    windowIndex: 0
-  });
-};
-
 onMounted(() => {
   initHKPlugin();
-  messenger.instance = new IframeMessenger({
-    targetWindow: window.parent,
-    targetOrigin: '*',
-    debug: true
+  messenger.instance = new IframeCommunicator({
+    targetWindow: window.parent
   });
-  messenger.instance.send('get-recorder-info');
-  messenger.instance.on('send-recorder-info', async (data) => {
-    recorderInfo.value = data;
-    pointsMap.value = deepCopy(data.AREA_POINTS);
-    await login();
-  });
+
+  messenger.instance.ready(); // 通知已加载
+
+  messenger.instance
+    .request('recorder-info')
+    .then(async (data) => {
+      recorderInfo.value = data;
+      pointsMap.value = deepCopy(data.AREA_POINTS);
+      await login();
+    })
+    .catch((err) => {});
+
   messenger.instance.on('clip-card-img', async () => {
     const info = recorderInfo.value ?? {};
     streamRef.value?.handlerClip(info);

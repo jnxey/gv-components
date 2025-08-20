@@ -16,8 +16,8 @@ import Stream from './_components/stream.vue';
 import BPlace from './_components/b-place.vue';
 import { computed, nextTick, onBeforeMount, onMounted, ref } from 'vue';
 import { clickLogin, clickStartRealPlay, initHKPlugin, setWindowLayout } from '@/tools/hk.js';
-import { IframeMessenger } from '@/tools/iframe-message.js';
 import { deepCopy, delayExec } from '@/tools/index.js';
+import { IframeCommunicator } from '@/tools/iframe-communicator.js';
 
 const sWidth = 1000;
 const sHeight = 560;
@@ -72,21 +72,24 @@ const setSave = (point) => {
 
 onMounted(() => {
   initHKPlugin();
-  messenger.instance = new IframeMessenger({
-    targetWindow: window.parent,
-    targetOrigin: '*',
-    debug: true
+  messenger.instance = new IframeCommunicator({
+    targetWindow: window.parent
   });
-  messenger.instance.send('get-recorder-info');
-  messenger.instance.on('send-recorder-info', async (data) => {
-    recorderInfo.value = data;
-    pointsMap.value = deepCopy(data.AREA_POINTS);
-    await login();
-    await delayExec(300);
-    await preview();
-  });
-  messenger.instance.on('get-point-map', async () => {
-    messenger.instance.send('send-point-map', deepCopy(pointsMap.value));
+
+  messenger.instance
+    .request('recorder-info')
+    .then(async (data) => {
+      console.log('recorder-info------');
+      recorderInfo.value = data;
+      pointsMap.value = deepCopy(data.AREA_POINTS);
+      await login();
+      await delayExec(300);
+      await preview();
+    })
+    .catch((err) => {});
+
+  messenger.instance.on('get-point-map', async (_, respond) => {
+    respond(deepCopy(pointsMap.value));
   });
 });
 

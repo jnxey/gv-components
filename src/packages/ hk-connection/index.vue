@@ -12,8 +12,9 @@ export default { name: 'gv-hk-connection' };
 </script>
 <script setup>
 import { onBeforeMount, onMounted, ref } from 'vue';
-import { IframeMessenger } from '@/tools/iframe-message.js';
 import { clickLogin, initHKPlugin } from '@/tools/hk.js';
+import { deepCopy } from '@/tools/index.js';
+import { IframeCommunicator } from '@/tools/iframe-communicator.js';
 
 const recorderInfo = ref(null);
 
@@ -37,16 +38,16 @@ const checkConnection = () => {
 
 onMounted(() => {
   initHKPlugin();
-  messenger.instance = new IframeMessenger({
-    targetWindow: window.parent,
-    targetOrigin: '*',
-    debug: true
+  messenger.instance = new IframeCommunicator({
+    targetWindow: window.parent
   });
-  messenger.instance.send('get-recorder-info');
-  messenger.instance.on('send-recorder-info', (data) => {
-    recorderInfo.value = data;
-    checkConnection();
-  });
+  messenger.instance
+    .request('recorder-info')
+    .then(async (data) => {
+      recorderInfo.value = data;
+      checkConnection();
+    })
+    .catch((err) => {});
 });
 
 onBeforeMount(() => {

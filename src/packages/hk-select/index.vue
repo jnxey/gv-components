@@ -8,9 +8,9 @@ export default { name: 'gv-hk-select' };
 </script>
 <script setup>
 import { onBeforeMount, onMounted, ref } from 'vue';
-import { IframeMessenger } from '@/tools/iframe-message.js';
 import { clickLogin, clickStartRealPlay, initHKPlugin, setSelectedWindow, setWindowLayout } from '@/tools/hk.js';
 import { delayExec } from '@/tools/index.js';
+import { IframeCommunicator } from '@/tools/iframe-communicator.js';
 
 const recorderInfo = ref(null);
 
@@ -61,18 +61,18 @@ const setSelected = (index) => {
 
 onMounted(() => {
   initHKPlugin({ cbSelWindCallback: setSelected });
-  messenger.instance = new IframeMessenger({
-    targetWindow: window.parent,
-    targetOrigin: '*',
-    debug: true
+  messenger.instance = new IframeCommunicator({
+    targetWindow: window.parent
   });
-  messenger.instance.send('get-recorder-info');
-  messenger.instance.on('send-recorder-info', async (data) => {
-    recorderInfo.value = data;
-    await login();
-    await delayExec(300);
-    await preview();
-  });
+  messenger.instance
+    .request('recorder-info')
+    .then(async (data) => {
+      recorderInfo.value = data;
+      await login();
+      await delayExec(300);
+      await preview();
+    })
+    .catch((err) => {});
 });
 
 onBeforeMount(() => {
