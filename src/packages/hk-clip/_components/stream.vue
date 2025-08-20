@@ -1,7 +1,7 @@
 <template>
   <div class="stream">
     <div id="divPlugin"></div>
-    <img class="image" :src="imgSrc" alt="" />
+    <img v-if="imgSrc" class="image" :src="imgSrc" alt="" />
   </div>
 </template>
 <script setup>
@@ -14,13 +14,11 @@ const props = defineProps({ pointsMap: Object, width: Number, height: Number });
 const imgSrc = shallowRef();
 
 const handlerClip = (info) => {
-  console.log(info, '----------------------clip-card-img');
   clickCapturePicData(info, (base64String) => {
     const img = new Image();
     img.src = 'data:image/jpeg;base64,' + base64String;
     imgSrc.value = img.src;
     img.onload = function () {
-      console.log(img, '-------------------------------img');
       Object.keys(props.pointsMap).forEach((p) => {
         const clippedCanvas = clipImageByPolygon(img, { width: props.width, height: props.height }, props.pointsMap[p].points);
         handlerAnalysis(clippedCanvas, info.token);

@@ -233,28 +233,30 @@ function uint8ArrayToBase64(uint8Array) {
 }
 
 // 抓图数据
-export async function clickCapturePicData(info, callback, current = false) {
+export async function clickCapturePicData(info, success, error, preview = false) {
   const szPicName = `${info.ip}_${info.port}_${info.channelId}_${new Date().getTime()}.jpg`;
-  const capture = async (fileName) => {
+  const capture = async (fileName, first = true) => {
     await delayExec(500);
     WebVideoCtrl.I2_CapturePic(fileName, {
       cbCallback: (uint8Array) => {
         uint8ArrayToBase64(uint8Array).then((base64String) => {
-          callback(base64String);
+          if (success) success(base64String);
         });
       }
     }).then(
       function () {
-        if (!current) WebVideoCtrl.I_Stop({ iWndIndex: window.g_iWndIndex });
+        if (!preview) WebVideoCtrl.I_Stop({ iWndIndex: window.g_iWndIndex });
         console.log('showOPInfo', fileName + ' 抓图数据打印成功！');
       },
       function () {
-        if (!current) WebVideoCtrl.I_Stop({ iWndIndex: window.g_iWndIndex });
+        if (first) return capture(fileName, false);
+        if (error) error();
+        if (!preview) WebVideoCtrl.I_Stop({ iWndIndex: window.g_iWndIndex });
         console.log('showOPInfo', fileName + ' 抓图数据打印失败！');
       }
     );
   };
-  if (!!current) {
+  if (!!preview) {
     capture(szPicName);
   } else {
     // 开始预览，窗口隐藏
@@ -271,6 +273,7 @@ export async function clickCapturePicData(info, callback, current = false) {
       },
       error: function () {
         console.error('预览失败');
+        if (error) error();
       }
     });
   }

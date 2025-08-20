@@ -67,18 +67,8 @@ onMounted(() => {
     await login();
   });
   messenger.instance.on('clip-card-img', async () => {
-    // await delayExec(300);
     const info = recorderInfo.value ?? {};
     streamRef.value?.handlerClip(info);
-  });
-  messenger.instance.on('start-preview', async () => {
-    // await preview();
-  });
-  messenger.instance.on('stop-preview', async () => {
-    // clickStopRealPlay();
-  });
-  messenger.instance.on('get-point-map', async () => {
-    messenger.instance.send('send-point-map', deepCopy(pointsMap.value));
   });
 });
 
