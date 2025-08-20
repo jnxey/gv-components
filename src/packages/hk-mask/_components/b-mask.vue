@@ -2,9 +2,9 @@
   <div class="b-mask no-point">
     <!-- 控制按钮 -->
     <div class="toolbar auto-point">
-      <button @click.stop="addPoint">添加点</button>
-      <button @click.stop="removePoint" :disabled="points.length <= 3">删除点</button>
-      <button @click.stop="setCancel">取消</button>
+      <button class="gv-button mr-12" @click.stop="addPoint">添加点</button>
+      <button class="gv-button mr-12" @click.stop="removePoint" :disabled="points.length <= 3">删除点</button>
+      <button class="gv-button mr-12" @click.stop="setCancel">取消</button>
     </div>
 
     <!-- SVG画布 -->
@@ -150,41 +150,6 @@ onBeforeUnmount(() => {
   top: 10px;
   left: 10px;
   z-index: 10;
-}
-button {
-  padding: 8px 15px;
-  margin-right: 8px;
-  border-radius: 4px;
-  cursor: pointer;
-  background-color: #4caf50;
-  color: white;
-  border: none;
-  transition: background-color 0.3s;
-}
-
-button.plain {
-  border: 1px solid #4caf50;
-  background-color: rgba(76, 175, 80, 0.55);
-}
-
-button.default {
-  color: #4caf50;
-  border: 1px solid #4caf50;
-  background-color: rgba(255, 255, 255, 0.5);
-}
-
-button:hover:not(:disabled) {
-  background-color: #45a049;
-}
-
-button:disabled {
-  background-color: #a5d6a7;
-  cursor: not-allowed;
-}
-
-button.active {
-  background-color: #2e7d32;
-  font-weight: bold;
 }
 
 svg {

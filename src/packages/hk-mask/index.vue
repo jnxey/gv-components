@@ -76,17 +76,14 @@ onMounted(() => {
     targetWindow: window.parent
   });
 
-  messenger.instance
-    .request('recorder-info')
-    .then(async (data) => {
-      console.log('recorder-info------');
-      recorderInfo.value = data;
-      pointsMap.value = deepCopy(data.AREA_POINTS);
-      await login();
-      await delayExec(300);
-      await preview();
-    })
-    .catch((err) => {});
+  messenger.instance.request('recorder-info').then(async (data) => {
+    console.log('recorder-info------');
+    recorderInfo.value = data;
+    pointsMap.value = deepCopy(data.AREA_POINTS);
+    await login();
+    await delayExec(300);
+    await preview();
+  });
 
   messenger.instance.on('get-point-map', async (_, respond) => {
     respond(deepCopy(pointsMap.value));

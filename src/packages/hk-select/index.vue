@@ -64,15 +64,12 @@ onMounted(() => {
   messenger.instance = new IframeCommunicator({
     targetWindow: window.parent
   });
-  messenger.instance
-    .request('recorder-info')
-    .then(async (data) => {
-      recorderInfo.value = data;
-      await login();
-      await delayExec(300);
-      await preview();
-    })
-    .catch((err) => {});
+  messenger.instance.request('recorder-info').then(async (data) => {
+    recorderInfo.value = data;
+    await login();
+    await delayExec(300);
+    await preview();
+  });
 });
 
 onBeforeMount(() => {

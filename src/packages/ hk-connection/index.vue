@@ -1,10 +1,6 @@
 <template>
   <div class="hk-connection">
-    <div v-if="!!recorderInfo" class="dots-loader">
-      <div class="dot"></div>
-      <div class="dot"></div>
-      <div class="dot"></div>
-    </div>
+    <loading v-if="!!recorderInfo" />
   </div>
 </template>
 <script>
@@ -13,8 +9,8 @@ export default { name: 'gv-hk-connection' };
 <script setup>
 import { onBeforeMount, onMounted, ref } from 'vue';
 import { clickLogin, initHKPlugin } from '@/tools/hk.js';
-import { deepCopy } from '@/tools/index.js';
 import { IframeCommunicator } from '@/tools/iframe-communicator.js';
+import Loading from '@/components/loading.vue';
 
 const recorderInfo = ref(null);
 
@@ -41,13 +37,10 @@ onMounted(() => {
   messenger.instance = new IframeCommunicator({
     targetWindow: window.parent
   });
-  messenger.instance
-    .request('recorder-info')
-    .then(async (data) => {
-      recorderInfo.value = data;
-      checkConnection();
-    })
-    .catch((err) => {});
+  messenger.instance.request('recorder-info').then(async (data) => {
+    recorderInfo.value = data;
+    checkConnection();
+  });
 });
 
 onBeforeMount(() => {
@@ -64,36 +57,5 @@ onBeforeMount(() => {
   justify-content: center;
   width: 300px;
   height: 200px;
-}
-
-.dots-loader {
-  display: flex;
-  justify-content: center;
-  gap: 6px; /* 点间距 */
-}
-
-.dot {
-  width: 12px;
-  height: 12px;
-  background: #3498db;
-  border-radius: 50%;
-  animation: bounce 1.4s infinite; /* 弹性动画 */
-}
-
-.dot:nth-child(2) {
-  animation-delay: 0.2s;
-} /* 第二点延迟 */
-.dot:nth-child(3) {
-  animation-delay: 0.4s;
-} /* 第三点延迟 */
-
-@keyframes bounce {
-  0%,
-  100% {
-    transform: translateY(0);
-  } /* 底部位置 */
-  50% {
-    transform: translateY(-15px);
-  } /* 跳到最高点 */
 }
 </style>

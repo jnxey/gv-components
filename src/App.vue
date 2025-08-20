@@ -26,4 +26,53 @@ body {
   margin: 0;
   padding: 0;
 }
+
+.ml-12 {
+  margin-left: 12px;
+}
+
+.mr-12 {
+  margin-right: 12px;
+}
+
+.gv-button {
+  padding: 8px 15px;
+  border-radius: 4px;
+  cursor: pointer;
+  background-color: #4caf50;
+  color: white;
+  border: none;
+  font-size: 14px;
+  transition: background-color 0.3s;
+}
+
+.gv-button.big {
+  padding: 15px 20px;
+  font-size: 18px;
+}
+
+.gv-button.plain {
+  border: 1px solid #4caf50;
+  background-color: rgba(76, 175, 80, 0.55);
+}
+
+.gv-button.default {
+  color: #4caf50;
+  border: 1px solid #4caf50;
+  background-color: rgba(255, 255, 255, 0.5);
+}
+
+.gv-button:hover:not(:disabled) {
+  background-color: #45a049;
+}
+
+.gv-button:disabled {
+  background-color: #a5d6a7;
+  cursor: not-allowed;
+}
+
+.gv-button.active {
+  background-color: #2e7d32;
+  font-weight: bold;
+}
 </style>
