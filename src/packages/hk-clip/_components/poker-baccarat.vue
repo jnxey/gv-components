@@ -2,6 +2,7 @@
   <div class="poker-baccarat">
     <div class="area-box-b">
       <div class="title">B</div>
+      <div class="add-btn" @click="addPoker('b')"></div>
       <template v-for="(item, index) in pokerShow.b.list" :key="index">
         <div class="poker-box" :class="[pokerShow.b.class, 'sign-' + index]">
           <img :src="`/video-recorder/poker/${item}.png`" alt="" />
@@ -10,18 +11,23 @@
     </div>
     <div class="area-box-p">
       <div class="title">P</div>
+      <div class="add-btn" @click="addPoker('p')"></div>
       <template v-for="(item, index) in pokerShow.p.list" :key="index">
         <div class="poker-box" :class="[pokerShow.p.class, 'sign-' + index]">
           <img :src="`/video-recorder/poker/${item}.png`" alt="" />
         </div>
       </template>
     </div>
+    <poker-select ref="pokerSelectRef" />
   </div>
 </template>
 <script setup>
-import { computed } from 'vue';
+import { computed, shallowRef } from 'vue';
+import PokerSelect from '@/packages/hk-clip/_components/poker-select.vue';
 
 const props = defineProps({ analysisInfo: Object });
+
+const pokerSelectRef = shallowRef();
 
 const pokerShow = computed(() => {
   const listMap = props.analysisInfo ?? {};
@@ -32,6 +38,10 @@ const pokerShow = computed(() => {
     p: { list: pList, class: 'box-n' + pList.length }
   };
 });
+
+const addPoker = () => {
+  pokerSelectRef.value?.open();
+};
 </script>
 <style>
 .poker-baccarat {
@@ -49,6 +59,7 @@ const pokerShow = computed(() => {
   left: 150px;
   width: 300px;
   height: 400px;
+  border-radius: 8px;
   border: 2px solid #ff0303;
   background-color: rgba(255, 3, 3, 0.3);
 }
@@ -66,6 +77,7 @@ const pokerShow = computed(() => {
   right: 150px;
   width: 300px;
   height: 400px;
+  border-radius: 8px;
   border: 2px solid #046ee6;
   background-color: rgba(4, 110, 230, 0.3);
 }
@@ -125,5 +137,16 @@ const pokerShow = computed(() => {
   top: 16%;
   left: 50%;
   transform: translateX(-50%);
+}
+
+.poker-baccarat .add-btn {
+  position: absolute;
+  bottom: 8px;
+  right: 8px;
+  width: 36px;
+  height: 36px;
+  cursor: pointer;
+  background-image: url('/inc.png');
+  background-size: 100% 100%;
 }
 </style>

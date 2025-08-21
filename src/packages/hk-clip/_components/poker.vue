@@ -89,11 +89,7 @@ const handlerClip = (info) => {
             analysisInfo.value[p] = analysis;
             checkAllPoint(() => {
               clipLoading.value = false;
-              const cInfo = {};
-              Object.keys(unref(analysisInfo)).forEach((name) => {
-                cInfo[name] = unref(analysisInfo)[name].map((item) => item.class_name);
-              });
-              completeInfo.value = cInfo;
+              setCompleteInfo(unref(analysisInfo));
             });
           } else {
             clipLoading.value = false;
@@ -134,11 +130,25 @@ const handlerAnalysis = (canvas, token) => {
   });
 };
 
-// 扫拍
+// 扫牌
 const scanPoker = () => {
   if (!props.recorderInfo) return;
   const info = props.recorderInfo ?? {};
   handlerClip(info);
+};
+
+// 根据返回的分析数据填入完整牌型数据
+const setCompleteInfo = (aInfo) => {
+  const cInfo = {};
+  Object.keys(aInfo).forEach((name) => {
+    cInfo[name] = aInfo[name].map((item) => item.class_name);
+  });
+  completeInfo.value = cInfo;
+};
+
+// 设置某个类型牌型数据
+const setTypeCompleteInfo = (name, list) => {
+  completeInfo.value[name] = list;
 };
 
 // 查看原图 / 扫牌信息
