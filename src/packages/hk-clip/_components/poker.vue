@@ -7,6 +7,7 @@
       <!--   牌型   -->
       <template v-else-if="completeInfo && !originalImage">
         <poker-baccarat
+          ref="pokerBaccaratRef"
           v-if="recorderInfo.game_model === GAME_MODEL.baccarat"
           :analysis-info="completeInfo"
           :complete-tips="completeTips"
@@ -30,6 +31,7 @@
       <button v-if="!!completeInfo" class="gv-button big plain mr-12" @click.stop="toggleOriginalImage">
         {{ originalImage ? '查看牌型' : '查看原图' }}
       </button>
+      <button v-if="!!completeInfo" class="gv-button big mr-12" :disabled="clipLoading" @click.stop="useHitItem">使用命中项</button>
       <button class="gv-button big" :disabled="clipLoading" @click.stop="scanPoker">AI识牌</button>
     </div>
   </div>
@@ -38,18 +40,21 @@
 import { clickCapturePicData } from '@/tools/hk.js';
 import { clipImageByPolygon } from '@/tools/index.js';
 import axios from 'axios';
-import { computed, reactive, ref, shallowRef, unref } from 'vue';
+import { computed, inject, reactive, ref, shallowRef, unref } from 'vue';
 import { GAME_MODEL } from '@/values/index.js';
 import Loading from '@/components/loading.vue';
 import PokerBaccarat from './poker-baccarat.vue';
 import BPlace from './b-place.vue';
 import { getPokerReplenish } from '@/tools/poker.js';
 
+const useHitKind = inject('useHitKind');
+
 const sWidth = 1000;
 const sHeight = 560;
 
 const props = defineProps({ recorderInfo: Object, pointsMap: Object, width: Number, height: Number });
 const imgSrc = shallowRef(null);
+const pokerBaccaratRef = shallowRef(null);
 const clipLoading = ref(false);
 const clipTipsText = ref(null);
 const analysisInfo = ref({});
@@ -149,6 +154,12 @@ const scanPoker = () => {
   if (!props.recorderInfo) return;
   const info = props.recorderInfo ?? {};
   handlerClip(info);
+};
+
+// 使用命中项
+const useHitItem = () => {
+  const hits = pokerBaccaratRef.value?.getHitItem();
+  useHitKind(hits);
 };
 
 // 根据返回的分析数据填入完整牌型数据

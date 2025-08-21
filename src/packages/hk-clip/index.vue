@@ -8,7 +8,7 @@ export default { name: 'gv-hk-clip' };
 </script>
 <script setup>
 import Poker from './_components/poker.vue';
-import { onBeforeMount, onMounted, ref, shallowRef } from 'vue';
+import { onBeforeMount, onMounted, provide, ref, shallowRef } from 'vue';
 import { clickLogin, initHKPlugin } from '@/tools/hk.js';
 import { deepCopy } from '@/tools/index.js';
 import { IframeCommunicator } from '@/tools/iframe-communicator.js';
@@ -27,6 +27,20 @@ const login = async () => {
     szPort: String(info.port),
     szUsername: info.account,
     szPassword: info.password
+  });
+};
+
+// 获取命中项
+const getHitKind = async (hitsItem, callback) => {
+  messenger.instance.request('preview-hit-item', hitsItem ?? []).then(async (data) => {
+    if (!!callback) callback(data);
+  });
+};
+
+// 使用命中想
+const useHitKind = async (hits, callback) => {
+  messenger.instance.request('use-hit-item', hits ?? []).then(async (status) => {
+    if (!!callback) callback(status);
   });
 };
 
@@ -56,6 +70,9 @@ onBeforeMount(() => {
     messenger.instance = null;
   }
 });
+
+provide('getHitKind', getHitKind);
+provide('useHitKind', useHitKind);
 </script>
 <style scoped>
 .hk-clip {

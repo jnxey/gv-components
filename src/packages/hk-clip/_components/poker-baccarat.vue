@@ -20,20 +20,25 @@
       </template>
       <div class="error-msg">{{ completeTips?.p }}</div>
     </div>
-    <div class="check-info">{{ JSON.stringify(pokerCheck) }}</div>
+    <div v-if="!!pokerKindHit" class="check-kind">
+      <div class="kind-item" v-for="item in pokerKindHit" :key="item.id">{{ item.name }}</div>
+    </div>
     <poker-select ref="pokerSelectRef" />
   </div>
 </template>
 <script setup>
-import { computed, shallowRef } from 'vue';
+import { computed, inject, shallowRef, watch } from 'vue';
 import PokerSelect from '@/packages/hk-clip/_components/poker-select.vue';
 import { pokerCheckBaccarat } from '@/tools/poker.js';
+import { deepCopy } from '@/tools/index.js';
 
 const emits = defineEmits(['setTypeCompleteInfo']);
 
 const props = defineProps({ analysisInfo: Object, completeTips: Object });
 
+const getHitKind = inject('getHitKind');
 const pokerSelectRef = shallowRef();
+const pokerKindHit = shallowRef(null);
 
 // 显示牌
 const pokerShow = computed(() => {
@@ -42,12 +47,6 @@ const pokerShow = computed(() => {
     b: { list: listMap.b, class: 'box-n' + listMap.b.length, showAdd: listMap.b.length < 3 },
     p: { list: listMap.p, class: 'box-n' + listMap.p.length, showAdd: listMap.p.length < 3 }
   };
-});
-
-// 检查牌型命中
-const pokerCheck = computed(() => {
-  const listMap = props.analysisInfo ?? {};
-  return pokerCheckBaccarat(listMap);
 });
 
 // 编辑扑克
@@ -78,6 +77,29 @@ const addPoker = (type) => {
     emits('setTypeCompleteInfo', type, list);
   });
 };
+
+// 获取命中项
+const getHitItem = () => {
+  return deepCopy(pokerKindHit.value);
+};
+
+// 监听牌型命中
+watch(
+  () => props.analysisInfo,
+  () => {
+    const listMap = props.analysisInfo ?? {};
+    const pokerCheck = pokerCheckBaccarat(listMap);
+    if (!pokerCheck?.check) return (pokerKindHit.value = null);
+    getHitKind(pokerCheck?.hitItem ?? [], (data) => {
+      pokerKindHit.value = data;
+    });
+  },
+  {
+    immediate: true
+  }
+);
+
+defineExpose({ getHitItem });
 </script>
 <style scoped>
 .poker-baccarat {
@@ -196,5 +218,24 @@ const addPoker = (type) => {
   background-image: url('/inc.png');
   background-size: 100% 100%;
   z-index: 15;
+}
+
+.poker-baccarat .check-kind {
+  position: absolute;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  bottom: 12px;
+  left: 0;
+  width: 100%;
+}
+
+.poker-baccarat .check-kind .kind-item {
+  padding: 5px 8px;
+  margin: 0 5px;
+  font-size: 12px;
+  color: #4caf50;
+  border-radius: 2px;
+  border: 1px solid #4caf50;
 }
 </style>
