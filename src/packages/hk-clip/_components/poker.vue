@@ -6,7 +6,11 @@
       <loading v-if="!!clipLoading" />
       <!--   牌型   -->
       <template v-else-if="completeInfo && !originalImage">
-        <poker-baccarat v-if="recorderInfo.game_model === GAME_MODEL.baccarat" :analysis-info="completeInfo" />
+        <poker-baccarat
+          v-if="recorderInfo.game_model === GAME_MODEL.baccarat"
+          :analysis-info="completeInfo"
+          @set-type-complete-info="setTypeCompleteInfo"
+        />
       </template>
       <!--   原图   -->
       <template v-else-if="completeInfo && !!originalImage">
@@ -141,7 +145,13 @@ const scanPoker = () => {
 const setCompleteInfo = (aInfo) => {
   const cInfo = {};
   Object.keys(aInfo).forEach((name) => {
-    cInfo[name] = aInfo[name].map((item) => item.class_name);
+    let list = aInfo[name].map((item) => item.class_name);
+    if (props.recorderInfo?.game_model === GAME_MODEL.baccarat) {
+      list = list.slice(0, 3);
+    } else if (props.recorderInfo?.game_model === GAME_MODEL.niu_niu) {
+      list = list.slice(0, 5);
+    }
+    cInfo[name] = list;
   });
   completeInfo.value = cInfo;
 };

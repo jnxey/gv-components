@@ -2,18 +2,18 @@
   <div class="poker-baccarat">
     <div class="area-box-b">
       <div class="title">B</div>
-      <div class="add-btn" @click="addPoker('b')"></div>
+      <div v-if="pokerShow.b.showAdd" class="add-btn" @click="addPoker('b')"></div>
       <template v-for="(item, index) in pokerShow.b.list" :key="index">
-        <div class="poker-box" :class="[pokerShow.b.class, 'sign-' + index]">
+        <div class="poker-box" :class="[pokerShow.b.class, 'sign-' + index]" @click="editPoker('b', index, item)">
           <img :src="`/video-recorder/poker/${item}.png`" alt="" />
         </div>
       </template>
     </div>
     <div class="area-box-p">
       <div class="title">P</div>
-      <div class="add-btn" @click="addPoker('p')"></div>
+      <div v-if="pokerShow.p.showAdd" class="add-btn" @click="addPoker('p')"></div>
       <template v-for="(item, index) in pokerShow.p.list" :key="index">
-        <div class="poker-box" :class="[pokerShow.p.class, 'sign-' + index]">
+        <div class="poker-box" :class="[pokerShow.p.class, 'sign-' + index]" @click="editPoker('p', index, item)">
           <img :src="`/video-recorder/poker/${item}.png`" alt="" />
         </div>
       </template>
@@ -25,25 +25,48 @@
 import { computed, shallowRef } from 'vue';
 import PokerSelect from '@/packages/hk-clip/_components/poker-select.vue';
 
+const emits = defineEmits(['setTypeCompleteInfo']);
+
 const props = defineProps({ analysisInfo: Object });
 
 const pokerSelectRef = shallowRef();
 
 const pokerShow = computed(() => {
   const listMap = props.analysisInfo ?? {};
-  const bList = listMap.b.slice(0, 3);
-  const pList = listMap.p.slice(0, 3);
   return {
-    b: { list: bList, class: 'box-n' + bList.length },
-    p: { list: pList, class: 'box-n' + pList.length }
+    b: { list: listMap.b, class: 'box-n' + listMap.b.length, showAdd: listMap.b.length < 3 },
+    p: { list: listMap.p, class: 'box-n' + listMap.p.length, showAdd: listMap.p.length < 3 }
   };
 });
 
-const addPoker = () => {
-  pokerSelectRef.value?.open();
+const editPoker = (type, index, poker) => {
+  pokerSelectRef.value?.open(
+    poker,
+    (poker) => {
+      const listMap = props.analysisInfo ?? {};
+      const list = [...listMap[type]];
+      list[index] = poker;
+      emits('setTypeCompleteInfo', type, list);
+    },
+    () => {
+      const listMap = props.analysisInfo ?? {};
+      const list = [...listMap[type]];
+      list.splice(index, 1);
+      emits('setTypeCompleteInfo', type, list);
+    }
+  );
+};
+
+const addPoker = (type) => {
+  pokerSelectRef.value?.open(null, (poker) => {
+    const listMap = props.analysisInfo ?? {};
+    const list = [...listMap[type]];
+    list.push(poker);
+    emits('setTypeCompleteInfo', type, list);
+  });
 };
 </script>
-<style>
+<style scoped>
 .poker-baccarat {
   position: absolute;
   top: 0;
@@ -92,6 +115,7 @@ const addPoker = () => {
 .poker-baccarat .poker-box {
   width: 80px;
   height: 120px;
+  cursor: pointer;
 }
 
 .poker-baccarat .poker-box img {
