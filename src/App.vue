@@ -70,15 +70,15 @@ body {
 }
 
 .gv-button:hover:not(:disabled) {
-  background-color: #45a049;
+  background-color: #238c26;
 }
 
 .gv-button.plain:hover:not(:disabled) {
-  background-color: #a5d6a7;
+  background-color: rgba(76, 175, 80, 0.2);
 }
 
 .gv-button.danger:hover:not(:disabled) {
-  background-color: rgba(248, 2, 2, 0.5);
+  background-color: rgba(248, 2, 2, 0.2);
 }
 
 .gv-button:disabled {
