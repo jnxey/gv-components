@@ -1,3 +1,8 @@
+// 牌点数
+export const POKER_VALUE = ['2', '3', '4', '5', '6', '7', '8', '9', '10', 'J', 'Q', 'K', 'A'];
+// 牌花色
+export const POKER_SHAPE = ['H', 'D', 'C', 'S'];
+
 // 牌型-百家乐
 export const BACCARAT_CARD_TYPE = {
   master: 'master', // 庄赢

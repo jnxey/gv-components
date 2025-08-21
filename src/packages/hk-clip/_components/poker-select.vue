@@ -1,8 +1,8 @@
 <template>
   <div v-show="isVisible" class="poker-select">
     <div class="poker-wrap">
-      <template v-for="num in pokerValue" :key="num">
-        <template v-for="shape in pokerShape" :key="shape">
+      <template v-for="num in POKER_VALUE" :key="num">
+        <template v-for="shape in POKER_SHAPE" :key="shape">
           <div class="poker-item" :class="{ selected: current === getPokerName(num, shape) }" @click="setCurrent(num, shape)">
             <img :src="`/video-recorder/poker/${getPokerName(num, shape)}.png`" alt="" />
           </div>
@@ -19,14 +19,11 @@
 </template>
 <script setup>
 import { ref } from 'vue';
-
+import { POKER_SHAPE, POKER_VALUE } from '@/values/card.js';
 const isVisible = ref(false);
 const isDelete = ref(false);
 const current = ref(null);
 const callbacks = { set: null, del: null };
-
-const pokerValue = ['2', '3', '4', '5', '6', '7', '8', '9', '10', 'J', 'Q', 'K', 'A'];
-const pokerShape = ['H', 'D', 'C', 'S'];
 
 const getPokerName = (num, shape) => {
   return num + shape;

@@ -8,6 +8,7 @@
           <img :src="`/video-recorder/poker/${item}.png`" alt="" />
         </div>
       </template>
+      <div class="error-msg">{{ completeTips?.b }}</div>
     </div>
     <div class="area-box-p">
       <div class="title">P</div>
@@ -17,20 +18,24 @@
           <img :src="`/video-recorder/poker/${item}.png`" alt="" />
         </div>
       </template>
+      <div class="error-msg">{{ completeTips?.p }}</div>
     </div>
+    <div class="check-info">{{ JSON.stringify(pokerCheck) }}</div>
     <poker-select ref="pokerSelectRef" />
   </div>
 </template>
 <script setup>
 import { computed, shallowRef } from 'vue';
 import PokerSelect from '@/packages/hk-clip/_components/poker-select.vue';
+import { pokerCheckBaccarat } from '@/tools/poker.js';
 
 const emits = defineEmits(['setTypeCompleteInfo']);
 
-const props = defineProps({ analysisInfo: Object });
+const props = defineProps({ analysisInfo: Object, completeTips: Object });
 
 const pokerSelectRef = shallowRef();
 
+// 显示牌
 const pokerShow = computed(() => {
   const listMap = props.analysisInfo ?? {};
   return {
@@ -39,6 +44,13 @@ const pokerShow = computed(() => {
   };
 });
 
+// 检查牌型命中
+const pokerCheck = computed(() => {
+  const listMap = props.analysisInfo ?? {};
+  return pokerCheckBaccarat(listMap);
+});
+
+// 编辑扑克
 const editPoker = (type, index, poker) => {
   pokerSelectRef.value?.open(
     poker,
@@ -57,6 +69,7 @@ const editPoker = (type, index, poker) => {
   );
 };
 
+// 添加扑克
 const addPoker = (type) => {
   pokerSelectRef.value?.open(null, (poker) => {
     const listMap = props.analysisInfo ?? {};
@@ -74,6 +87,16 @@ const addPoker = (type) => {
   width: 100%;
   height: 100%;
   z-index: 20;
+}
+
+.poker-baccarat .error-msg {
+  position: absolute;
+  left: 8px;
+  bottom: 8px;
+  color: #ff0303;
+  font-size: 12px;
+  font-weight: bold;
+  z-index: 10;
 }
 
 .poker-baccarat .area-box-b {
@@ -147,20 +170,20 @@ const addPoker = (type) => {
 .poker-baccarat .box-n3.sign-0 {
   position: absolute;
   top: 50%;
-  left: 15%;
+  right: 15%;
 }
 
 .poker-baccarat .box-n3.sign-1 {
   position: absolute;
   top: 50%;
-  right: 15%;
+  left: 15%;
 }
 
 .poker-baccarat .box-n3.sign-2 {
   position: absolute;
   top: 16%;
   left: 50%;
-  transform: translateX(-50%);
+  transform: translateX(-50%) rotate(-90deg);
 }
 
 .poker-baccarat .add-btn {
@@ -172,5 +195,6 @@ const addPoker = (type) => {
   cursor: pointer;
   background-image: url('/inc.png');
   background-size: 100% 100%;
+  z-index: 15;
 }
 </style>

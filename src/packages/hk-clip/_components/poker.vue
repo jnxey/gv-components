@@ -9,6 +9,7 @@
         <poker-baccarat
           v-if="recorderInfo.game_model === GAME_MODEL.baccarat"
           :analysis-info="completeInfo"
+          :complete-tips="completeTips"
           @set-type-complete-info="setTypeCompleteInfo"
         />
       </template>
@@ -37,11 +38,12 @@
 import { clickCapturePicData } from '@/tools/hk.js';
 import { clipImageByPolygon } from '@/tools/index.js';
 import axios from 'axios';
-import { computed, ref, shallowRef, unref } from 'vue';
+import { computed, reactive, ref, shallowRef, unref } from 'vue';
 import { GAME_MODEL } from '@/values/index.js';
 import Loading from '@/components/loading.vue';
 import PokerBaccarat from './poker-baccarat.vue';
 import BPlace from './b-place.vue';
+import { getPokerReplenish } from '@/tools/poker.js';
 
 const sWidth = 1000;
 const sHeight = 560;
@@ -52,11 +54,22 @@ const clipLoading = ref(false);
 const clipTipsText = ref(null);
 const analysisInfo = ref({});
 const completeInfo = ref(null);
+const completeTips = ref({});
 const originalImage = ref(false);
 
 const wrapStyle = computed(() => {
   return { width: `${sWidth}px`, height: `${sHeight}px` };
 });
+
+// 清空数据
+const clearAllInfo = () => {
+  clipLoading.value = false;
+  completeInfo.value = null;
+  clipTipsText.value = '';
+  originalImage.value = false;
+  imgSrc.value = null;
+  completeTips.value = {};
+};
 
 // 检查点位信息
 const checkAllPoint = (callback) => {
@@ -70,11 +83,8 @@ const checkAllPoint = (callback) => {
 
 // 切图
 const handlerClip = (info) => {
+  clearAllInfo();
   clipLoading.value = true;
-  completeInfo.value = null;
-  clipTipsText.value = '';
-  originalImage.value = false;
-  imgSrc.value = null;
   clickCapturePicData(
     info,
     (base64String) => {
@@ -148,6 +158,11 @@ const setCompleteInfo = (aInfo) => {
     let list = aInfo[name].map((item) => item.class_name);
     if (props.recorderInfo?.game_model === GAME_MODEL.baccarat) {
       list = list.slice(0, 3);
+      if (list.length === 3) {
+        const info = getPokerReplenish(aInfo[name].slice(0, 3));
+        completeTips.value[name] = info.tipsMsg;
+        list = info.result;
+      }
     } else if (props.recorderInfo?.game_model === GAME_MODEL.niu_niu) {
       list = list.slice(0, 5);
     }
