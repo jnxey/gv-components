@@ -225,7 +225,7 @@ defineExpose({ getHitItem });
   display: flex;
   align-items: center;
   justify-content: center;
-  bottom: 12px;
+  bottom: 26px;
   left: 0;
   width: 100%;
 }
@@ -236,6 +236,7 @@ defineExpose({ getHitItem });
   font-size: 12px;
   color: #4caf50;
   border-radius: 2px;
+  background-color: rgba(76, 175, 80, 0.15);
   border: 1px solid #4caf50;
 }
 </style>

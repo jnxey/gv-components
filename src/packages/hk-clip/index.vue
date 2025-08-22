@@ -58,9 +58,12 @@ onMounted(() => {
     await login();
   });
 
-  messenger.instance.on('clip-card-img', async () => {
-    const info = recorderInfo.value ?? {};
-    pokerRef.value?.handlerClip(info);
+  messenger.instance.on('try-scan-poker', async () => {
+    pokerRef.value?.tryScanPoker();
+  });
+
+  messenger.instance.on('clear-scan-poker', async () => {
+    pokerRef.value?.clearAllInfo();
   });
 });
 

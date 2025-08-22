@@ -35,6 +35,16 @@ body {
   margin-right: 12px;
 }
 
+.link-button {
+  padding: 8px 15px;
+  border-radius: 4px;
+  cursor: pointer;
+  color: #4caf50;
+  background-color: transparent;
+  border: none;
+  font-size: 16px;
+}
+
 .gv-button {
   padding: 8px 15px;
   border-radius: 4px;

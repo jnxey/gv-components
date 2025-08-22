@@ -28,11 +28,11 @@
     </div>
     <!--  按钮区域  -->
     <div class="button-wrap">
-      <button v-if="!!completeInfo" class="gv-button big plain mr-12" @click.stop="toggleOriginalImage">
-        {{ originalImage ? '查看牌型' : '查看原图' }}
+      <button v-if="!!completeInfo" class="gv-button big mr-12" :disabled="clipLoading" @click.stop="useHitItem">使用此牌型</button>
+      <button v-if="!!completeInfo" class="link-button mr-12" @click.stop="toggleOriginalImage">
+        {{ originalImage ? '返回牌型' : '查看原图' }}
       </button>
-      <button v-if="!!completeInfo" class="gv-button big mr-12" :disabled="clipLoading" @click.stop="useHitItem">使用命中项</button>
-      <button class="gv-button big" :disabled="clipLoading" @click.stop="scanPoker">AI识牌</button>
+      <button v-if="!clipLoading" class="link-button" @click.stop="scanPoker">重新识牌</button>
     </div>
   </div>
 </template>
@@ -40,7 +40,7 @@
 import { clickCapturePicData } from '@/tools/hk.js';
 import { clipImageByPolygon } from '@/tools/index.js';
 import axios from 'axios';
-import { computed, inject, reactive, ref, shallowRef, unref } from 'vue';
+import { computed, inject, ref, shallowRef, unref } from 'vue';
 import { GAME_MODEL } from '@/values/index.js';
 import Loading from '@/components/loading.vue';
 import PokerBaccarat from './poker-baccarat.vue';
@@ -156,6 +156,12 @@ const scanPoker = () => {
   handlerClip(info);
 };
 
+// 若识别数据则扫拍
+const tryScanPoker = () => {
+  if (!!completeInfo.value) return;
+  scanPoker();
+};
+
 // 使用命中项
 const useHitItem = () => {
   const hits = pokerBaccaratRef.value?.getHitItem();
@@ -192,7 +198,7 @@ const toggleOriginalImage = () => {
   originalImage.value = !originalImage.value;
 };
 
-defineExpose({ handlerClip });
+defineExpose({ handlerClip, scanPoker, tryScanPoker, clearAllInfo });
 </script>
 <style scoped>
 .poker {
@@ -234,11 +240,19 @@ defineExpose({ handlerClip });
   }
 
   .button-wrap {
+    position: relative;
     display: flex;
     align-items: center;
     justify-content: end;
     height: 80px;
     padding: 0 20px;
+
+    .gv-button {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+    }
   }
 }
 </style>
