@@ -36,9 +36,8 @@ export const getPokerReplenish = (pokers) => {
 
 // 检查牌点数是否符合规则
 export const checkPokerRule = (analysisInfo, countResult) => {
-  if (analysisInfo.b.length === 0) return { b: '未识别到牌型' }; // 未识别牌型
-  if (analysisInfo.p.length === 0) return { p: '未识别到牌型' }; // 未识别牌型
-  if (analysisInfo.b.length === 1 && analysisInfo.p.length === 1) return null; // 可能玩的是龙虎
+  if (analysisInfo.b.length <= 1) return { b: '未识别到牌型' }; // 未识别牌型
+  if (analysisInfo.p.length <= 1) return { p: '未识别到牌型' }; // 未识别牌型
   // ---- 庄 2张牌
   if (analysisInfo.b.length === 2 && analysisInfo.p.length === 2) {
     // 庄 2张牌 闲 2张牌
@@ -68,7 +67,6 @@ export const checkPokerRule = (analysisInfo, countResult) => {
     const one = baccaratValueMap[oInfo.value]; // 庄 第1张点数
     const two = baccaratValueMap[wInfo.value]; // 庄 第2张点数
     const countValue = (one + two) % 10;
-    console.log(countValue, '------------------000');
     if (countValue === 3 && [8].includes(three)) return { b: '不需补牌' };
     if (countValue === 4 && [0, 1, 8, 9].includes(three)) return { b: '不需补牌' };
     if (countValue === 5 && [0, 1, 2, 3, 8, 9].includes(three)) return { b: '不需补牌' };
