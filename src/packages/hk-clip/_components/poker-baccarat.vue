@@ -8,7 +8,7 @@
           <img :src="`/video-recorder/poker/${item}.png`" alt="" />
         </div>
       </template>
-      <div class="error-msg">{{ completeTips?.b }}</div>
+      <div class="error-msg">{{ showErrorTips?.b }}</div>
     </div>
     <div class="area-box-p">
       <div class="title">P</div>
@@ -18,7 +18,7 @@
           <img :src="`/video-recorder/poker/${item}.png`" alt="" />
         </div>
       </template>
-      <div class="error-msg">{{ completeTips?.p }}</div>
+      <div class="error-msg">{{ showErrorTips?.p }}</div>
     </div>
     <div v-if="!!pokerKindHit" class="check-kind">
       <div class="kind-item" v-for="item in pokerKindHit" :key="item.id">{{ item.name }}</div>
@@ -27,18 +27,23 @@
   </div>
 </template>
 <script setup>
-import { computed, inject, shallowRef, watch } from 'vue';
+import { computed, inject, ref, shallowRef, watch } from 'vue';
 import PokerSelect from '@/packages/hk-clip/_components/poker-select.vue';
-import { pokerCheckBaccarat } from '@/tools/poker.js';
+import { checkPokerRule, pokerCheckBaccarat } from '@/tools/poker.js';
 import { deepCopy } from '@/tools/index.js';
 
 const emits = defineEmits(['setTypeCompleteInfo']);
 
 const props = defineProps({ analysisInfo: Object, completeTips: Object });
 
+const checkRuleTips = ref({});
 const getHitKind = inject('getHitKind');
 const pokerSelectRef = shallowRef();
 const pokerKindHit = shallowRef(null);
+
+const showErrorTips = computed(() => {
+  return { ...(checkRuleTips.value ?? {}), ...(props.completeTips ?? {}) };
+});
 
 // 显示牌
 const pokerShow = computed(() => {
@@ -89,10 +94,17 @@ watch(
   () => {
     const listMap = props.analysisInfo ?? {};
     const pokerCheck = pokerCheckBaccarat(listMap);
-    if (!pokerCheck?.check) return (pokerKindHit.value = null);
-    getHitKind(pokerCheck?.hitItem ?? [], (data) => {
-      pokerKindHit.value = data;
-    });
+
+    if (!pokerCheck?.check) {
+      checkRuleTips.value = { b: pokerCheck.msg, p: pokerCheck.msg };
+      pokerKindHit.value = null;
+    } else {
+      checkRuleTips.value = checkPokerRule(listMap, pokerCheck);
+      console.log(checkRuleTips.value, '---------------------------change');
+      getHitKind(pokerCheck?.hitItem ?? [], (data) => {
+        pokerKindHit.value = data;
+      });
+    }
   },
   {
     immediate: true

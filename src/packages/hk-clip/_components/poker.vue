@@ -177,7 +177,7 @@ const setCompleteInfo = (aInfo) => {
       list = list.slice(0, 3);
       if (list.length === 3) {
         const info = getPokerReplenish(aInfo[name].slice(0, 3));
-        completeTips.value[name] = info.tipsMsg;
+        if (!!info.tipsMsg) completeTips.value[name] = info.tipsMsg;
         list = info.result;
       }
     } else if (props.recorderInfo?.game_model === GAME_MODEL.niu_niu) {
@@ -190,7 +190,8 @@ const setCompleteInfo = (aInfo) => {
 
 // 设置某个类型牌型数据
 const setTypeCompleteInfo = (name, list) => {
-  completeInfo.value[name] = list;
+  const info = completeInfo.value ?? {};
+  completeInfo.value = { ...info, [name]: list };
 };
 
 // 查看原图 / 扫牌信息
