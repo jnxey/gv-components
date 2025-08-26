@@ -20,6 +20,13 @@
           :complete-tips="completeTips"
           @set-type-complete-info="setTypeCompleteInfo"
         />
+        <poker-niu
+          ref="pokerNiuRef"
+          v-if="recorderInfo.game_model === GAME_MODEL.niu_niu"
+          :analysis-info="completeInfo"
+          :complete-tips="completeTips"
+          @set-type-complete-info="setTypeCompleteInfo"
+        />
       </template>
       <!--   原图   -->
       <template v-else-if="completeInfo && !!originalImage">
@@ -54,6 +61,7 @@ import PokerBaccarat from './poker-baccarat.vue';
 import BPlace from './b-place.vue';
 import { getPokerReplenish } from '@/tools/poker-baccarat.js';
 import PokerLongHu from '@/packages/hk-clip/_components/poker-long-hu.vue';
+import PokerNiu from '@/packages/hk-clip/_components/poker-niu.vue';
 
 const useHitKind = inject('useHitKind');
 
@@ -64,6 +72,7 @@ const props = defineProps({ recorderInfo: Object, pointsMap: Object, width: Numb
 const imgSrc = shallowRef(null);
 const pokerBaccaratRef = shallowRef(null);
 const pokerLongHuRef = shallowRef(null);
+const pokerNiuRef = shallowRef(null);
 const clipLoading = ref(false);
 const clipTipsText = ref(null);
 const analysisInfo = ref({});
@@ -178,6 +187,9 @@ const useHitItem = () => {
     useHitKind(hits);
   } else if (props.recorderInfo.game_model === GAME_MODEL.long_hu) {
     const hits = pokerLongHuRef.value?.getHitItem();
+    useHitKind(hits);
+  } else if (props.recorderInfo.game_model === GAME_MODEL.niu_niu) {
+    const hits = pokerNiuRef.value?.getHitItem();
     useHitKind(hits);
   }
 };

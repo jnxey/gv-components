@@ -1,15 +1,11 @@
 <template>
-  <div class="poker-baccarat">
-    <template v-for="name in POINTS_BACCARAT_LIST" :key="name">
-      <div
-        class="area-box"
-        :class="POINTS_BACCARAT[name].class"
-        :style="{ borderColor: POINTS_BACCARAT[name].color, backgroundColor: POINTS_BACCARAT[name].fill }"
-      >
-        <div class="title" :style="{ backgroundColor: POINTS_BACCARAT[name].color }">{{ POINTS_BACCARAT[name].name }}</div>
+  <div class="poker-niu">
+    <template v-for="name in POINTS_NIU_LIST" :key="name">
+      <div class="area-box" :class="POINTS_NIU[name].class" :style="{ borderColor: POINTS_NIU[name].color, backgroundColor: POINTS_NIU[name].fill }">
+        <div class="title" :style="{ backgroundColor: POINTS_NIU[name].color }">{{ POINTS_NIU[name].name }}</div>
         <div v-if="pokerShow[name].showAdd" class="add-btn" @click="addPoker(name)"></div>
         <template v-for="(item, index) in pokerShow[name].list" :key="index">
-          <div class="poker-box" :class="[pokerShow[name].class, 'sign-' + index]" @click="editPoker(name, index, item)">
+          <div class="poker-box" :class="['sign-' + index]" @click="editPoker(name, index, item)">
             <img :src="`/video-recorder/poker/${item}.png`" alt="" />
           </div>
         </template>
@@ -25,9 +21,9 @@
 <script setup>
 import { computed, inject, ref, shallowRef, watch } from 'vue';
 import PokerSelect from '@/packages/hk-clip/_components/poker-select.vue';
-import { checkBaccaratPokerRule, pokerCheckBaccarat } from '@/tools/poker-baccarat.js';
 import { deepCopy } from '@/tools/index.js';
-import { POINTS_BACCARAT, POINTS_BACCARAT_LIST } from '@/values/index.js';
+import { checkNiuPokerRule, pokerCheckNiu } from '@/tools/poker-niu.js';
+import { POINTS_NIU, POINTS_NIU_LIST } from '@/values/index.js';
 
 const emits = defineEmits(['setTypeCompleteInfo']);
 
@@ -46,8 +42,8 @@ const showErrorTips = computed(() => {
 const pokerShow = computed(() => {
   const listMap = props.analysisInfo ?? {};
   const result = {};
-  POINTS_BACCARAT_LIST.forEach((name) => {
-    result[name] = { list: listMap[name], class: 'box-n' + listMap[name].length, showAdd: listMap[name].length < 3 };
+  POINTS_NIU_LIST.forEach((name) => {
+    result[name] = { list: listMap[name], showAdd: listMap[name].length < 5 };
   });
   return result;
 });
@@ -91,13 +87,13 @@ watch(
   () => props.analysisInfo,
   () => {
     const listMap = props.analysisInfo ?? {};
-    const pokerCheck = pokerCheckBaccarat(listMap);
+    const pokerCheck = pokerCheckNiu(listMap);
 
     if (!pokerCheck?.check) {
       checkRuleTips.value = { b: pokerCheck.msg, p: pokerCheck.msg };
       pokerKindHit.value = null;
     } else {
-      checkRuleTips.value = checkBaccaratPokerRule(listMap, pokerCheck);
+      checkRuleTips.value = checkNiuPokerRule(listMap);
       console.log(checkRuleTips.value, '---------------------------change');
       getHitKind(pokerCheck?.hitItem ?? [], (data) => {
         pokerKindHit.value = data;
@@ -112,16 +108,22 @@ watch(
 defineExpose({ getHitItem });
 </script>
 <style scoped>
-.poker-baccarat {
+.poker-niu {
+  box-sizing: border-box;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: end;
   position: absolute;
   top: 0;
   left: 0;
   width: 100%;
   height: 100%;
+  padding: 0 20px 32px;
   z-index: 20;
 }
 
-.poker-baccarat .error-msg {
+.poker-niu .error-msg {
   position: absolute;
   left: 8px;
   bottom: 8px;
@@ -131,92 +133,72 @@ defineExpose({ getHitItem });
   z-index: 10;
 }
 
-.poker-baccarat .area-box {
+.poker-niu .area-box {
   position: relative;
-  width: 300px;
-  height: 400px;
+  display: inline-block;
+  margin-left: 12px;
+  margin-right: 12px;
+  width: 200px;
+  height: 240px;
   border-radius: 8px;
   border-width: 2px;
   border-style: solid;
+  vertical-align: top;
 }
 
-.poker-baccarat .area-box .title {
-  font-size: 22px;
+.poker-niu .area-box:first-child {
+  margin-right: 42px;
+}
+
+.poker-niu .area-box .title {
+  font-size: 20px;
   color: #ffffff;
-  padding: 8px;
+  padding: 6px;
 }
 
-.poker-baccarat .area-box-b {
-  position: absolute;
-  top: 30px;
-  left: 150px;
-}
-
-.poker-baccarat .area-box-p {
-  position: absolute;
-  top: 30px;
-  right: 150px;
-}
-
-.poker-baccarat .area-box-p .title {
-  font-size: 22px;
-  color: #ffffff;
-  padding: 8px;
-  background-color: #046ee6;
-}
-
-.poker-baccarat .poker-box {
-  width: 80px;
-  height: 120px;
+.poker-niu .poker-box {
+  width: 40px;
+  height: 60px;
   cursor: pointer;
 }
 
-.poker-baccarat .poker-box img {
+.poker-niu .poker-box img {
   width: 100%;
   height: 100%;
 }
 
-.poker-baccarat .box-n1 {
+.poker-niu .sign-0 {
   position: absolute;
-  top: 50%;
+  top: 58px;
+  left: 17%;
+}
+
+.poker-niu .sign-1 {
+  position: absolute;
+  top: 58px;
+  right: 17%;
+}
+
+.poker-niu .sign-2 {
+  position: absolute;
+  top: 130px;
+  left: 5%;
+}
+
+.poker-niu .sign-3 {
+  position: absolute;
+  top: 130px;
   left: 50%;
-  transform: translate(-50%, -50%);
+  transform: translateX(-50%);
 }
 
-.poker-baccarat .box-n2.sign-0 {
+.poker-niu .sign-4 {
   position: absolute;
-  top: 50%;
-  left: 15%;
-  transform: translateY(-50%);
+  top: 130px;
+  right: 5%;
 }
 
-.poker-baccarat .box-n2.sign-1 {
-  position: absolute;
-  top: 50%;
-  right: 15%;
-  transform: translateY(-50%);
-}
-
-.poker-baccarat .box-n3.sign-0 {
-  position: absolute;
-  top: 50%;
-  right: 15%;
-}
-
-.poker-baccarat .box-n3.sign-1 {
-  position: absolute;
-  top: 50%;
-  left: 15%;
-}
-
-.poker-baccarat .box-n3.sign-2 {
-  position: absolute;
-  top: 16%;
-  left: 50%;
-  transform: translateX(-50%) rotate(-90deg);
-}
-
-.poker-baccarat .add-btn {
+.poker-niu .add-btn {
   position: absolute;
   bottom: 8px;
   right: 8px;
@@ -228,7 +210,7 @@ defineExpose({ getHitItem });
   z-index: 15;
 }
 
-.poker-baccarat .check-kind {
+.poker-niu .check-kind {
   position: absolute;
   display: flex;
   align-items: center;
@@ -238,7 +220,7 @@ defineExpose({ getHitItem });
   width: 100%;
 }
 
-.poker-baccarat .check-kind .kind-item {
+.poker-niu .check-kind .kind-item {
   padding: 5px 8px;
   margin: 0 5px;
   font-size: 12px;

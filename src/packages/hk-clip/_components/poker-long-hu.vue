@@ -1,25 +1,21 @@
 <template>
   <div class="poker-baccarat">
-    <div class="area-box-b">
-      <div class="title">B</div>
-      <div v-if="pokerShow.b.showAdd" class="add-btn" @click="addPoker('b')"></div>
-      <template v-for="(item, index) in pokerShow.b.list" :key="index">
-        <div class="poker-box" :class="[pokerShow.b.class, 'sign-' + index]" @click="editPoker('b', index, item)">
-          <img :src="`/video-recorder/poker/${item}.png`" alt="" />
-        </div>
-      </template>
-      <div class="error-msg">{{ showErrorTips?.b }}</div>
-    </div>
-    <div class="area-box-p">
-      <div class="title">P</div>
-      <div v-if="pokerShow.p.showAdd" class="add-btn" @click="addPoker('p')"></div>
-      <template v-for="(item, index) in pokerShow.p.list" :key="index">
-        <div class="poker-box" :class="[pokerShow.p.class, 'sign-' + index]" @click="editPoker('p', index, item)">
-          <img :src="`/video-recorder/poker/${item}.png`" alt="" />
-        </div>
-      </template>
-      <div class="error-msg">{{ showErrorTips?.p }}</div>
-    </div>
+    <template v-for="name in POINTS_BACCARAT_LIST" :key="name">
+      <div
+        class="area-box"
+        :class="POINTS_BACCARAT[name].class"
+        :style="{ borderColor: POINTS_BACCARAT[name].color, backgroundColor: POINTS_BACCARAT[name].fill }"
+      >
+        <div class="title" :style="{ backgroundColor: POINTS_BACCARAT[name].color }">{{ POINTS_BACCARAT[name].name }}</div>
+        <div v-if="pokerShow[name].showAdd" class="add-btn" @click="addPoker(name)"></div>
+        <template v-for="(item, index) in pokerShow[name].list" :key="index">
+          <div class="poker-box" :class="[pokerShow[name].class, 'sign-' + index]" @click="editPoker(name, index, item)">
+            <img :src="`/video-recorder/poker/${item}.png`" alt="" />
+          </div>
+        </template>
+        <div class="error-msg">{{ showErrorTips?.[name] }}</div>
+      </div>
+    </template>
     <div v-if="!!pokerKindHit" class="check-kind">
       <div class="kind-item" v-for="item in pokerKindHit" :key="item.id">{{ item.name }}</div>
     </div>
@@ -31,6 +27,7 @@ import { computed, inject, ref, shallowRef, watch } from 'vue';
 import PokerSelect from '@/packages/hk-clip/_components/poker-select.vue';
 import { deepCopy } from '@/tools/index.js';
 import { checkLongHuPokerRule, pokerCheckLongHu } from '@/tools/poker-long-hu.js';
+import { POINTS_BACCARAT, POINTS_BACCARAT_LIST } from '@/values/index.js';
 
 const emits = defineEmits(['setTypeCompleteInfo']);
 
@@ -48,10 +45,11 @@ const showErrorTips = computed(() => {
 // 显示牌
 const pokerShow = computed(() => {
   const listMap = props.analysisInfo ?? {};
-  return {
-    b: { list: listMap.b, class: 'box-n' + listMap.b.length, showAdd: listMap.b.length < 1 },
-    p: { list: listMap.p, class: 'box-n' + listMap.p.length, showAdd: listMap.p.length < 1 }
-  };
+  const result = {};
+  POINTS_BACCARAT_LIST.forEach((name) => {
+    result[name] = { list: listMap[name], class: 'box-n' + listMap[name].length, showAdd: listMap[name].length < 1 };
+  });
+  return result;
 });
 
 // 编辑扑克
@@ -133,33 +131,31 @@ defineExpose({ getHitItem });
   z-index: 10;
 }
 
+.poker-baccarat .area-box {
+  position: relative;
+  width: 300px;
+  height: 400px;
+  border-radius: 8px;
+  border-width: 2px;
+  border-style: solid;
+}
+
+.poker-baccarat .area-box .title {
+  font-size: 22px;
+  color: #ffffff;
+  padding: 8px;
+}
+
 .poker-baccarat .area-box-b {
   position: absolute;
   top: 30px;
   left: 150px;
-  width: 300px;
-  height: 400px;
-  border-radius: 8px;
-  border: 2px solid #ff0303;
-  background-color: rgba(255, 3, 3, 0.3);
-}
-
-.poker-baccarat .area-box-b .title {
-  font-size: 22px;
-  color: #ffffff;
-  padding: 8px;
-  background-color: #ff0303;
 }
 
 .poker-baccarat .area-box-p {
   position: absolute;
   top: 30px;
   right: 150px;
-  width: 300px;
-  height: 400px;
-  border-radius: 8px;
-  border: 2px solid #046ee6;
-  background-color: rgba(4, 110, 230, 0.3);
 }
 
 .poker-baccarat .area-box-p .title {
