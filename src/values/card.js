@@ -19,6 +19,14 @@ export const BACCARAT_CARD_TYPE = {
   other: 'other' // 其他
 };
 
+// 牌型-龙虎
+export const LONG_HU_CARD_TYPE = {
+  master: 'master', // 龙赢
+  player: 'player', // 虎赢
+  draw: 'draw', // 和局
+  pair_any: 'pair_any' // 任意对子
+};
+
 // 牌型-牛牛
 export const NIU_CARD_TYPE = {
   niu_5hua: 'niu_5hua', // 5公

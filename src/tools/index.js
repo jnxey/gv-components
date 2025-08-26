@@ -56,6 +56,24 @@ export const deepCopy = (json) => {
   return obj;
 };
 
+// 根据名称获取点数以及花色
+export const getPokerInfo = (cardString) => {
+  // 验证输入格式（允许点数后有无空格）
+  if (!/^([2-9]|10|[JQKA])[\sHSDC]*$/.test(cardString)) {
+    throw new Error('无效的扑克牌格式');
+  }
+  // 分离点数和花色
+  const rankMatch = cardString.match(/^(10|[2-9JQKAjqka])/i);
+  const suitMatch = cardString.match(/[HSDC]+$/);
+  if (!rankMatch || !suitMatch) {
+    throw new Error('无法解析点数和花色');
+  }
+  // 标准化点数（大写字母）和花色（Unicode符号）
+  const rank = rankMatch[0].toUpperCase();
+  const suitSymbol = suitMatch[0];
+  return { value: rank, symbol: suitSymbol };
+};
+
 /**
  * 根据多边形坐标点切割图像
  * @param {HTMLImageElement} img - 要裁剪的图片对象

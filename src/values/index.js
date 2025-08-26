@@ -1,5 +1,5 @@
 // 游戏模型
-export const GAME_MODEL = { baccarat: 1, niu_niu: 2, general: 99 };
+export const GAME_MODEL = { baccarat: 1, niu_niu: 2, long_hu: 3, general: 99 };
 
 // 百家乐点位描述
 export const POINTS_BACCARAT = {

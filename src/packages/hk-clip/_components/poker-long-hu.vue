@@ -29,8 +29,8 @@
 <script setup>
 import { computed, inject, ref, shallowRef, watch } from 'vue';
 import PokerSelect from '@/packages/hk-clip/_components/poker-select.vue';
-import { checkBaccaratPokerRule, pokerCheckBaccarat } from '@/tools/poker-baccarat.js';
 import { deepCopy } from '@/tools/index.js';
+import { checkLongHuPokerRule, pokerCheckLongHu } from '@/tools/poker-long-hu.js';
 
 const emits = defineEmits(['setTypeCompleteInfo']);
 
@@ -49,8 +49,8 @@ const showErrorTips = computed(() => {
 const pokerShow = computed(() => {
   const listMap = props.analysisInfo ?? {};
   return {
-    b: { list: listMap.b, class: 'box-n' + listMap.b.length, showAdd: listMap.b.length < 3 },
-    p: { list: listMap.p, class: 'box-n' + listMap.p.length, showAdd: listMap.p.length < 3 }
+    b: { list: listMap.b, class: 'box-n' + listMap.b.length, showAdd: listMap.b.length < 1 },
+    p: { list: listMap.p, class: 'box-n' + listMap.p.length, showAdd: listMap.p.length < 1 }
   };
 });
 
@@ -93,13 +93,13 @@ watch(
   () => props.analysisInfo,
   () => {
     const listMap = props.analysisInfo ?? {};
-    const pokerCheck = pokerCheckBaccarat(listMap);
+    const pokerCheck = pokerCheckLongHu(listMap);
 
     if (!pokerCheck?.check) {
       checkRuleTips.value = { b: pokerCheck.msg, p: pokerCheck.msg };
       pokerKindHit.value = null;
     } else {
-      checkRuleTips.value = checkBaccaratPokerRule(listMap, pokerCheck);
+      checkRuleTips.value = checkLongHuPokerRule(listMap);
       console.log(checkRuleTips.value, '---------------------------change');
       getHitKind(pokerCheck?.hitItem ?? [], (data) => {
         pokerKindHit.value = data;

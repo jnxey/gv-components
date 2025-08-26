@@ -13,6 +13,13 @@
           :complete-tips="completeTips"
           @set-type-complete-info="setTypeCompleteInfo"
         />
+        <poker-long-hu
+          ref="pokerLongHuRef"
+          v-if="recorderInfo.game_model === GAME_MODEL.long_hu"
+          :analysis-info="completeInfo"
+          :complete-tips="completeTips"
+          @set-type-complete-info="setTypeCompleteInfo"
+        />
       </template>
       <!--   原图   -->
       <template v-else-if="completeInfo && !!originalImage">
@@ -45,7 +52,8 @@ import { GAME_MODEL } from '@/values/index.js';
 import Loading from '@/components/loading.vue';
 import PokerBaccarat from './poker-baccarat.vue';
 import BPlace from './b-place.vue';
-import { getPokerReplenish } from '@/tools/poker.js';
+import { getPokerReplenish } from '@/tools/poker-baccarat.js';
+import PokerLongHu from '@/packages/hk-clip/_components/poker-long-hu.vue';
 
 const useHitKind = inject('useHitKind');
 
@@ -55,6 +63,7 @@ const sHeight = 560;
 const props = defineProps({ recorderInfo: Object, pointsMap: Object, width: Number, height: Number });
 const imgSrc = shallowRef(null);
 const pokerBaccaratRef = shallowRef(null);
+const pokerLongHuRef = shallowRef(null);
 const clipLoading = ref(false);
 const clipTipsText = ref(null);
 const analysisInfo = ref({});
@@ -164,8 +173,13 @@ const tryScanPoker = () => {
 
 // 使用命中项
 const useHitItem = () => {
-  const hits = pokerBaccaratRef.value?.getHitItem();
-  useHitKind(hits);
+  if (props.recorderInfo.game_model === GAME_MODEL.baccarat) {
+    const hits = pokerBaccaratRef.value?.getHitItem();
+    useHitKind(hits);
+  } else if (props.recorderInfo.game_model === GAME_MODEL.long_hu) {
+    const hits = pokerLongHuRef.value?.getHitItem();
+    useHitKind(hits);
+  }
 };
 
 // 根据返回的分析数据填入完整牌型数据
@@ -180,6 +194,8 @@ const setCompleteInfo = (aInfo) => {
         if (!!info.tipsMsg) completeTips.value[name] = info.tipsMsg;
         list = info.result;
       }
+    } else if (props.recorderInfo?.game_model === GAME_MODEL.long_hu) {
+      list = list.slice(0, 1);
     } else if (props.recorderInfo?.game_model === GAME_MODEL.niu_niu) {
       list = list.slice(0, 5);
     }

@@ -1,4 +1,5 @@
 import { BACCARAT_CARD_TYPE } from '@/values/card.js';
+import { getPokerInfo } from '@/tools/index.js';
 
 // 百家乐点数值对应
 const baccaratValueMap = { 2: 2, 3: 3, 4: 4, 5: 5, 6: 6, 7: 7, 8: 8, 9: 9, 10: 0, J: 0, Q: 0, K: 0, A: 1 };
@@ -35,7 +36,7 @@ export const getPokerReplenish = (pokers) => {
 };
 
 // 检查牌点数是否符合规则
-export const checkPokerRule = (analysisInfo, countResult) => {
+export const checkBaccaratPokerRule = (analysisInfo, countResult) => {
   if (analysisInfo.b.length <= 1) return { b: '未识别到牌型' }; // 未识别牌型
   if (analysisInfo.p.length <= 1) return { p: '未识别到牌型' }; // 未识别牌型
   // ---- 庄 2张牌
@@ -87,27 +88,6 @@ export const checkPokerRule = (analysisInfo, countResult) => {
     if (countValue >= 6) return { p: '不需补牌' };
   }
   return null;
-};
-
-// 根据名称获取点数以及花色
-export const getPokerInfo = (cardString) => {
-  // 验证输入格式（允许点数后有无空格）
-  if (!/^([2-9]|10|[JQKA])[\sHSDC]*$/.test(cardString)) {
-    throw new Error('无效的扑克牌格式');
-  }
-  // 分离点数和花色
-  const rankMatch = cardString.match(/^(10|[2-9JQKAjqka])/i);
-  const suitMatch = cardString.match(/[HSDC]+$/);
-  if (!rankMatch || !suitMatch) {
-    throw new Error('无法解析点数和花色');
-  }
-  // 标准化点数（大写字母）和花色（Unicode符号）
-  const rank = rankMatch[0].toUpperCase();
-  const suitSymbol = suitMatch[0];
-  return {
-    value: rank,
-    symbol: suitSymbol
-  };
 };
 
 // 根据返回的点数信息返回检查结果
@@ -166,7 +146,7 @@ export const pokerCheckBaccarat = (analysisInfo) => {
     }
     // 命中 闲对
     if (pValue[0] === pValue[1]) {
-      hitItem.push(BACCARAT_CARD_TYPE.master_pair);
+      hitItem.push(BACCARAT_CARD_TYPE.player_pair);
       hitItem.push(BACCARAT_CARD_TYPE.pair_any); // 命中 任意对子
       if (pShape[0] === pShape[1]) hitItem.push(BACCARAT_CARD_TYPE.pair_perfect); // 命中 完美对子
     }
