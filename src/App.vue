@@ -8,7 +8,7 @@
 import GvHkMask from '@/packages/hk-mask/index.vue';
 import { onBeforeMount, ref } from 'vue';
 import qs from 'qs';
-import GvHkConnection from '@/packages/ hk-connection/index.vue';
+import GvHkConnection from '@/packages/hk-connection/index.vue';
 import GvHkSelect from '@/packages/hk-select/index.vue';
 import GvHkClip from '@/packages/hk-clip/index.vue';
 
