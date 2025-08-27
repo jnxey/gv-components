@@ -26,7 +26,7 @@
 import { computed, inject, ref, shallowRef, watch } from 'vue';
 import PokerSelect from '@/packages/hk-clip/_components/poker-select.vue';
 import { deepCopy } from '@/tools/index.js';
-import { checkLongHuPokerRule, pokerCheckLongHu } from '@/tools/poker-long-hu.js';
+import { pokerCheckLongHu } from '@/tools/poker-long-hu.js';
 import { POINTS_BACCARAT, POINTS_BACCARAT_LIST } from '@/values/index.js';
 
 const emits = defineEmits(['setTypeCompleteInfo']);
@@ -92,12 +92,11 @@ watch(
   () => {
     const listMap = props.analysisInfo ?? {};
     const pokerCheck = pokerCheckLongHu(listMap);
-
     if (!pokerCheck?.check) {
-      checkRuleTips.value = { b: pokerCheck.msg, p: pokerCheck.msg };
+      checkRuleTips.value = pokerCheck.msg;
       pokerKindHit.value = null;
     } else {
-      checkRuleTips.value = checkLongHuPokerRule(listMap);
+      checkRuleTips.value = null;
       console.log(checkRuleTips.value, '---------------------------change');
       getHitKind(pokerCheck?.hitItem ?? [], (data) => {
         pokerKindHit.value = data;

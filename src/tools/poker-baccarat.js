@@ -97,8 +97,8 @@ export const pokerCheckBaccarat = (analysisInfo) => {
     // 检查张数
     const bList = analysisInfo.b ?? [];
     const pList = analysisInfo.p ?? [];
-    if (bList.length <= 0 || bList.length > 3 || pList.length <= 0 || pList.length > 3)
-      return { check: false, msg: '请检查扑克牌识别的张数，请检查' };
+    if (bList.length <= 0 || bList.length > 3) return { check: false, msg: { b: '请检查扑克牌识别的张数' } };
+    if (pList.length <= 0 || pList.length > 3) return { check: false, msg: { p: '请检查扑克牌识别的张数' } };
     // 获取庄闲点数、花色
     const bValue = [];
     const bShape = [];
@@ -152,6 +152,6 @@ export const pokerCheckBaccarat = (analysisInfo) => {
     }
     return { check: true, bCountValue, pCountValue, hitItem: hitItem };
   } catch (e) {
-    return { check: false, msg: '扑克牌识别错误，请检查' };
+    return { check: false, msg: { b: '扑克牌识别错误，请检查', p: '扑克牌识别错误，请检查' } };
   }
 };

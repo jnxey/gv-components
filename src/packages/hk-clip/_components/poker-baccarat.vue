@@ -94,7 +94,7 @@ watch(
     const pokerCheck = pokerCheckBaccarat(listMap);
 
     if (!pokerCheck?.check) {
-      checkRuleTips.value = { b: pokerCheck.msg, p: pokerCheck.msg };
+      checkRuleTips.value = pokerCheck.msg;
       pokerKindHit.value = null;
     } else {
       checkRuleTips.value = checkBaccaratPokerRule(listMap, pokerCheck);
