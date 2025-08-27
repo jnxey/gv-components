@@ -37,7 +37,7 @@ const getHitKind = async (hitsItem, callback) => {
   });
 };
 
-// 使用命中想
+// 使用命中项
 const useHitKind = async (hits, callback) => {
   messenger.instance.request('use-hit-item', hits ?? []).then(async (status) => {
     if (!!callback) callback(status);

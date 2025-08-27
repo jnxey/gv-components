@@ -4,18 +4,18 @@
       <div class="area-box" :class="POINTS_NIU[name].class" :style="{ borderColor: POINTS_NIU[name].color, backgroundColor: POINTS_NIU[name].fill }">
         <div class="title" :style="{ backgroundColor: POINTS_NIU[name].color }">
           {{ POINTS_NIU[name].name }}
-          <template v-if="!!pokerKindHit && pokerKindHit.hitItem?.[name]">
-            - {{ pokerNiuDictMap[pokerKindHit.hitItem?.[name]?.poker?.type]?.name ?? 'Not Found' }}
+          <template v-if="!!pokerKindHit && pokerKindHit?.[name]">
+            - {{ pokerNiuDictMap[pokerKindHit?.[name]?.poker?.type]?.name ?? 'Not Found' }}
           </template>
-          <template v-if="!!pokerKindHit && pokerKindHit.hitItem?.[name] && name !== 'b'">
-            - {{ pokerNiuWIn[pokerKindHit.hitItem?.[name]?.winner]?.name ?? 'Not Found' }}
+          <template v-if="!!pokerKindHit && pokerKindHit?.[name] && name !== 'b'">
+            - {{ pokerNiuWIn[pokerKindHit?.[name]?.winner]?.name ?? 'Not Found' }}
           </template>
         </div>
         <div v-if="pokerShow[name].showAdd" class="add-btn" @click="addPoker(name)"></div>
         <template v-for="(item, index) in pokerShow[name].list" :key="index">
           <div
             class="poker-box"
-            :class="['sign-' + index, !!pokerKindHit?.hitItem?.[name]?.poker?.match?.[item] ? 'matched' : 'no-matched']"
+            :class="['sign-' + index, !!pokerKindHit?.[name]?.poker?.match?.[item] ? 'matched' : 'no-matched']"
             @click="editPoker(name, index, item)"
           >
             <img :src="`/video-recorder/poker/${item}.png`" alt="" />
@@ -106,7 +106,7 @@ watch(
       pokerKindHit.value = null;
     } else {
       checkRuleTips.value = null;
-      pokerKindHit.value = pokerCheck;
+      pokerKindHit.value = pokerCheck.hitItem;
     }
   },
   {

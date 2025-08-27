@@ -73,7 +73,7 @@ export const NIU_CARD_TYPE_DICT = [
   { name: '牛4', value: NIU_CARD_TYPE.niu_4 },
   { name: '牛3', value: NIU_CARD_TYPE.niu_3 },
   { name: '牛2', value: NIU_CARD_TYPE.niu_2 },
-  { name: '牛·', value: NIU_CARD_TYPE.niu_1 },
+  { name: '牛1', value: NIU_CARD_TYPE.niu_1 },
   { name: '牛7~牛9', value: NIU_CARD_TYPE.niu_7_9 },
   { name: '牛1~牛6', value: NIU_CARD_TYPE.niu_1_6 },
   { name: '无牛', value: NIU_CARD_TYPE.niu_none },
