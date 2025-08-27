@@ -142,6 +142,4 @@ function _compareHands(hand1, hand2) {
     const weight2 = Math.max(...hand2.map((c) => suitWeights[c.symbol]));
     if (weight1 !== weight2) return weight1 > weight2 ? { ...result, winner: 'b' } : { ...result, winner: 'p' };
   }
-
-  return { ...result, winner: 'd' };
 }
