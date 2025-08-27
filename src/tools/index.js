@@ -56,6 +56,19 @@ export const deepCopy = (json) => {
   return obj;
 };
 
+/**
+ *  将数组转为对象
+ */
+export const mappingArrayToObject = (array = [], key = 'id') => {
+  const result = {};
+  if (!key) {
+    array.forEach((item) => (result[item] = true));
+  } else {
+    array.forEach((item) => (result[item[key]] = item));
+  }
+  return result;
+};
+
 // 根据名称获取点数以及花色
 export const getPokerInfo = (cardString) => {
   // 验证输入格式（允许点数后有无空格）

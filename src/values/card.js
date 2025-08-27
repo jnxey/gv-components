@@ -29,7 +29,9 @@ export const LONG_HU_CARD_TYPE = {
 
 // 牌型-牛牛
 export const NIU_CARD_TYPE = {
-  niu_5hua: 'niu_5hua', // 5公
+  niu_5small: 'niu_5small', // 5小
+  niu_bomb: 'niu_bomb', // 炸弹
+  niu_5hua: 'niu_5hua', // 5花
   niu_niu: 'niu_niu', // 牛牛
   niu_9: 'niu_9',
   niu_8: 'niu_8',
@@ -40,6 +42,10 @@ export const NIU_CARD_TYPE = {
   niu_3: 'niu_3',
   niu_2: 'niu_2',
   niu_1: 'niu_1',
+  niu_7_9: 'niu_7_9',
+  niu_1_6: 'niu_1_6',
+  niu_none: 'niu_none',
+  niu_all: 'niu_all',
   other: 'other' // 其他
 };
 
@@ -52,3 +58,32 @@ export const BONUS_CARD_TYPE = {
   gourd: 'gourd', // 葫芦
   other: 'other' // 其他
 };
+
+// 牌型-牛牛-字典
+export const NIU_CARD_TYPE_DICT = [
+  { name: '五小牛', value: NIU_CARD_TYPE.niu_5small },
+  { name: '炸弹牛', value: NIU_CARD_TYPE.niu_bomb },
+  { name: '五花牛', value: NIU_CARD_TYPE.niu_5hua },
+  { name: '牛牛', value: NIU_CARD_TYPE.niu_niu },
+  { name: '牛9', value: NIU_CARD_TYPE.niu_9 },
+  { name: '牛8', value: NIU_CARD_TYPE.niu_8 },
+  { name: '牛7', value: NIU_CARD_TYPE.niu_7 },
+  { name: '牛6', value: NIU_CARD_TYPE.niu_6 },
+  { name: '牛5', value: NIU_CARD_TYPE.niu_5 },
+  { name: '牛4', value: NIU_CARD_TYPE.niu_4 },
+  { name: '牛3', value: NIU_CARD_TYPE.niu_3 },
+  { name: '牛2', value: NIU_CARD_TYPE.niu_2 },
+  { name: '牛·', value: NIU_CARD_TYPE.niu_1 },
+  { name: '牛7~牛9', value: NIU_CARD_TYPE.niu_7_9 },
+  { name: '牛1~牛6', value: NIU_CARD_TYPE.niu_1_6 },
+  { name: '无牛', value: NIU_CARD_TYPE.niu_none },
+  { name: '有牛', value: NIU_CARD_TYPE.niu_all },
+  { name: '其他', value: BACCARAT_CARD_TYPE.other }
+];
+
+// 牌型-牛牛-字典
+export const NIU_CARD_WIN_DICT = [
+  { name: 'Win', value: 'p' },
+  { name: 'Loss', value: 'b' },
+  { name: 'Draw', value: 'd' }
+];
