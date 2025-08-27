@@ -14,8 +14,8 @@ export const pokerCheckNiu = (analysisInfo) => {
     POINTS_NIU_LIST.forEach((name) => (aMap[name] = !!analysisInfo[name] ? analysisInfo[name].map((item) => getPokerInfo(item)) : []));
     for (let i = 0; i < POINTS_NIU_LIST.length; i++) {
       const name = POINTS_NIU_LIST[i];
-      if (name === 'b' && aMap[name].length !== 5) return { check: false, msg: '请检查扑克牌识别的张数' };
-      if (name !== 'b' && aMap[name].length !== 5 && aMap[name].length !== 0) return { check: false, msg: '请检查扑克牌识别的张数' };
+      if (name === 'b' && aMap[name].length !== 5) return { check: false, msg: { [name]: '请检查扑克牌识别的张数' } };
+      if (name !== 'b' && aMap[name].length !== 5 && aMap[name].length !== 0) return { check: false, msg: { [name]: '请检查扑克牌识别的张数' } };
     }
     // 命中
     for (let i = 0; i < POINTS_NIU_LIST.length; i++) {
@@ -29,7 +29,9 @@ export const pokerCheckNiu = (analysisInfo) => {
 
     return { check: true, hitItem: hitItem };
   } catch (e) {
-    return { check: false, msg: '扑克牌识别错误，请检查' };
+    const msgMap = {};
+    POINTS_NIU_LIST.forEach((name) => (msgMap[name] = '扑克牌识别错误，请检查'));
+    return { check: false, msg: msgMap };
   }
 };
 

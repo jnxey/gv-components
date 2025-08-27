@@ -21,9 +21,9 @@
             <img :src="`/video-recorder/poker/${item}.png`" alt="" />
           </div>
         </template>
+        <div class="error-msg">{{ showErrorTips?.[name] }}</div>
       </div>
     </template>
-    <div v-if="!!checkRuleTips" class="error-msg">{{ checkRuleTips }}</div>
     <poker-select ref="pokerSelectRef" />
   </div>
 </template>
@@ -40,11 +40,15 @@ const emits = defineEmits(['setTypeCompleteInfo']);
 const pokerNiuDictMap = mappingArrayToObject(NIU_CARD_TYPE_DICT, 'value');
 const pokerNiuWIn = mappingArrayToObject(NIU_CARD_WIN_DICT, 'value');
 
-const props = defineProps({ analysisInfo: Object });
+const props = defineProps({ analysisInfo: Object, completeTips: Object });
 
 const checkRuleTips = ref(null);
 const pokerSelectRef = shallowRef();
 const pokerKindHit = shallowRef(null);
+
+const showErrorTips = computed(() => {
+  return { ...(checkRuleTips.value ?? {}), ...(props.completeTips ?? {}) };
+});
 
 // 显示牌
 const pokerShow = computed(() => {
@@ -130,14 +134,11 @@ defineExpose({ getHitItem });
 
 .poker-niu .error-msg {
   position: absolute;
-  top: 0;
-  left: 50%;
-  padding: 5px 10px;
-  font-size: 14px;
-  color: #ffffff;
-  transform: translateX(-50%);
-  border-radius: 8px;
-  background-color: #ff0303;
+  left: 8px;
+  bottom: 8px;
+  color: #ff0303;
+  font-size: 12px;
+  font-weight: bold;
   z-index: 10;
 }
 
