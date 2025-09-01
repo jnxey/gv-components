@@ -1,6 +1,6 @@
 <template>
   <div class="hk-clip">
-    <poker ref="pokerRef" :points-map="pointsMap" :recorder-info="recorderInfo" />
+    <poker ref="pokerRef" :points-map="pointsMap" :recorder-info="recorderInfo" @set-points-map="setPointsMap" />
   </div>
 </template>
 <script>
@@ -44,6 +44,13 @@ const useHitKind = async (hits, callback) => {
   });
 };
 
+// 保存区域
+const saveHitArea = async (data, callback) => {
+  messenger.instance.request('save-hit-area', data).then(async (status) => {
+    if (!!callback) callback(status);
+  });
+};
+
 onMounted(() => {
   initHKPlugin();
   messenger.instance = new IframeCommunicator({
@@ -67,6 +74,10 @@ onMounted(() => {
   });
 });
 
+const setPointsMap = (data) => {
+  pointsMap.value = deepCopy(data);
+};
+
 onBeforeMount(() => {
   if (!!messenger.instance?.destroy) {
     messenger.instance?.destroy();
@@ -76,6 +87,7 @@ onBeforeMount(() => {
 
 provide('getHitKind', getHitKind);
 provide('useHitKind', useHitKind);
+provide('saveHitArea', saveHitArea);
 </script>
 <style scoped>
 .hk-clip {

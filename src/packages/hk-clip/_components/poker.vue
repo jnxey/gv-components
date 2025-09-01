@@ -31,8 +31,14 @@
       <!--   原图   -->
       <template v-else-if="completeInfo && !!originalImage">
         <div class="show-pic">
-          <b-place v-if="!!pointsMap" :points-map="pointsMap" />
-          <img v-if="!!imgSrc" class="image" :src="imgSrc" alt="" />
+          <b-edit
+            v-if="!!pointsMap"
+            ref="bEditRef"
+            :style="wrapStyle"
+            :points-map-init="pointsMap"
+            :recorder-info-init="recorderInfo"
+            :img-src="imgSrc"
+          />
         </div>
       </template>
       <!--   提示信息   -->
@@ -42,9 +48,10 @@
     </div>
     <!--  按钮区域  -->
     <div class="button-wrap">
-      <button v-if="!!completeInfo" class="gv-button big mr-12" :disabled="clipLoading" @click.stop="useHitItem">使用此牌型</button>
+      <button v-if="!!completeInfo && !originalImage" class="gv-button big mr-12" @click.stop="useHitItem">使用此牌型</button>
+      <button v-if="!!completeInfo && !!originalImage" class="gv-button big mr-12" @click.stop="saveArea">保存区域</button>
       <button v-if="!!completeInfo" class="link-button mr-12" @click.stop="toggleOriginalImage">
-        {{ originalImage ? '返回牌型' : '查看原图' }}
+        {{ originalImage ? '返回牌型' : '查看热区' }}
       </button>
       <button v-if="!clipLoading" class="link-button" @click.stop="scanPoker">重新识牌</button>
     </div>
@@ -52,27 +59,32 @@
 </template>
 <script setup>
 import { clickCapturePicData } from '@/tools/hk.js';
-import { clipImageByPolygon } from '@/tools/index.js';
+import { clipImageByPolygon, deepCopy } from '@/tools/index.js';
 import axios from 'axios';
 import { computed, inject, ref, shallowRef, unref } from 'vue';
 import { GAME_MODEL } from '@/values/index.js';
 import Loading from '@/components/loading.vue';
 import PokerBaccarat from './poker-baccarat.vue';
-import BPlace from './b-place.vue';
 import { getPokerReplenish } from '@/tools/poker-baccarat.js';
 import PokerLongHu from '@/packages/hk-clip/_components/poker-long-hu.vue';
 import PokerNiu from '@/packages/hk-clip/_components/poker-niu.vue';
+import { getPokerSort } from '@/tools/poker-niu.js';
+import BEdit from '@/packages/hk-clip/_components/b-edit.vue';
 
 const useHitKind = inject('useHitKind');
+const saveHitArea = inject('saveHitArea');
 
 const sWidth = 1000;
 const sHeight = 560;
+
+const emits = defineEmits(['setPointsMap']);
 
 const props = defineProps({ recorderInfo: Object, pointsMap: Object, width: Number, height: Number });
 const imgSrc = shallowRef(null);
 const pokerBaccaratRef = shallowRef(null);
 const pokerLongHuRef = shallowRef(null);
 const pokerNiuRef = shallowRef(null);
+const bEditRef = shallowRef(null);
 const clipLoading = ref(false);
 const clipTipsText = ref(null);
 const analysisInfo = ref({});
@@ -194,15 +206,29 @@ const useHitItem = () => {
   }
 };
 
+// 保存区域
+const saveArea = () => {
+  const data = deepCopy(bEditRef.value?.getPointsMap());
+  saveHitArea(data, (status) => {
+    console.log(status, '--------------------------status');
+    if (status) {
+      emits('setPointsMap', data);
+      toggleOriginalImage();
+    }
+  });
+};
+
 // 根据返回的分析数据填入完整牌型数据
 const setCompleteInfo = (aInfo) => {
   const cInfo = {};
   Object.keys(aInfo).forEach((name) => {
-    let list = aInfo[name].map((item) => item.class_name);
+    const aList = aInfo[name].filter((item) => item.bbox?.length === 2);
+    let list = aList.map((item) => item.class_name);
     if (props.recorderInfo?.game_model === GAME_MODEL.baccarat) {
       list = list.slice(0, 3);
       if (list.length === 3) {
-        const info = getPokerReplenish(aInfo[name].slice(0, 3));
+        // 校验哪张是补牌
+        const info = getPokerReplenish(aList.slice(0, 3));
         if (!!info.tipsMsg) completeTips.value[name] = info.tipsMsg;
         list = info.result;
       }
@@ -210,6 +236,10 @@ const setCompleteInfo = (aInfo) => {
       list = list.slice(0, 1);
     } else if (props.recorderInfo?.game_model === GAME_MODEL.niu_niu) {
       list = list.slice(0, 5);
+      if (list.length === 5) {
+        // 校验牌位置
+        list = getPokerSort(aList.slice(0, 5));
+      }
     }
     cInfo[name] = list;
   });
@@ -254,11 +284,6 @@ defineExpose({ handlerClip, scanPoker, tryScanPoker, clearAllInfo });
     height: 100%;
     overflow: hidden;
     z-index: 5;
-  }
-
-  .show-pic img {
-    width: 100%;
-    height: 100%;
   }
 
   .info-text {

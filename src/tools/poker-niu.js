@@ -5,6 +5,29 @@ import { getPokerInfo } from '@/tools/index.js';
 // 龙虎点数值对应
 const niuValueMap = { 2: 2, 3: 3, 4: 4, 5: 5, 6: 6, 7: 7, 8: 8, 9: 9, 10: 10, J: 11, Q: 12, K: 13, A: 1 };
 
+// 获取扑克牌的排序方式
+export const getPokerSort = (pokers) => {
+  console.log(pokers, '-------------------pokers');
+  // 确定比y还是x
+  const dBox = pokers[0].bbox[0];
+  const xDistance = Math.abs(dBox.x1 - dBox.x2);
+  const yDistance = Math.abs(dBox.y1 - dBox.y2);
+  const d1 = yDistance > xDistance ? 'y1' : 'x1';
+  const d2 = yDistance > xDistance ? 'x1' : 'y1';
+  // 扑克牌高度
+  const dHeight = Math.abs(pokers[0].bbox[0][d1] - pokers[0].bbox[1][d1]) * 0.9;
+  const checkList = pokers.map((item) => {
+    const box1 = item.bbox[0];
+    const box2 = item.bbox[1];
+    const box = box1[d1] > box2[d1] ? box1 : box2;
+    return { ...item, sort1: box[d1], sort2: box[d2] };
+  });
+  checkList.sort((a, b) => a.sort2 - b.sort2);
+  checkList.sort((a, b) => a.sort1 - b.sort1);
+  if (Math.abs(checkList[2].sort1 - checkList[1].sort1) < dHeight) checkList.reverse();
+  return checkList.map((item) => item.class_name);
+};
+
 // 根据返回的点数信息返回检查结果
 export const pokerCheckNiu = (analysisInfo) => {
   try {
