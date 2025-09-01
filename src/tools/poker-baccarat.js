@@ -1,5 +1,6 @@
 import { BACCARAT_CARD_TYPE } from '@/values/card.js';
 import { getPokerInfo } from '@/tools/index.js';
+import { $t } from '@/lang/i18n.js';
 
 // 百家乐点数值对应
 const baccaratValueMap = { 2: 2, 3: 3, 4: 4, 5: 5, 6: 6, 7: 7, 8: 8, 9: 9, 10: 0, J: 0, Q: 0, K: 0, A: 1 };
@@ -30,34 +31,34 @@ export const getPokerReplenish = (pokers) => {
     result.splice(hKey, 1);
     result.push(cValue);
   } else {
-    tipsMsg = '未识别出补牌，请检查补牌是否横放';
+    tipsMsg = $t('common.tools.tips_err_1');
   }
   return { tipsMsg, result };
 };
 
 // 检查牌点数是否符合规则
 export const checkBaccaratPokerRule = (analysisInfo, countResult) => {
-  if (analysisInfo.b.length <= 1) return { b: '未识别到牌型' }; // 未识别牌型
-  if (analysisInfo.p.length <= 1) return { p: '未识别到牌型' }; // 未识别牌型
+  if (analysisInfo.b.length <= 1) return { b: $t('common.tools.tips_err_2') }; // 未识别牌型
+  if (analysisInfo.p.length <= 1) return { p: $t('common.tools.tips_err_2') }; // 未识别牌型
   // ---- 庄 2张牌
   if (analysisInfo.b.length === 2 && analysisInfo.p.length === 2) {
     // 庄 2张牌 闲 2张牌
-    if (countResult.bCountValue <= 5) return { b: '还需补牌' };
+    if (countResult.bCountValue <= 5) return { b: $t('common.tools.tips_err_3') };
   }
   if (analysisInfo.b.length === 2 && analysisInfo.p.length === 3) {
     // 庄 2张牌 闲 3张牌
     const tInfo = getPokerInfo(analysisInfo.p[2]);
     const three = baccaratValueMap[tInfo.value] % 10; // 闲 第三张点数
-    if (countResult.bCountValue <= 2) return { b: '还需补牌' };
-    if (countResult.bCountValue === 3 && ![8].includes(three)) return { b: '还需补牌' };
-    if (countResult.bCountValue === 4 && ![0, 1, 8, 9].includes(three)) return { b: '还需补牌' };
-    if (countResult.bCountValue === 5 && ![0, 1, 2, 3, 8, 9].includes(three)) return { b: '还需补牌' };
-    if (countResult.bCountValue === 6 && ![0, 1, 2, 3, 4, 5, 8, 9].includes(three)) return { b: '还需补牌' };
+    if (countResult.bCountValue <= 2) return { b: $t('common.tools.tips_err_3') };
+    if (countResult.bCountValue === 3 && ![8].includes(three)) return { b: $t('common.tools.tips_err_3') };
+    if (countResult.bCountValue === 4 && ![0, 1, 8, 9].includes(three)) return { b: $t('common.tools.tips_err_3') };
+    if (countResult.bCountValue === 5 && ![0, 1, 2, 3, 8, 9].includes(three)) return { b: $t('common.tools.tips_err_3') };
+    if (countResult.bCountValue === 6 && ![0, 1, 2, 3, 4, 5, 8, 9].includes(three)) return { b: $t('common.tools.tips_err_3') };
   }
   // ---- 庄 3张牌
   if (analysisInfo.b.length === 3 && analysisInfo.p.length === 2) {
     // 庄 3张牌 闲 2张牌
-    if (countResult.bCountValue >= 7) return { b: '不需补牌' };
+    if (countResult.bCountValue >= 7) return { b: $t('common.tools.tips_err_4') };
   }
   if (analysisInfo.b.length === 3 && analysisInfo.p.length === 3) {
     // 庄 3张牌 闲 3张牌
@@ -68,15 +69,15 @@ export const checkBaccaratPokerRule = (analysisInfo, countResult) => {
     const one = baccaratValueMap[oInfo.value]; // 庄 第1张点数
     const two = baccaratValueMap[wInfo.value]; // 庄 第2张点数
     const countValue = (one + two) % 10;
-    if (countValue === 3 && [8].includes(three)) return { b: '不需补牌' };
-    if (countValue === 4 && [0, 1, 8, 9].includes(three)) return { b: '不需补牌' };
-    if (countValue === 5 && [0, 1, 2, 3, 8, 9].includes(three)) return { b: '不需补牌' };
-    if (countValue === 6 && [0, 1, 2, 3, 4, 5, 8, 9].includes(three)) return { b: '不需补牌' };
-    if (countValue >= 7) return { b: '不需补牌' };
+    if (countValue === 3 && [8].includes(three)) return { b: $t('common.tools.tips_err_4') };
+    if (countValue === 4 && [0, 1, 8, 9].includes(three)) return { b: $t('common.tools.tips_err_4') };
+    if (countValue === 5 && [0, 1, 2, 3, 8, 9].includes(three)) return { b: $t('common.tools.tips_err_4') };
+    if (countValue === 6 && [0, 1, 2, 3, 4, 5, 8, 9].includes(three)) return { b: $t('common.tools.tips_err_4') };
+    if (countValue >= 7) return { b: $t('common.tools.tips_err_4') };
   }
   // ---- 闲 2张牌
   if (analysisInfo.p.length === 2) {
-    if (countResult.pCountValue <= 5) return { p: '还需补牌' };
+    if (countResult.pCountValue <= 5) return { p: $t('common.tools.tips_err_4') };
   }
   // ---- 闲 3张牌
   if (analysisInfo.p.length === 3) {
@@ -85,7 +86,7 @@ export const checkBaccaratPokerRule = (analysisInfo, countResult) => {
     const one = baccaratValueMap[oInfo.value]; // 闲 第1张点数
     const two = baccaratValueMap[wInfo.value]; // 闲 第2张点数
     const countValue = (one + two) % 10;
-    if (countValue >= 6) return { p: '不需补牌' };
+    if (countValue >= 6) return { p: $t('common.tools.tips_err_4') };
   }
   return null;
 };
@@ -97,8 +98,8 @@ export const pokerCheckBaccarat = (analysisInfo) => {
     // 检查张数
     const bList = analysisInfo.b ?? [];
     const pList = analysisInfo.p ?? [];
-    if (bList.length <= 0 || bList.length > 3) return { check: false, msg: { b: '请检查扑克牌识别的张数' } };
-    if (pList.length <= 0 || pList.length > 3) return { check: false, msg: { p: '请检查扑克牌识别的张数' } };
+    if (bList.length <= 0 || bList.length > 3) return { check: false, msg: { b: $t('common.tools.tips_err_5') } };
+    if (pList.length <= 0 || pList.length > 3) return { check: false, msg: { p: $t('common.tools.tips_err_5') } };
     // 获取庄闲点数、花色
     const bValue = [];
     const bShape = [];
@@ -152,6 +153,6 @@ export const pokerCheckBaccarat = (analysisInfo) => {
     }
     return { check: true, bCountValue, pCountValue, hitItem: hitItem };
   } catch (e) {
-    return { check: false, msg: { b: '扑克牌识别错误，请检查', p: '扑克牌识别错误，请检查' } };
+    return { check: false, msg: { b: $t('common.tools.tips_err_6'), p: $t('common.tools.tips_err_6') } };
   }
 };

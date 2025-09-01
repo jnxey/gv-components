@@ -2,9 +2,9 @@
   <div class="b-mask no-point">
     <!-- 控制按钮 -->
     <div class="toolbar auto-point">
-      <button class="gv-button mr-12" @click.stop="addPoint">添加点</button>
-      <button class="gv-button mr-12" @click.stop="removePoint" :disabled="points.length <= 3">删除点</button>
-      <button class="gv-button mr-12" @click.stop="setCancel">取消</button>
+      <button class="gv-button mr-12" @click.stop="addPoint">{{ $t('common.mask.add_point') }}</button>
+      <button class="gv-button mr-12" @click.stop="removePoint" :disabled="points.length <= 3">{{ $t('common.mask.del_point') }}</button>
+      <button class="gv-button mr-12" @click.stop="setCancel">{{ $t('common.mask.cancel') }}</button>
     </div>
 
     <!-- SVG画布 -->
@@ -38,6 +38,7 @@
 <script setup>
 import { ref, reactive, computed, onBeforeMount, onBeforeUnmount, onMounted } from 'vue';
 import { deepCopy } from '@/tools/index.js';
+import { $t } from '@/lang/i18n.js';
 
 const emits = defineEmits(['cancel', 'save']);
 

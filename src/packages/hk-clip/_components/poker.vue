@@ -43,17 +43,17 @@
       </template>
       <!--   提示信息   -->
       <template v-else>
-        <div class="info-text">{{ clipTipsText ?? '请点击AI识牌按钮' }}</div>
+        <div class="info-text">{{ clipTipsText ?? $t('common.clip.tips_scan_click') }}</div>
       </template>
     </div>
     <!--  按钮区域  -->
     <div class="button-wrap">
-      <button v-if="!!completeInfo && !originalImage" class="gv-button big mr-12" @click.stop="useHitItem">使用此牌型</button>
-      <button v-if="!!completeInfo && !!originalImage" class="gv-button big mr-12" @click.stop="saveArea">保存区域</button>
+      <button v-if="!!completeInfo && !originalImage" class="gv-button big mr-12" @click.stop="useHitItem">{{ $t('common.clip.use_card') }}</button>
+      <button v-if="!!completeInfo && !!originalImage" class="gv-button big mr-12" @click.stop="saveArea">{{ $t('common.clip.save_area') }}</button>
       <button v-if="!!completeInfo" class="link-button mr-12" @click.stop="toggleOriginalImage">
-        {{ originalImage ? '返回牌型' : '查看热区' }}
+        {{ originalImage ? $t('common.clip.back_card') : $t('common.clip.view_hit') }}
       </button>
-      <button v-if="!clipLoading" class="link-button" @click.stop="scanPoker">重新识牌</button>
+      <button v-if="!clipLoading" class="link-button" @click.stop="scanPoker">{{ $t('common.clip.rescan') }}</button>
     </div>
   </div>
 </template>
@@ -70,6 +70,7 @@ import PokerLongHu from '@/packages/hk-clip/_components/poker-long-hu.vue';
 import PokerNiu from '@/packages/hk-clip/_components/poker-niu.vue';
 import { getPokerSort } from '@/tools/poker-niu.js';
 import BEdit from '@/packages/hk-clip/_components/b-edit.vue';
+import { $t } from '@/lang/i18n.js';
 
 const useHitKind = inject('useHitKind');
 const saveHitArea = inject('saveHitArea');
@@ -128,7 +129,7 @@ const handlerClip = (info) => {
       imgSrc.value = img.src;
       img.onerror = function () {
         clipLoading.value = false;
-        clipTipsText.value = '图片加载失败，请重试或联系管理员';
+        clipTipsText.value = $t('common.clip.tips_img_err1');
       };
       img.onload = function () {
         Object.keys(props.pointsMap).forEach(async (p) => {
@@ -142,14 +143,14 @@ const handlerClip = (info) => {
             });
           } else {
             clipLoading.value = false;
-            clipTipsText.value = '图片分析失败，请重试或联系管理员';
+            clipTipsText.value = $t('common.clip.tips_img_err2');
           }
         });
       };
     },
     () => {
       clipLoading.value = false;
-      clipTipsText.value = '图片获取失败，请重试或联系管理员';
+      clipTipsText.value = $t('common.clip.tips_img_err3');
     }
   );
 };

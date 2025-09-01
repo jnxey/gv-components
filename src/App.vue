@@ -11,11 +11,13 @@ import qs from 'qs';
 import GvHkConnection from '@/packages/hk-connection/index.vue';
 import GvHkSelect from '@/packages/hk-select/index.vue';
 import GvHkClip from '@/packages/hk-clip/index.vue';
+import { languageSet } from '@/lang/index.js';
 
 const mode = ref();
 
 onBeforeMount(() => {
   const params = qs.parse(window.location.search.substring(1));
+  languageSet(params.lang);
   mode.value = params.mode;
 });
 </script>

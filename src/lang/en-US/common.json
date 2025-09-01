@@ -1,0 +1,26 @@
+{
+  "mask": {
+    "add_point": "Add point",
+    "del_point": "Remove point",
+    "cancel": "Cancel"
+  },
+  "clip": {
+    "use_card": "Use this card type",
+    "save_area": "Save area",
+    "back_card": "Return to card type",
+    "view_hit": "View hot zone",
+    "rescan": "Re-identify cards",
+    "tips_scan_click": "Please click the AI identification button",
+    "tips_img_err1": "Image loading failed, please try again or contact the administrator",
+    "tips_img_err2": "Image analysis failed, please try again or contact the administrator",
+    "tips_img_err3": "Image acquisition failed, please try again or contact the administrator"
+  },
+  "tools": {
+    "tips_err_1": "No card was identified, please check if the card is horizontal",
+    "tips_err_2": "No card type was identified",
+    "tips_err_3": "A new card is needed",
+    "tips_err_4": "No new card is needed",
+    "tips_err_5": "Please check the number of recognized playing cards",
+    "tips_err_6": "Playing card recognition error, please check"
+  }
+}

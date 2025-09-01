@@ -1,6 +1,7 @@
 import { NIU_CARD_TYPE } from '@/values/card.js';
 import { POINTS_NIU_LIST } from '@/values/index.js';
 import { getPokerInfo } from '@/tools/index.js';
+import { $t } from '@/lang/i18n.js';
 
 // 龙虎点数值对应
 const niuValueMap = { 2: 2, 3: 3, 4: 4, 5: 5, 6: 6, 7: 7, 8: 8, 9: 9, 10: 10, J: 11, Q: 12, K: 13, A: 1 };
@@ -15,7 +16,7 @@ export const getPokerSort = (pokers) => {
   const d1 = yDistance > xDistance ? 'y1' : 'x1';
   const d2 = yDistance > xDistance ? 'x1' : 'y1';
   // 扑克牌高度
-  const dHeight = Math.abs(pokers[0].bbox[0][d1] - pokers[0].bbox[1][d1]) * 0.9;
+  const dHeight = Math.abs(pokers[0].bbox[0][d1] - pokers[0].bbox[1][d1]) * 0.5;
   const checkList = pokers.map((item) => {
     const box1 = item.bbox[0];
     const box2 = item.bbox[1];
@@ -37,8 +38,8 @@ export const pokerCheckNiu = (analysisInfo) => {
     POINTS_NIU_LIST.forEach((name) => (aMap[name] = !!analysisInfo[name] ? analysisInfo[name].map((item) => getPokerInfo(item)) : []));
     for (let i = 0; i < POINTS_NIU_LIST.length; i++) {
       const name = POINTS_NIU_LIST[i];
-      if (name === 'b' && aMap[name].length !== 5) return { check: false, msg: { [name]: '请检查扑克牌识别的张数' } };
-      if (name !== 'b' && aMap[name].length !== 5 && aMap[name].length !== 0) return { check: false, msg: { [name]: '请检查扑克牌识别的张数' } };
+      if (name === 'b' && aMap[name].length !== 5) return { check: false, msg: { [name]: $t('common.tools.tips_err_5') } };
+      if (name !== 'b' && aMap[name].length !== 5 && aMap[name].length !== 0) return { check: false, msg: { [name]: $t('common.tools.tips_err_5') } };
     }
     // 命中
     for (let i = 0; i < POINTS_NIU_LIST.length; i++) {
@@ -53,7 +54,7 @@ export const pokerCheckNiu = (analysisInfo) => {
     return { check: true, hitItem: hitItem };
   } catch (e) {
     const msgMap = {};
-    POINTS_NIU_LIST.forEach((name) => (msgMap[name] = '扑克牌识别错误，请检查'));
+    POINTS_NIU_LIST.forEach((name) => (msgMap[name] = $t('common.tools.tips_err_6')));
     return { check: false, msg: msgMap };
   }
 };
