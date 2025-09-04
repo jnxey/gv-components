@@ -59,7 +59,7 @@
 </template>
 <script setup>
 import { clickCapturePicData } from '@/tools/hk.js';
-import { clipImageByPolygon, deepCopy } from '@/tools/index.js';
+import { clipImageByPolygon, deepCopy, preprocessCanvas } from '@/tools/index.js';
 import axios from 'axios';
 import { computed, inject, ref, shallowRef, unref } from 'vue';
 import { GAME_MODEL } from '@/values/index.js';
@@ -133,7 +133,7 @@ const handlerClip = (info) => {
       };
       img.onload = function () {
         Object.keys(props.pointsMap).forEach(async (p) => {
-          const clippedCanvas = clipImageByPolygon(img, { width: sWidth, height: sHeight }, props.pointsMap[p].points);
+          const clippedCanvas = preprocessCanvas(clipImageByPolygon(img, { width: sWidth, height: sHeight }, props.pointsMap[p].points));
           const analysis = await handlerAnalysis(clippedCanvas, info.token);
           if (!!analysis) {
             analysisInfo.value[p] = analysis;

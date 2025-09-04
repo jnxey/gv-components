@@ -135,3 +135,45 @@ export function clipImageByPolygon(img, size, points) {
 
   return canvas;
 }
+
+/**
+ * 把已有 canvas 处理成640x640，保持比例并补边
+ * @param {HTMLCanvasElement} inputCanvas - 原始canvas
+ * @param {number} size - 目标大小，默认640
+ * @returns {HTMLCanvasElement} - 处理后的640x640画布
+ */
+export function preprocessCanvas(inputCanvas, size = 640) {
+  const iw = inputCanvas.width;
+  const ih = inputCanvas.height;
+
+  // 创建目标画布
+  const outputCanvas = document.createElement('canvas');
+  const ctx = outputCanvas.getContext('2d');
+  outputCanvas.width = size;
+  outputCanvas.height = size;
+
+  // 默认缩放比例 = 1（不放大）
+  let scale = 1;
+
+  // 如果宽或高大于目标尺寸，则按比例缩小
+  if (iw > size || ih > size) {
+    scale = Math.min(size / iw, size / ih);
+  }
+
+  // 缩放后的宽高
+  const newW = Math.round(iw * scale);
+  const newH = Math.round(ih * scale);
+
+  // 居中绘制
+  const dx = Math.floor((size - newW) / 2);
+  const dy = Math.floor((size - newH) / 2);
+
+  // 填充黑色背景
+  ctx.fillStyle = 'black';
+  ctx.fillRect(0, 0, size, size);
+
+  // 绘制缩放后的原canvas
+  ctx.drawImage(inputCanvas, 0, 0, iw, ih, dx, dy, newW, newH);
+
+  return outputCanvas;
+}
