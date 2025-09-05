@@ -236,7 +236,7 @@ function uint8ArrayToBase64(uint8Array) {
 export async function clickCapturePicData(info, success, error, preview = false) {
   const szPicName = `${info.ip}_${info.port}_${info.channelId}_${new Date().getTime()}.jpg`;
   const capture = async (fileName, first = true) => {
-    await delayExec(500);
+    await delayExec(1000);
     WebVideoCtrl.I2_CapturePic(fileName, {
       cbCallback: (uint8Array) => {
         uint8ArrayToBase64(uint8Array).then((base64String) => {
