@@ -232,11 +232,53 @@ function uint8ArrayToBase64(uint8Array) {
   });
 }
 
+/**
+ * 每隔100ms检查是否有画面，支持超时
+ * @param {Object} options - 配置参数
+ * @param {HTMLVideoElement} [options.videoEl] - 新版 WebSDK 的 <video> 元素
+ * @param {number} [options.wndIndex=0] - 旧版 WebSDK 窗口索引
+ * @param {number} [options.timeout=10000] - 最大等待时间（毫秒）
+ * @param {function} callback - 检查到有画面时回调(true)，超时时回调(false)
+ */
+export function checkHasFrame({ videoEl, wndIndex = 0, timeout = 5000 }, callback) {
+  const start = Date.now();
+
+  const timer = setInterval(() => {
+    try {
+      let hasFrame = false;
+      const wndInfo = WebVideoCtrl.I_GetWindowStatus(wndIndex);
+
+      // 新版 WebSDK：检查 <video>
+      if (
+        !!videoEl &&
+        !videoEl.paused &&
+        !videoEl.ended &&
+        videoEl.readyState >= 2 && // 至少有一帧
+        videoEl.videoWidth > 0 &&
+        videoEl.videoHeight > 0 &&
+        wndInfo &&
+        wndInfo.szIP
+      ) {
+        hasFrame = true;
+      }
+
+      if (hasFrame) {
+        clearInterval(timer);
+        callback(true);
+      } else if (Date.now() - start >= timeout) {
+        clearInterval(timer);
+        callback(false);
+      }
+    } catch (e) {
+      clearInterval(timer);
+    }
+  }, 100);
+}
+
 // 抓图数据
 export async function clickCapturePicData(info, success, error, preview = false) {
   const szPicName = `${info.ip}_${info.port}_${info.channelId}_${new Date().getTime()}.jpg`;
-  const capture = async (fileName, first = true) => {
-    await delayExec(1000);
+  const capture = async (fileName) => {
     WebVideoCtrl.I2_CapturePic(fileName, {
       cbCallback: (uint8Array) => {
         uint8ArrayToBase64(uint8Array).then((base64String) => {
@@ -249,7 +291,6 @@ export async function clickCapturePicData(info, success, error, preview = false)
         console.log('showOPInfo', fileName + ' 抓图数据打印成功！');
       },
       function () {
-        if (first) return capture(fileName, false);
         if (error) error();
         if (!preview) WebVideoCtrl.I_Stop({ iWndIndex: window.g_iWndIndex });
         console.log('showOPInfo', fileName + ' 抓图数据打印失败！');
@@ -269,7 +310,10 @@ export async function clickCapturePicData(info, success, error, preview = false)
       bProxy: false, // ws取流协议是否要过Nginx
       success: function () {
         console.log('预览成功，开始抓图');
-        capture(szPicName);
+        const video = document.querySelector('#divPlugin video');
+        checkHasFrame({ videoEl: video, wndIndex: 0, timeout: 5000 }, () => {
+          capture(szPicName);
+        });
       },
       error: function () {
         console.error('预览失败');
