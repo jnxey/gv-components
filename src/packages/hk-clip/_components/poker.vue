@@ -133,7 +133,7 @@ const handlerClip = (info) => {
       };
       img.onload = function () {
         Object.keys(props.pointsMap).forEach(async (p) => {
-          const clippedCanvas = preprocessCanvas(clipImageByPolygon(img, { width: sWidth, height: sHeight }, props.pointsMap[p].points));
+          const clippedCanvas = clipImageByPolygon(img, { width: sWidth, height: sHeight }, props.pointsMap[p].points);
           const analysis = await handlerAnalysis(clippedCanvas, info.token);
           if (!!analysis) {
             analysisInfo.value[p] = analysis;
