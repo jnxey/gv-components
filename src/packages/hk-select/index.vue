@@ -56,7 +56,11 @@ const preview = async () => {
 // 设置选中
 const setSelected = (index) => {
   const selected = window.HK_CHANNEL_LIST[index];
-  messenger.instance.send('send-recorder-selected', { channelId: selected.id, channelName: selected.name });
+  if (!selected) {
+    messenger.instance.send('send-recorder-selected', null);
+  } else {
+    messenger.instance.send('send-recorder-selected', { channelId: selected.id, channelName: selected.name });
+  }
 };
 
 onMounted(() => {
