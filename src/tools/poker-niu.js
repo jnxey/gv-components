@@ -1,6 +1,6 @@
 import { NIU_CARD_TYPE } from '@/values/card.js';
 import { POINTS_NIU_LIST } from '@/values/index.js';
-import { getPokerInfo } from '@/tools/index.js';
+import { deepCopy, getPokerInfo } from '@/tools/index.js';
 import { $t } from '@/lang/i18n.js';
 
 // 龙虎点数值对应
@@ -65,6 +65,8 @@ export const pokerCheckNiu = (analysisInfo) => {
  * @returns {Object} { type: 牌型名称, value: 比较数值, typeValue: 基础牌型值, cards: 高亮组合 }
  */
 function _calculateNiuNiu(hand) {
+  hand = deepCopy(hand);
+  hand.reverse();
   // 1. 预处理：转换点数 (J/Q/K=10, A=1, 其他保留原值)
   const points = hand.map((card) => (niuValueMap[card.value] >= 10 ? 10 : niuValueMap[card.value] === 1 ? 1 : niuValueMap[card.value]));
 

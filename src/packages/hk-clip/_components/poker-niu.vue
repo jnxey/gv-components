@@ -181,7 +181,7 @@ defineExpose({ getHitItem });
   width: 100%;
   height: 100%;
   border-radius: 4px;
-  border: 2px solid #bd0101;
+  border: 2px solid #4caf50;
 }
 
 .poker-niu .poker-box img {
