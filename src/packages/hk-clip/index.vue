@@ -12,6 +12,7 @@ import { onBeforeMount, onMounted, provide, ref, shallowRef } from 'vue';
 import { clickLogin, initHKPlugin } from '@/tools/hk.js';
 import { deepCopy } from '@/tools/index.js';
 import { IframeCommunicator } from '@/tools/iframe-communicator.js';
+import { getPointFieldName } from '@/tools/query.js';
 
 const pointsMap = ref(null);
 const bindInfo = ref(null);
@@ -62,7 +63,7 @@ onMounted(() => {
 
   messenger.instance.request('recorder-info').then(async (data) => {
     bindInfo.value = deepCopy(data);
-    pointsMap.value = deepCopy(data.POKER_AREA_POINTS);
+    pointsMap.value = deepCopy(data[getPointFieldName()]);
     await login();
   });
 
