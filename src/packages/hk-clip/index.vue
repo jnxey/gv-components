@@ -1,6 +1,6 @@
 <template>
   <div class="hk-clip">
-    <poker ref="pokerRef" :points-map="pointsMap" :recorder-info="recorderInfo" @set-points-map="setPointsMap" />
+    <poker ref="pokerRef" :points-map="pointsMap" :bind-info="bindInfo" @set-points-map="setPointsMap" />
   </div>
 </template>
 <script>
@@ -14,19 +14,20 @@ import { deepCopy } from '@/tools/index.js';
 import { IframeCommunicator } from '@/tools/iframe-communicator.js';
 
 const pointsMap = ref(null);
-const recorderInfo = ref(null);
+const bindInfo = ref(null);
 const pokerRef = shallowRef();
 
 const messenger = { instance: null };
 
 // 登录
 const login = async () => {
-  const info = recorderInfo.value ?? {};
+  const info = bindInfo.value ?? {};
+  const recorder = info.recorder ?? {};
   await clickLogin({
-    szIP: info.ip,
-    szPort: String(info.port),
-    szUsername: info.account,
-    szPassword: info.password
+    szIP: recorder.ip,
+    szPort: String(recorder.port),
+    szUsername: recorder.account,
+    szPassword: recorder.password
   });
 };
 
@@ -60,8 +61,8 @@ onMounted(() => {
   messenger.instance.ready(); // 通知已加载
 
   messenger.instance.request('recorder-info').then(async (data) => {
-    recorderInfo.value = data;
-    pointsMap.value = deepCopy(data.AREA_POINTS);
+    bindInfo.value = deepCopy(data);
+    pointsMap.value = deepCopy(data.POKER_AREA_POINTS);
     await login();
   });
 

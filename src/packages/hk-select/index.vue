@@ -12,32 +12,35 @@ import { clickLogin, clickStartRealPlay, initHKPlugin, setSelectedWindow, setWin
 import { delayExec } from '@/tools/index.js';
 import { IframeCommunicator } from '@/tools/iframe-communicator.js';
 
-const recorderInfo = ref(null);
+const bindInfo = ref(null);
 
 const messenger = { instance: null };
 
 // 登录
 const login = async () => {
-  const info = recorderInfo.value ?? {};
+  const info = bindInfo.value ?? {};
+  const recorder = info.recorder ?? {};
   await clickLogin({
-    szIP: info.ip,
-    szPort: String(info.port),
-    szUsername: info.account,
-    szPassword: info.password
+    szIP: recorder.ip,
+    szPort: String(recorder.port),
+    szUsername: recorder.account,
+    szPassword: recorder.password
   });
 };
 
 // 预览
 const preview = async () => {
-  const info = recorderInfo.value ?? {};
+  const info = bindInfo.value ?? {};
+  const recorder = info.recorder ?? {};
+  const camera = info.camera ?? {};
   let selectIndex = null;
   console.log('------------------------------------------e1');
   setWindowLayout(window.HK_CHANNEL_LIST.length);
   console.log('------------------------------------------e2');
   window.HK_CHANNEL_LIST.forEach((channel, index) => {
-    if (info.channelId === channel.id) selectIndex = index;
+    if (camera.channelId === channel.id) selectIndex = index;
     clickStartRealPlay({
-      szDeviceIdentify: `${info.ip}_${info.port}`,
+      szDeviceIdentify: `${recorder.ip}_${recorder.port}`,
       iRtspPort: window.DEVICE_PORT.iRtspPort,
       iChannelID: channel.id,
       bZeroChannel: false,
@@ -69,7 +72,7 @@ onMounted(() => {
     targetWindow: window.parent
   });
   messenger.instance.request('recorder-info').then(async (data) => {
-    recorderInfo.value = data;
+    bindInfo.value = data;
     await login();
     await delayExec(300);
     await preview();

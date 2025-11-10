@@ -1,6 +1,6 @@
 <template>
   <div class="hk-connection">
-    <loading v-if="!!recorderInfo" />
+    <loading v-if="!!bindInfo" />
   </div>
 </template>
 <script>
@@ -12,17 +12,18 @@ import { clickLogin, initHKPlugin } from '@/tools/hk.js';
 import { IframeCommunicator } from '@/tools/iframe-communicator.js';
 import Loading from '@/components/loading.vue';
 
-const recorderInfo = ref(null);
+const bindInfo = ref(null);
 
 const messenger = { instance: null };
 
 const checkConnection = () => {
-  const info = recorderInfo.value ?? {};
+  const info = bindInfo.value ?? {};
+  const recorder = info.recorder ?? {};
   clickLogin({
-    szIP: info.ip,
-    szPort: String(info.port),
-    szUsername: info.account,
-    szPassword: info.password
+    szIP: recorder.ip,
+    szPort: String(recorder.port),
+    szUsername: recorder.account,
+    szPassword: recorder.password
   })
     .then(() => {
       messenger.instance.send('recorder-connection-success');
@@ -38,7 +39,7 @@ onMounted(() => {
     targetWindow: window.parent
   });
   messenger.instance.request('recorder-info').then(async (data) => {
-    recorderInfo.value = data;
+    bindInfo.value = data;
     checkConnection();
   });
 });

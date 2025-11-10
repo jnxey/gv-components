@@ -8,21 +8,21 @@
       <template v-else-if="completeInfo && !originalImage">
         <poker-baccarat
           ref="pokerBaccaratRef"
-          v-if="recorderInfo.game_model === GAME_MODEL.baccarat"
+          v-if="bindInfo.game_model === GAME_MODEL.baccarat"
           :analysis-info="completeInfo"
           :complete-tips="completeTips"
           @set-type-complete-info="setTypeCompleteInfo"
         />
         <poker-long-hu
           ref="pokerLongHuRef"
-          v-if="recorderInfo.game_model === GAME_MODEL.long_hu"
+          v-if="bindInfo.game_model === GAME_MODEL.long_hu"
           :analysis-info="completeInfo"
           :complete-tips="completeTips"
           @set-type-complete-info="setTypeCompleteInfo"
         />
         <poker-niu
           ref="pokerNiuRef"
-          v-if="recorderInfo.game_model === GAME_MODEL.niu_niu"
+          v-if="bindInfo.game_model === GAME_MODEL.niu_niu"
           :analysis-info="completeInfo"
           :complete-tips="completeTips"
           @set-type-complete-info="setTypeCompleteInfo"
@@ -31,14 +31,7 @@
       <!--   原图   -->
       <template v-else-if="completeInfo && !!originalImage">
         <div class="show-pic">
-          <b-edit
-            v-if="!!pointsMap"
-            ref="bEditRef"
-            :style="wrapStyle"
-            :points-map-init="pointsMap"
-            :recorder-info-init="recorderInfo"
-            :img-src="imgSrc"
-          />
+          <b-edit v-if="!!pointsMap" ref="bEditRef" :style="wrapStyle" :points-map-init="pointsMap" :bind-info-init="bindInfo" :img-src="imgSrc" />
         </div>
       </template>
       <!--   提示信息   -->
@@ -80,7 +73,7 @@ const sHeight = 560;
 
 const emits = defineEmits(['setPointsMap']);
 
-const props = defineProps({ recorderInfo: Object, pointsMap: Object, width: Number, height: Number });
+const props = defineProps({ bindInfo: Object, pointsMap: Object, width: Number, height: Number });
 const imgSrc = shallowRef(null);
 const pokerBaccaratRef = shallowRef(null);
 const pokerLongHuRef = shallowRef(null);
@@ -122,7 +115,8 @@ const handlerClip = (info) => {
   clearAllInfo();
   clipLoading.value = true;
   clickCapturePicData(
-    info,
+    info.recorder,
+    info.camera,
     (base64String) => {
       const img = new Image();
       img.src = 'data:image/jpeg;base64,' + base64String;
@@ -182,8 +176,8 @@ const handlerAnalysis = (canvas, token) => {
 
 // 扫牌
 const scanPoker = () => {
-  if (!props.recorderInfo) return;
-  const info = props.recorderInfo ?? {};
+  if (!props.bindInfo) return;
+  const info = props.bindInfo ?? {};
   handlerClip(info);
 };
 
@@ -195,13 +189,13 @@ const tryScanPoker = () => {
 
 // 使用命中项
 const useHitItem = () => {
-  if (props.recorderInfo.game_model === GAME_MODEL.baccarat) {
+  if (props.bindInfo.game_model === GAME_MODEL.baccarat) {
     const hits = pokerBaccaratRef.value?.getHitItem();
     useHitKind(hits);
-  } else if (props.recorderInfo.game_model === GAME_MODEL.long_hu) {
+  } else if (props.bindInfo.game_model === GAME_MODEL.long_hu) {
     const hits = pokerLongHuRef.value?.getHitItem();
     useHitKind(hits);
-  } else if (props.recorderInfo.game_model === GAME_MODEL.niu_niu) {
+  } else if (props.bindInfo.game_model === GAME_MODEL.niu_niu) {
     const hits = pokerNiuRef.value?.getHitItem();
     useHitKind(hits);
   }
@@ -225,7 +219,7 @@ const setCompleteInfo = (aInfo) => {
   Object.keys(aInfo).forEach((name) => {
     const aList = aInfo[name].filter((item) => item.bbox?.length === 2);
     let list = aList.map((item) => item.class_name);
-    if (props.recorderInfo?.game_model === GAME_MODEL.baccarat) {
+    if (props.bindInfo?.game_model === GAME_MODEL.baccarat) {
       list = list.slice(0, 3);
       if (list.length === 3) {
         // 校验哪张是补牌
@@ -233,9 +227,9 @@ const setCompleteInfo = (aInfo) => {
         if (!!info.tipsMsg) completeTips.value[name] = info.tipsMsg;
         list = info.result;
       }
-    } else if (props.recorderInfo?.game_model === GAME_MODEL.long_hu) {
+    } else if (props.bindInfo?.game_model === GAME_MODEL.long_hu) {
       list = list.slice(0, 1);
-    } else if (props.recorderInfo?.game_model === GAME_MODEL.niu_niu) {
+    } else if (props.bindInfo?.game_model === GAME_MODEL.niu_niu) {
       list = list.slice(0, 5);
       if (list.length === 5) {
         // 校验牌位置

@@ -15,11 +15,11 @@ import { deepCopy } from '@/tools/index.js';
 
 const current = ref(null);
 
-const props = defineProps({ pointsMapInit: Object, recorderInfoInit: Object, imgSrc: String });
+const props = defineProps({ pointsMapInit: Object, bindInfoInit: Object, imgSrc: String });
 
 const pointsMap = ref(null);
 
-const recorderInfo = ref(null);
+const bindInfo = ref(null);
 
 const setCurrent = async (p) => {
   current.value = null;
@@ -38,7 +38,7 @@ const getPointsMap = () => {
 
 onBeforeMount(() => {
   pointsMap.value = deepCopy(props.pointsMapInit);
-  recorderInfo.value = deepCopy(props.recorderInfoInit);
+  bindInfo.value = deepCopy(props.bindInfoInit);
 });
 
 defineExpose({ getPointsMap });

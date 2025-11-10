@@ -276,8 +276,8 @@ export function checkHasFrame({ videoEl, wndIndex = 0, timeout = 5000 }, callbac
 }
 
 // 抓图数据
-export async function clickCapturePicData(info, success, error, preview = false) {
-  const szPicName = `${info.ip}_${info.port}_${info.channelId}_${new Date().getTime()}.jpg`;
+export async function clickCapturePicData(recorder, camera, success, error, preview = false) {
+  const szPicName = `${recorder.ip}_${recorder.port}_${camera.channelId}_${new Date().getTime()}.jpg`;
   const capture = async (fileName) => {
     WebVideoCtrl.I2_CapturePic(fileName, {
       cbCallback: (uint8Array) => {
@@ -301,12 +301,12 @@ export async function clickCapturePicData(info, success, error, preview = false)
     capture(szPicName);
   } else {
     // 开始预览，窗口隐藏
-    WebVideoCtrl.I_StartRealPlay(`${info.ip}_${info.port}`, {
+    WebVideoCtrl.I_StartRealPlay(`${recorder.ip}_${recorder.port}`, {
       iStreamType: 1,
-      iChannelID: info.channelId,
+      iChannelID: camera.channelId,
       bZeroChannel: false,
       iWndIndex: window.g_iWndIndex,
-      iRtspPort: info.port,
+      iRtspPort: recorder.port,
       bProxy: false, // ws取流协议是否要过Nginx
       success: function () {
         console.log('预览成功，开始抓图');

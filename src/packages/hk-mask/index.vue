@@ -30,29 +30,32 @@ const wrapStyle = computed(() => {
 
 const pointsMap = ref(null);
 
-const recorderInfo = ref(null);
+const bindInfo = ref(null);
 
 const messenger = { instance: null };
 
 // 登录
 const login = async () => {
-  const info = recorderInfo.value ?? {};
+  const info = bindInfo.value ?? {};
+  const recorder = info.recorder ?? {};
   await clickLogin({
-    szIP: info.ip,
-    szPort: String(info.port),
-    szUsername: info.account,
-    szPassword: info.password
+    szIP: recorder.ip,
+    szPort: String(recorder.port),
+    szUsername: recorder.account,
+    szPassword: recorder.password
   });
 };
 
 // 预览
 const preview = async () => {
-  const info = recorderInfo.value ?? {};
+  const info = bindInfo.value ?? {};
+  const recorder = info.recorder ?? {};
+  const camera = info.camera ?? {};
   setWindowLayout(1);
   clickStartRealPlay({
-    szDeviceIdentify: `${info.ip}_${info.port}`,
+    szDeviceIdentify: `${recorder.ip}_${recorder.port}`,
     iRtspPort: window.DEVICE_PORT.iRtspPort,
-    iChannelID: info.channelId,
+    iChannelID: camera.channelId,
     bZeroChannel: false,
     iStreamType: 1,
     windowIndex: 0
@@ -78,8 +81,8 @@ onMounted(() => {
 
   messenger.instance.request('recorder-info').then(async (data) => {
     console.log('recorder-info------');
-    recorderInfo.value = data;
-    pointsMap.value = deepCopy(data.AREA_POINTS);
+    bindInfo.value = data;
+    pointsMap.value = deepCopy(data.POKER_AREA_POINTS);
     await login();
     await delayExec(300);
     await preview();
