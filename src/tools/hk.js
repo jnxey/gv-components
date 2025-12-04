@@ -1,5 +1,7 @@
 import { delayExec } from '@/tools/index.js';
 
+const httpType = 2; // 1表示http协议 2表示https协议
+
 // 全局保存当前选中窗口
 const ErrorCodes = {
   1001: '码流传输过程异常',
@@ -97,7 +99,7 @@ export function clickLogin({ szIP, szPort, szUsername, szPassword }) {
   return new Promise((resolve, reject) => {
     if ('' === szIP || '' === szPort) return reject();
     const szDeviceIdentify = szIP + '_' + szPort;
-    const iRet = WebVideoCtrl.I_Login(szIP, 1, szPort, szUsername, szPassword, {
+    const iRet = WebVideoCtrl.I_Login(szIP, httpType, szPort, szUsername, szPassword, {
       success: async (xmlDoc) => {
         console.log('showOPInfo', szDeviceIdentify + ' 登录成功！');
         await getChannelInfo(szDeviceIdentify);
