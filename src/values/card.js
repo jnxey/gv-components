@@ -69,8 +69,6 @@ export const NIU_CARD_TYPE_DICT = [
 export const SAN_GONG_CARD_TYPE = {
   san_tiao: 'san_tiao', // 三条
   san_gong: 'san_gong', // 三公
-  shuang_gong: 'shuang_gong', // 双公
-  dan_gong: 'dan_gong', // 单公
   point_9: 'point_9',
   point_8: 'point_8',
   point_7: 'point_7',
@@ -88,8 +86,6 @@ export const SAN_GONG_CARD_TYPE = {
 export const SAN_GONG_CARD_TYPE_DICT = [
   { name: '三条', value: SAN_GONG_CARD_TYPE.san_tiao },
   { name: '三公', value: SAN_GONG_CARD_TYPE.san_gong },
-  { name: '双公', value: SAN_GONG_CARD_TYPE.shuang_gong },
-  { name: '单公', value: SAN_GONG_CARD_TYPE.dan_gong },
   { name: '9点', value: SAN_GONG_CARD_TYPE.point_9 },
   { name: '8点', value: SAN_GONG_CARD_TYPE.point_8 },
   { name: '7点', value: SAN_GONG_CARD_TYPE.point_7 },

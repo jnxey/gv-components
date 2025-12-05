@@ -59,25 +59,17 @@ function evaluateHand(cards) {
 
   // 判定牌型和 typeRank（数值越大越强）
   // typeRank 说明：
-  //  5 -> 三条 (三张同点)
-  //  4 -> 三公 (三张均为 J/Q/K，但不是三条，同一张三K会被先判三条)
-  //  3 -> 双公 (两个为J/Q/K)
-  //  2 -> 单公 (一个为J/Q/K)
+  //  3 -> 三条 (三张同点)
+  //  2 -> 三公 (三张均为 J/Q/K，但不是三条，同一张三K会被先判三条)
   //  1 -> 普通点数（按 point 比较）
-  let typeRank = 1,
-    typeName = '点数';
+  let typeRank;
+  let typeName;
   if (counts[0] === 3) {
-    typeRank = 5;
+    typeRank = 3;
     typeName = SAN_GONG_CARD_TYPE.san_tiao;
   } else if (gongCount === 3) {
-    typeRank = 4;
-    typeName = SAN_GONG_CARD_TYPE.san_gong;
-  } else if (gongCount === 2) {
-    typeRank = 3;
-    typeName = SAN_GONG_CARD_TYPE.shuang_gong;
-  } else if (gongCount === 1) {
     typeRank = 2;
-    typeName = SAN_GONG_CARD_TYPE.dan_gong;
+    typeName = SAN_GONG_CARD_TYPE.san_gong;
   } else {
     typeRank = 1;
     typeName = SAN_GONG_CARD_TYPE[`point_${point}`];
@@ -87,46 +79,25 @@ function evaluateHand(cards) {
   // 我们设计通用 tieKey 规则（越靠前越重要）：
   //  - 三条：先比较三条的牌面大小（rankValue），再比较最大单张花色
   //  - 三公：按三张中最大牌 rankValue，若同，再比第二、第三，最后比花色序列
-  //  - 双公：先比较非公那张牌的点数(rankValue)，再比较最大公牌rank与花色
-  //  - 单公：先比较非公两张的点数（按降序序列），再比公牌rank，再比花色序列
   //  - 点数：先比较 point（0..9），再比较按牌面降序的 rankValue 列表与花色列
   const tieKey = [];
-  if (typeRank === 5) {
+  if (typeRank === 3) {
     // 三条
     // 找到被重复的rank（只有一个）
     const tripleRank = Object.keys(rankCounts).find((r) => rankCounts[r] === 3);
     tieKey.push({ tripleRankValue: RANK_VALUE[tripleRank] });
     // 推入每张牌的 rankValue,suitValue 作为后备比较
     parsed.forEach((c) => tieKey.push({ rankValue: c.rankValue, suitValue: c.suitValue }));
-  } else if (typeRank === 4) {
+  } else if (typeRank === 2) {
     // 三公
     // 三张都是公牌，按最大、次大、第三比较
-    parsed.forEach((c) => tieKey.push({ rankValue: c.rankValue, suitValue: c.suitValue }));
-  } else if (typeRank === 3) {
-    // 双公
-    // 找非公牌
-    const nonGong = parsed.find((c) => !isGong(c.rank));
-    // remaining two are 公， but我们也把它们放进 tieKey
-    const gongCards = parsed.filter((c) => isGong(c.rank));
-    tieKey.push({ nonGongRankValue: nonGong ? nonGong.rankValue : 0 }); // should exist
-    // 次要按两个公中最大的rankValue then suit
-    gongCards.forEach((c) => tieKey.push({ rankValue: c.rankValue, suitValue: c.suitValue }));
-    // then remaining parsed items
-    parsed.forEach((c) => tieKey.push({ rankValue: c.rankValue, suitValue: c.suitValue }));
-  } else if (typeRank === 2) {
-    // 单公
-    // 非公两张按降序，先比较大的，再比较小的，再比较公牌
-    const nonGongs = parsed.filter((c) => !isGong(c.rank));
-    nonGongs.forEach((c) => tieKey.push({ rankValue: c.rankValue, suitValue: c.suitValue }));
-    const gongCard = parsed.find((c) => isGong(c.rank));
-    if (gongCard) tieKey.push({ rankValue: gongCard.rankValue, suitValue: gongCard.suitValue });
     parsed.forEach((c) => tieKey.push({ rankValue: c.rankValue, suitValue: c.suitValue }));
   } else {
     // 点数型
     // 先比较 point（高者胜）
     tieKey.push({ point });
     // 再比较每张牌按降序的 rankValue, suitValue
-    parsed.forEach((c) => tieKey.push({ rankValue: c.rankValue, suitValue: c.suitValue }));
+    parsed.forEach((c) => tieKey.push({ rankValue: c.rankValue, suitValue: c.suitValue, gongCount: gongCount }));
   }
 
   // 生成便于 debug/显示的 summary
@@ -135,7 +106,6 @@ function evaluateHand(cards) {
   return {
     type: typeName,
     typeRank,
-    typeName,
     point,
     gongCount,
     sortedCards,
@@ -164,17 +134,15 @@ function compareTieKey(aTie, bTie) {
       if (av !== bv) return av > bv ? 1 : -1;
       continue;
     }
-    if ('nonGongRankValue' in a || 'nonGongRankValue' in b) {
-      const av = a.nonGongRankValue || 0,
-        bv = b.nonGongRankValue || 0;
-      if (av !== bv) return av > bv ? 1 : -1;
-      continue;
-    }
     if ('rankValue' in a || 'rankValue' in b) {
       const av = a.rankValue || 0,
         bv = b.rankValue || 0;
       if (av !== bv) return av > bv ? 1 : -1;
-      // 若 rankValue 相同，再比较 suitValue（若存在）
+      // 若点数相同
+      const ag = a.gongCount,
+        bg = b.gongCount;
+      if (ag !== bg) return ag > bg ? 1 : -1;
+      // 若 rankValue, 公牌数量 都相同，再比较 suitValue（若存在）
       const as = a.suitValue || 0,
         bs = b.suitValue || 0;
       if (as !== bs) return as > bs ? 1 : -1;
