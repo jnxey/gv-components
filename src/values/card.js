@@ -42,10 +42,7 @@ export const NIU_CARD_TYPE = {
   niu_3: 'niu_3',
   niu_2: 'niu_2',
   niu_1: 'niu_1',
-  niu_7_9: 'niu_7_9',
-  niu_1_6: 'niu_1_6',
   niu_none: 'niu_none',
-  niu_all: 'niu_all',
   other: 'other' // 其他
 };
 
@@ -64,10 +61,7 @@ export const NIU_CARD_TYPE_DICT = [
   { name: '牛3', value: NIU_CARD_TYPE.niu_3 },
   { name: '牛2', value: NIU_CARD_TYPE.niu_2 },
   { name: '牛1', value: NIU_CARD_TYPE.niu_1 },
-  { name: '牛7~牛9', value: NIU_CARD_TYPE.niu_7_9 },
-  { name: '牛1~牛6', value: NIU_CARD_TYPE.niu_1_6 },
   { name: '无牛', value: NIU_CARD_TYPE.niu_none },
-  { name: '有牛', value: NIU_CARD_TYPE.niu_all },
   { name: '其他', value: BACCARAT_CARD_TYPE.other }
 ];
 
@@ -86,7 +80,8 @@ export const SAN_GONG_CARD_TYPE = {
   point_3: 'point_3',
   point_2: 'point_2',
   point_1: 'point_1',
-  point_0: 'point_0'
+  point_0: 'point_0',
+  other: 'other' // 其他
 };
 
 // 牌型-三公-字典
@@ -104,7 +99,8 @@ export const SAN_GONG_CARD_TYPE_DICT = [
   { name: '3点', value: SAN_GONG_CARD_TYPE.point_3 },
   { name: '2点', value: SAN_GONG_CARD_TYPE.point_2 },
   { name: '1点', value: SAN_GONG_CARD_TYPE.point_1 },
-  { name: '单牌', value: SAN_GONG_CARD_TYPE.point_0 }
+  { name: '单牌', value: SAN_GONG_CARD_TYPE.point_0 },
+  { name: '其他', value: SAN_GONG_CARD_TYPE.other }
 ];
 
 // 彩金牌型
