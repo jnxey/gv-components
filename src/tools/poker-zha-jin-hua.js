@@ -1,4 +1,4 @@
-import { SAN_GONG_CARD_TYPE, ZHA_JIN_HUA_CARD_TYPE } from '@/values/card.js';
+import { ZHA_JIN_HUA_CARD_TYPE } from '@/values/card.js';
 import { POINTS_GENERAL_LIST } from '@/values/index.js';
 import { getPokerInfo } from '@/tools/index.js';
 import { $t } from '@/lang/i18n.js';
