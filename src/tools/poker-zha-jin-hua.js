@@ -11,9 +11,9 @@ function parse(card) {
 }
 
 function evaluate(cards) {
-  let p = cards.map(parse).sort((a, b) => b.r - a.r || b.s - a.s); // 大小花色排序
-  let r = p.map((x) => x.r); // 大小排序
-  let s = p.map((x) => x.s); // 花色排序
+  let p = cards.map(parse).sort((a, b) => b.r - a.r || b.s - a.s); // 大小花色 排序
+  let r = p.map((x) => x.r); // 大小数组
+  let s = p.map((x) => x.s); // 花色数组
   let count = {};
   r.forEach((x) => (count[x] = (count[x] || 0) + 1)); // 计算同点数量
   let values = Object.values(count).sort((a, b) => b - a); // 同点数量排序
@@ -44,7 +44,17 @@ function evaluate(cards) {
     typeName = ZHA_JIN_HUA_CARD_TYPE.dui_zi; // 对子
   } else {
     typeValue = 1; // 单牌
-    typeName = ZHA_JIN_HUA_CARD_TYPE.dan; // 单牌
+    if (r[2] === 14) {
+      typeName = ZHA_JIN_HUA_CARD_TYPE.dan_a; // 单牌A
+    } else if (r[2] === 13) {
+      typeName = ZHA_JIN_HUA_CARD_TYPE.dan_k; // 单牌K
+    } else if (r[2] === 12) {
+      typeName = ZHA_JIN_HUA_CARD_TYPE.dan_q; // 单牌Q
+    } else if (r[2] === 11) {
+      typeName = ZHA_JIN_HUA_CARD_TYPE.dan_j; // 单牌J
+    } else {
+      typeName = ZHA_JIN_HUA_CARD_TYPE.dan; // 单牌
+    }
   }
 
   let key = [];
@@ -64,6 +74,7 @@ function evaluate(cards) {
     let single = Object.keys(count).find((k) => count[k] === 1);
     key.push(+pair, +single);
   } else {
+    // 单牌
     key = [...r].reverse();
   }
   key.push(...s); // 花色兜底
