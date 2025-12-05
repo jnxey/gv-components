@@ -1,5 +1,5 @@
 import { NIU_CARD_TYPE } from '@/values/card.js';
-import { POINTS_NIU_LIST } from '@/values/index.js';
+import { POINTS_GENERAL_LIST } from '@/values/index.js';
 import { deepCopy, getPokerInfo } from '@/tools/index.js';
 import { $t } from '@/lang/i18n.js';
 
@@ -35,15 +35,15 @@ export const pokerCheckNiu = (analysisInfo) => {
     const hitItem = {};
     // 检查张数
     const aMap = {};
-    POINTS_NIU_LIST.forEach((name) => (aMap[name] = !!analysisInfo[name] ? analysisInfo[name].map((item) => getPokerInfo(item)) : []));
-    for (let i = 0; i < POINTS_NIU_LIST.length; i++) {
-      const name = POINTS_NIU_LIST[i];
+    POINTS_GENERAL_LIST.forEach((name) => (aMap[name] = !!analysisInfo[name] ? analysisInfo[name].map((item) => getPokerInfo(item)) : []));
+    for (let i = 0; i < POINTS_GENERAL_LIST.length; i++) {
+      const name = POINTS_GENERAL_LIST[i];
       if (name === 'b' && aMap[name].length !== 5) return { check: false, msg: { [name]: $t('common.tools.tips_err_5') } };
       if (name !== 'b' && aMap[name].length !== 5 && aMap[name].length !== 0) return { check: false, msg: { [name]: $t('common.tools.tips_err_5') } };
     }
     // 命中
-    for (let i = 0; i < POINTS_NIU_LIST.length; i++) {
-      const name = POINTS_NIU_LIST[i];
+    for (let i = 0; i < POINTS_GENERAL_LIST.length; i++) {
+      const name = POINTS_GENERAL_LIST[i];
       if (name === 'b') {
         hitItem[name] = { poker: _calculateNiuNiu(aMap[name]) };
       } else if (aMap[name].length !== 0) {
@@ -54,7 +54,7 @@ export const pokerCheckNiu = (analysisInfo) => {
     return { check: true, hitItem: hitItem };
   } catch (e) {
     const msgMap = {};
-    POINTS_NIU_LIST.forEach((name) => (msgMap[name] = $t('common.tools.tips_err_6')));
+    POINTS_GENERAL_LIST.forEach((name) => (msgMap[name] = $t('common.tools.tips_err_6')));
     return { check: false, msg: msgMap };
   }
 };

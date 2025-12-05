@@ -8,7 +8,7 @@ import vueDevTools from 'vite-plugin-vue-devtools';
 export default defineConfig({
   base: '/video-recorder/',
   build: {
-    outDir: '../game-view/public/video-recorder'
+    outDir: '../hk-nginx/webs/video-recorder'
   },
   plugins: [vue()],
   resolve: {

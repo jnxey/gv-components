@@ -1,5 +1,5 @@
 // 游戏模型
-export const GAME_MODEL = { baccarat: 1, niu_niu: 2, long_hu: 3, general: 99 };
+export const GAME_MODEL = { baccarat: 1, niu_niu: 2, long_hu: 3, san_gong: 4, tong_zi: 5, zha_jin_hua: 6, general: 99 };
 
 // 百家乐/龙虎 点位描述
 export const POINTS_BACCARAT = {
@@ -11,7 +11,7 @@ export const POINTS_BACCARAT = {
 export const POINTS_BACCARAT_LIST = ['b', 'p'];
 
 // 牛牛 点位描述
-export const POINTS_NIU = {
+export const POINTS_GENERAL = {
   b: { name: 'B', color: '#ff0303', fill: 'rgba(255,3,3,0.3)', class: 'area-box-b' },
   s1: { name: 'S1', color: '#046ee6', fill: 'rgba(4,110,230,0.3)', class: 'area-box-s1' },
   s2: { name: 'S2', color: '#046ee6', fill: 'rgba(4,110,230,0.3)', class: 'area-box-s2' },
@@ -22,4 +22,4 @@ export const POINTS_NIU = {
 };
 
 // 百家乐/龙虎 列表
-export const POINTS_NIU_LIST = ['b', 's1', 's2', 's3', 's5', 's6', 's7'];
+export const POINTS_GENERAL_LIST = ['b', 's1', 's2', 's3', 's5', 's6', 's7'];

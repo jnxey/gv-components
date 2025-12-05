@@ -49,16 +49,6 @@ export const NIU_CARD_TYPE = {
   other: 'other' // 其他
 };
 
-// 彩金牌型
-export const BONUS_CARD_TYPE = {
-  royal_flush: 'royal_flush', // 皇家同花顺
-  flush: 'flush', // 同花顺
-  same_flower: 'same_flower', // 同花
-  straight: 'straight', // 顺子
-  gourd: 'gourd', // 葫芦
-  other: 'other' // 其他
-};
-
 // 牌型-牛牛-字典
 export const NIU_CARD_TYPE_DICT = [
   { name: '五小牛', value: NIU_CARD_TYPE.niu_5small },
@@ -81,8 +71,54 @@ export const NIU_CARD_TYPE_DICT = [
   { name: '其他', value: BACCARAT_CARD_TYPE.other }
 ];
 
-// 牌型-牛牛-字典
-export const NIU_CARD_WIN_DICT = [
+// 牌型-三公
+export const SAN_GONG_CARD_TYPE = {
+  san_tiao: 'san_tiao', // 三条
+  san_gong: 'san_gong', // 三公
+  shuang_gong: 'shuang_gong', // 双公
+  dan_gong: 'dan_gong', // 单公
+  point_9: 'point_9',
+  point_8: 'point_8',
+  point_7: 'point_7',
+  point_6: 'point_6',
+  point_5: 'point_5',
+  point_4: 'point_4',
+  point_3: 'point_3',
+  point_2: 'point_2',
+  point_1: 'point_1',
+  point_0: 'point_0'
+};
+
+// 牌型-三公-字典
+export const SAN_GONG_CARD_TYPE_DICT = [
+  { name: '三条', value: SAN_GONG_CARD_TYPE.san_tiao },
+  { name: '三公', value: SAN_GONG_CARD_TYPE.san_gong },
+  { name: '双公', value: SAN_GONG_CARD_TYPE.shuang_gong },
+  { name: '单公', value: SAN_GONG_CARD_TYPE.dan_gong },
+  { name: '9点', value: SAN_GONG_CARD_TYPE.point_9 },
+  { name: '8点', value: SAN_GONG_CARD_TYPE.point_8 },
+  { name: '7点', value: SAN_GONG_CARD_TYPE.point_7 },
+  { name: '6点', value: SAN_GONG_CARD_TYPE.point_6 },
+  { name: '5点', value: SAN_GONG_CARD_TYPE.point_5 },
+  { name: '4点', value: SAN_GONG_CARD_TYPE.point_4 },
+  { name: '3点', value: SAN_GONG_CARD_TYPE.point_3 },
+  { name: '2点', value: SAN_GONG_CARD_TYPE.point_2 },
+  { name: '1点', value: SAN_GONG_CARD_TYPE.point_1 },
+  { name: '单牌', value: SAN_GONG_CARD_TYPE.point_0 }
+];
+
+// 彩金牌型
+export const BONUS_CARD_TYPE = {
+  royal_flush: 'royal_flush', // 皇家同花顺
+  flush: 'flush', // 同花顺
+  same_flower: 'same_flower', // 同花
+  straight: 'straight', // 顺子
+  gourd: 'gourd', // 葫芦
+  other: 'other' // 其他
+};
+
+// 牌型-输赢-字典
+export const CARD_WIN_DICT = [
   { name: 'Win', value: 'p' },
   { name: 'Loss', value: 'b' },
   { name: 'Draw', value: 'd' }

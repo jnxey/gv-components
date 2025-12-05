@@ -1,5 +1,5 @@
 <template>
-  <div class="poker-niu">
+  <div class="poker-san-gong">
     <template v-for="name in POINTS_GENERAL_LIST" :key="name">
       <div
         class="area-box"
@@ -9,7 +9,7 @@
         <div class="title" :style="{ backgroundColor: POINTS_GENERAL[name].color }">
           {{ POINTS_GENERAL[name].name }}
           <template v-if="!!pokerKindHit && pokerKindHit?.[name]">
-            - {{ pokerNiuDictMap[pokerKindHit?.[name]?.poker?.type]?.name ?? 'Not Found' }}
+            - {{ pokerSanGongDictMap[pokerKindHit?.[name]?.poker?.type]?.name ?? 'Not Found' }}
           </template>
           <template v-if="!!pokerKindHit && pokerKindHit?.[name] && name !== 'b'">
             - {{ pokerNiuWIn[pokerKindHit?.[name]?.winner]?.name ?? 'Not Found' }}
@@ -35,13 +35,13 @@
 import { computed, inject, ref, shallowRef, watch } from 'vue';
 import PokerSelect from '@/packages/hk-clip/_components/poker-select.vue';
 import { deepCopy, mappingArrayToObject } from '@/tools/index.js';
-import { pokerCheckNiu } from '@/tools/poker-niu.js';
+import { pokerCheckSanGong } from '@/tools/poker-san-gong.js';
 import { POINTS_GENERAL, POINTS_GENERAL_LIST } from '@/values/index.js';
-import { NIU_CARD_TYPE_DICT, CARD_WIN_DICT } from '@/values/card.js';
+import { CARD_WIN_DICT, SAN_GONG_CARD_TYPE_DICT } from '@/values/card.js';
 
 const emits = defineEmits(['setTypeCompleteInfo']);
 
-const pokerNiuDictMap = mappingArrayToObject(NIU_CARD_TYPE_DICT, 'value');
+const pokerSanGongDictMap = mappingArrayToObject(SAN_GONG_CARD_TYPE_DICT, 'value');
 const pokerNiuWIn = mappingArrayToObject(CARD_WIN_DICT, 'value');
 
 const props = defineProps({ analysisInfo: Object, completeTips: Object });
@@ -103,7 +103,7 @@ watch(
   () => props.analysisInfo,
   () => {
     const listMap = props.analysisInfo ?? {};
-    const pokerCheck = pokerCheckNiu(listMap);
+    const pokerCheck = pokerCheckSanGong(listMap);
     console.log(pokerCheck, '------------------pokerCheck');
     if (!pokerCheck?.check) {
       checkRuleTips.value = pokerCheck.msg;
@@ -121,7 +121,7 @@ watch(
 defineExpose({ getHitItem });
 </script>
 <style scoped>
-.poker-niu {
+.poker-san-gong {
   box-sizing: border-box;
   display: flex;
   flex-wrap: wrap;
@@ -136,7 +136,7 @@ defineExpose({ getHitItem });
   z-index: 20;
 }
 
-.poker-niu .error-msg {
+.poker-san-gong .error-msg {
   position: absolute;
   left: 8px;
   bottom: 8px;
@@ -146,7 +146,7 @@ defineExpose({ getHitItem });
   z-index: 10;
 }
 
-.poker-niu .area-box {
+.poker-san-gong .area-box {
   position: relative;
   display: inline-block;
   margin-left: 12px;
@@ -159,24 +159,24 @@ defineExpose({ getHitItem });
   vertical-align: top;
 }
 
-.poker-niu .area-box:first-child {
+.poker-san-gong .area-box:first-child {
   margin-right: 42px;
 }
 
-.poker-niu .area-box .title {
+.poker-san-gong .area-box .title {
   font-size: 20px;
   color: #ffffff;
   padding: 6px;
 }
 
-.poker-niu .poker-box {
+.poker-san-gong .poker-box {
   position: relative;
   width: 40px;
   height: 60px;
   cursor: pointer;
 }
 
-.poker-niu .poker-box.matched:after {
+.poker-san-gong .poker-box.matched:after {
   content: '';
   box-sizing: border-box;
   position: absolute;
@@ -188,43 +188,31 @@ defineExpose({ getHitItem });
   border: 2px solid #4caf50;
 }
 
-.poker-niu .poker-box img {
+.poker-san-gong .poker-box img {
   width: 100%;
   height: 100%;
 }
 
-.poker-niu .sign-0 {
+.poker-san-gong .sign-0 {
   position: absolute;
-  top: 58px;
-  left: 17%;
-}
-
-.poker-niu .sign-1 {
-  position: absolute;
-  top: 58px;
-  right: 17%;
-}
-
-.poker-niu .sign-2 {
-  position: absolute;
-  top: 130px;
+  top: 100px;
   left: 5%;
 }
 
-.poker-niu .sign-3 {
+.poker-san-gong .sign-1 {
   position: absolute;
-  top: 130px;
+  top: 100px;
   left: 50%;
   transform: translateX(-50%);
 }
 
-.poker-niu .sign-4 {
+.poker-san-gong .sign-2 {
   position: absolute;
-  top: 130px;
+  top: 100px;
   right: 5%;
 }
 
-.poker-niu .add-btn {
+.poker-san-gong .add-btn {
   position: absolute;
   bottom: 8px;
   right: 8px;
@@ -236,7 +224,7 @@ defineExpose({ getHitItem });
   z-index: 15;
 }
 
-.poker-niu .check-kind {
+.poker-san-gong .check-kind {
   position: absolute;
   display: flex;
   align-items: center;
@@ -246,7 +234,7 @@ defineExpose({ getHitItem });
   width: 100%;
 }
 
-.poker-niu .check-kind .kind-item {
+.poker-san-gong .check-kind .kind-item {
   padding: 5px 8px;
   margin: 0 5px;
   font-size: 12px;

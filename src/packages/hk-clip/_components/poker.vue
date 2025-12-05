@@ -27,6 +27,13 @@
           :complete-tips="completeTips"
           @set-type-complete-info="setTypeCompleteInfo"
         />
+        <poker-san-gong
+          ref="pokerSanGongRef"
+          v-if="bindInfo.game_model === GAME_MODEL.san_gong"
+          :analysis-info="completeInfo"
+          :complete-tips="completeTips"
+          @set-type-complete-info="setTypeCompleteInfo"
+        />
       </template>
       <!--   原图   -->
       <template v-else-if="completeInfo && !!originalImage">
@@ -64,6 +71,7 @@ import PokerNiu from '@/packages/hk-clip/_components/poker-niu.vue';
 import { getPokerSort } from '@/tools/poker-niu.js';
 import BEdit from '@/packages/hk-clip/_components/b-edit.vue';
 import { $t } from '@/lang/i18n.js';
+import PokerSanGong from '@/packages/hk-clip/_components/poker-san-gong.vue';
 
 const useHitKind = inject('useHitKind');
 const saveHitArea = inject('saveHitArea');
@@ -78,6 +86,7 @@ const imgSrc = shallowRef(null);
 const pokerBaccaratRef = shallowRef(null);
 const pokerLongHuRef = shallowRef(null);
 const pokerNiuRef = shallowRef(null);
+const pokerSanGongRef = shallowRef(null);
 const bEditRef = shallowRef(null);
 const clipLoading = ref(false);
 const clipTipsText = ref(null);
@@ -198,6 +207,9 @@ const useHitItem = () => {
   } else if (props.bindInfo.game_model === GAME_MODEL.niu_niu) {
     const hits = pokerNiuRef.value?.getHitItem();
     useHitKind(hits);
+  } else if (props.bindInfo.game_model === GAME_MODEL.san_gong) {
+    const hits = pokerSanGongRef.value?.getHitItem();
+    useHitKind(hits);
   }
 };
 
@@ -235,6 +247,8 @@ const setCompleteInfo = (aInfo) => {
         // 校验牌位置
         list = getPokerSort(aList.slice(0, 5));
       }
+    } else if (props.bindInfo?.game_model === GAME_MODEL.san_gong) {
+      list = list.slice(0, 3);
     }
     cInfo[name] = list;
   });

@@ -1,6 +1,6 @@
 import { delayExec } from '@/tools/index.js';
 
-const httpType = 2; // 1表示http协议 2表示https协议
+const httpType = 1; // 1表示http协议 2表示https协议
 
 // 全局保存当前选中窗口
 const ErrorCodes = {
@@ -195,7 +195,7 @@ export function clickStartRealPlay({ szDeviceIdentify, iRtspPort, iChannelID, bZ
         iChannelID: iChannelID,
         bZeroChannel: bZeroChannel,
         iWndIndex: windowIndex,
-        bProxy: true, // ws取流协议是否要过Nginx
+        bProxy: false, // ws取流协议是否要过Nginx
         success: function () {
           szInfo = '开始预览成功！';
           console.log('showOPInfo', szDeviceIdentify + ' ' + szInfo);
@@ -309,7 +309,7 @@ export async function clickCapturePicData(recorder, camera, success, error, prev
       bZeroChannel: false,
       iWndIndex: window.g_iWndIndex,
       iRtspPort: recorder.port,
-      bProxy: true, // ws取流协议是否要过Nginx
+      bProxy: false, // ws取流协议是否要过Nginx
       success: function () {
         console.log('预览成功，开始抓图');
         const video = document.querySelector('#divPlugin video');
