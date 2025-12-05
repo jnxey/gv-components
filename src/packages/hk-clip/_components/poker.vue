@@ -34,6 +34,13 @@
           :complete-tips="completeTips"
           @set-type-complete-info="setTypeCompleteInfo"
         />
+        <poker-zha-jin-hua
+          ref="pokerZhaJinHuaRef"
+          v-if="bindInfo.game_model === GAME_MODEL.zha_jin_hua"
+          :analysis-info="completeInfo"
+          :complete-tips="completeTips"
+          @set-type-complete-info="setTypeCompleteInfo"
+        />
       </template>
       <!--   原图   -->
       <template v-else-if="completeInfo && !!originalImage">
@@ -72,6 +79,7 @@ import { getPokerSort } from '@/tools/poker-niu.js';
 import BEdit from '@/packages/hk-clip/_components/b-edit.vue';
 import { $t } from '@/lang/i18n.js';
 import PokerSanGong from '@/packages/hk-clip/_components/poker-san-gong.vue';
+import PokerZhaJinHua from '@/packages/hk-clip/_components/poker-zha-jin-hua.vue';
 
 const useHitKind = inject('useHitKind');
 const saveHitArea = inject('saveHitArea');
@@ -87,6 +95,7 @@ const pokerBaccaratRef = shallowRef(null);
 const pokerLongHuRef = shallowRef(null);
 const pokerNiuRef = shallowRef(null);
 const pokerSanGongRef = shallowRef(null);
+const pokerZhaJinHuaRef = shallowRef(null);
 const bEditRef = shallowRef(null);
 const clipLoading = ref(false);
 const clipTipsText = ref(null);
@@ -210,6 +219,9 @@ const useHitItem = () => {
   } else if (props.bindInfo.game_model === GAME_MODEL.san_gong) {
     const hits = pokerSanGongRef.value?.getHitItem();
     useHitKind(hits);
+  } else if (props.bindInfo.game_model === GAME_MODEL.zha_jin_hua) {
+    const hits = pokerZhaJinHuaRef.value?.getHitItem();
+    useHitKind(hits);
   }
 };
 
@@ -248,6 +260,8 @@ const setCompleteInfo = (aInfo) => {
         list = getPokerSort(aList.slice(0, 5));
       }
     } else if (props.bindInfo?.game_model === GAME_MODEL.san_gong) {
+      list = list.slice(0, 3);
+    } else if (props.bindInfo?.game_model === GAME_MODEL.zha_jin_hua) {
       list = list.slice(0, 3);
     }
     cInfo[name] = list;

@@ -1,6 +1,6 @@
-import { NIU_CARD_TYPE, SAN_GONG_CARD_TYPE } from '@/values/card.js';
+import { SAN_GONG_CARD_TYPE } from '@/values/card.js';
 import { POINTS_GENERAL_LIST } from '@/values/index.js';
-import { deepCopy, getPokerInfo } from '@/tools/index.js';
+import { getPokerInfo } from '@/tools/index.js';
 import { $t } from '@/lang/i18n.js';
 
 // 花色与大小映射
@@ -137,6 +137,7 @@ function compareTieKey(aTie, bTie) {
     if ('rankValue' in a || 'rankValue' in b) {
       const av = a.rankValue || 0,
         bv = b.rankValue || 0;
+      if ((av === bv) === 0) return 1; // 如果都是0点，庄赢
       if (av !== bv) return av > bv ? 1 : -1;
       // 若点数相同
       const ag = a.gongCount,

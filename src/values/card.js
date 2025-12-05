@@ -99,6 +99,36 @@ export const SAN_GONG_CARD_TYPE_DICT = [
   { name: '其他', value: SAN_GONG_CARD_TYPE.other }
 ];
 
+// 牌型-炸金花
+export const ZHA_JIN_HUA_CARD_TYPE = {
+  san_tiao: 'san_tiao', // 三条
+  tong_hua_shun: 'tong_hua_shun', // 同花顺
+  tong_hua: 'tong_hua',
+  shun_zi: 'shun_zi',
+  dui_zi: 'dui_zi',
+  dan_a: 'dan_a',
+  dan_k: 'dan_k',
+  dan_q: 'dan_q',
+  dan_j: 'dan_j',
+  dan: 'dan',
+  other: 'other' // 其他
+};
+
+// 牌型-三公-字典
+export const ZHA_JIN_HUA_CARD_TYPE_DICT = [
+  { name: '三条', value: ZHA_JIN_HUA_CARD_TYPE.san_tiao },
+  { name: '同花顺', value: ZHA_JIN_HUA_CARD_TYPE.tong_hua_shun },
+  { name: '同花', value: ZHA_JIN_HUA_CARD_TYPE.tong_hua },
+  { name: '顺子', value: ZHA_JIN_HUA_CARD_TYPE.shun_zi },
+  { name: '对子', value: ZHA_JIN_HUA_CARD_TYPE.dui_zi },
+  { name: '单牌A', value: ZHA_JIN_HUA_CARD_TYPE.dan_a },
+  { name: '单牌K', value: ZHA_JIN_HUA_CARD_TYPE.dan_k },
+  { name: '单牌Q', value: ZHA_JIN_HUA_CARD_TYPE.dan_q },
+  { name: '单牌J', value: ZHA_JIN_HUA_CARD_TYPE.dan_j },
+  { name: '单牌', value: ZHA_JIN_HUA_CARD_TYPE.dan },
+  { name: '其他', value: ZHA_JIN_HUA_CARD_TYPE.other }
+];
+
 // 彩金牌型
 export const BONUS_CARD_TYPE = {
   royal_flush: 'royal_flush', // 皇家同花顺
