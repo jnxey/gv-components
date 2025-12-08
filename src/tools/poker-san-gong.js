@@ -139,7 +139,7 @@ function compareTieKey(aTie, bTie) {
         bv = b.rankValue || 0;
       if ((av === bv) === 0) return 1; // 如果都是0点，庄赢
       if (av !== bv) return av > bv ? 1 : -1;
-      // 若点数相同
+      // 若点数相同，公牌数不同
       const ag = a.gongCount,
         bg = b.gongCount;
       if (ag !== bg) return ag > bg ? 1 : -1;
