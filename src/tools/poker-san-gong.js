@@ -140,8 +140,8 @@ function compareTieKey(aTie, bTie) {
       if ((av === bv) === 0) return 1; // 如果都是0点，庄赢
       if (av !== bv) return av > bv ? 1 : -1;
       // 若点数相同，公牌数不同
-      const ag = a.gongCount,
-        bg = b.gongCount;
+      const ag = a.gongCount || 0,
+        bg = b.gongCount || 0;
       if (ag !== bg) return ag > bg ? 1 : -1;
       // 若 rankValue, 公牌数量 都相同，再比较 suitValue（若存在）
       const as = a.suitValue || 0,
