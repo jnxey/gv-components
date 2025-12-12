@@ -143,8 +143,9 @@ const handlerClip = (info) => {
         clipLoading.value = false;
         clipTipsText.value = $t('common.clip.tips_img_err1');
       };
-      img.onload = function () {
-        Object.keys(props.pointsMap).forEach(async (p) => {
+      img.onload = async function () {
+        const keysPoints = Object.keys(props.pointsMap);
+        for (let p of keysPoints) {
           const clippedCanvas = clipImageByPolygon(img, { width: sWidth, height: sHeight }, props.pointsMap[p].points);
           const analysis = await handlerAnalysis(clippedCanvas, info.token);
           if (!!analysis) {
@@ -157,7 +158,7 @@ const handlerClip = (info) => {
             clipLoading.value = false;
             clipTipsText.value = $t('common.clip.tips_img_err2');
           }
-        });
+        }
       };
     },
     () => {
@@ -176,7 +177,7 @@ const handlerAnalysis = (canvas, token) => {
         const formData = new FormData();
         formData.append('file', blob, 'canvas_image.jpg'); // 字段名需与后端一致
         axios
-          .post('/adminapi/pokerCamera/predict', formData, {
+          .post('/poker-scan', formData, {
             headers: { 'Content-Type': 'multipart/form-data', token: token } // 必须设置[9](@ref)
           })
           .then((response) => {
