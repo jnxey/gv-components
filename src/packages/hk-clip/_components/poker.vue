@@ -41,6 +41,13 @@
           :complete-tips="completeTips"
           @set-type-complete-info="setTypeCompleteInfo"
         />
+        <majiang-tui-tong-zi
+          ref="majiangTuiTongZiRef"
+          v-if="bindInfo.game_model === GAME_MODEL.tong_zi"
+          :analysis-info="completeInfo"
+          :complete-tips="completeTips"
+          @set-type-complete-info="setTypeCompleteInfo"
+        />
       </template>
       <!--   原图   -->
       <template v-else-if="completeInfo && !!originalImage">
@@ -80,9 +87,13 @@ import BEdit from '@/packages/hk-clip/_components/b-edit.vue';
 import { $t } from '@/lang/i18n.js';
 import PokerSanGong from '@/packages/hk-clip/_components/poker-san-gong.vue';
 import PokerZhaJinHua from '@/packages/hk-clip/_components/poker-zha-jin-hua.vue';
+import MajiangTuiTongZi from '@/packages/hk-clip/_components/majiang-tui-tong-zi.vue';
 
 const useHitKind = inject('useHitKind');
 const saveHitArea = inject('saveHitArea');
+
+const POKER_SCAN_MODEL = [GAME_MODEL.baccarat, GAME_MODEL.niu_niu, GAME_MODEL.long_hu, GAME_MODEL.san_gong, GAME_MODEL.zha_jin_hua];
+const MA_JIANG_SCAN_MODEL = [GAME_MODEL.tong_zi];
 
 const sWidth = 1000;
 const sHeight = 560;
@@ -96,6 +107,7 @@ const pokerLongHuRef = shallowRef(null);
 const pokerNiuRef = shallowRef(null);
 const pokerSanGongRef = shallowRef(null);
 const pokerZhaJinHuaRef = shallowRef(null);
+const majiangTuiTongZiRef = shallowRef(null);
 const bEditRef = shallowRef(null);
 const clipLoading = ref(false);
 const clipTipsText = ref(null);
@@ -175,9 +187,12 @@ const handlerAnalysis = (canvas, token) => {
       function (blob) {
         // blob可直接用于上传
         const formData = new FormData();
+        let scanUrl = '';
+        if (POKER_SCAN_MODEL.includes(props.bindInfo?.game_model)) scanUrl = '/poker-scan';
+        if (MA_JIANG_SCAN_MODEL.includes(props.bindInfo?.game_model)) scanUrl = '/majiang-scan';
         formData.append('file', blob, 'canvas_image.jpg'); // 字段名需与后端一致
         axios
-          .post('/poker-scan', formData, {
+          .post(scanUrl, formData, {
             headers: { 'Content-Type': 'multipart/form-data', token: token } // 必须设置[9](@ref)
           })
           .then((response) => {
@@ -223,6 +238,9 @@ const useHitItem = () => {
   } else if (props.bindInfo.game_model === GAME_MODEL.zha_jin_hua) {
     const hits = pokerZhaJinHuaRef.value?.getHitItem();
     useHitKind(hits);
+  } else if (props.bindInfo.game_model === GAME_MODEL.tong_zi) {
+    const hits = majiangTuiTongZiRef.value?.getHitItem();
+    useHitKind(hits);
   }
 };
 
@@ -230,7 +248,6 @@ const useHitItem = () => {
 const saveArea = () => {
   const data = deepCopy(bEditRef.value?.getPointsMap());
   saveHitArea(data, (status) => {
-    console.log(status, '--------------------------status');
     if (status) {
       emits('setPointsMap', data);
       toggleOriginalImage();
@@ -242,7 +259,8 @@ const saveArea = () => {
 const setCompleteInfo = (aInfo) => {
   const cInfo = {};
   Object.keys(aInfo).forEach((name) => {
-    const aList = aInfo[name].filter((item) => item.bbox?.length === 2);
+    const markLen = MA_JIANG_SCAN_MODEL.includes(props.bindInfo?.game_model) ? 1 : 2;
+    const aList = aInfo[name].filter((item) => item.bbox?.length === markLen);
     let list = aList.map((item) => item.class_name);
     if (props.bindInfo?.game_model === GAME_MODEL.baccarat) {
       list = list.slice(0, 3);
@@ -264,6 +282,8 @@ const setCompleteInfo = (aInfo) => {
       list = list.slice(0, 3);
     } else if (props.bindInfo?.game_model === GAME_MODEL.zha_jin_hua) {
       list = list.slice(0, 3);
+    } else if (props.bindInfo?.game_model === GAME_MODEL.tong_zi) {
+      list = list.slice(0, 2);
     }
     cInfo[name] = list;
   });

@@ -2,6 +2,8 @@
 export const POKER_VALUE = ['2', '3', '4', '5', '6', '7', '8', '9', '10', 'J', 'Q', 'K', 'A'];
 // 牌花色
 export const POKER_SHAPE = ['H', 'D', 'C', 'S'];
+// 麻将值-筒子
+export const MA_JIANG_VALUE = ['1D', '2D', '3D', '4D', '5D', '6D', '7D', '8D', '9D'];
 
 // 牌型-百家乐
 export const BACCARAT_CARD_TYPE = {
@@ -129,15 +131,37 @@ export const ZHA_JIN_HUA_CARD_TYPE_DICT = [
   { name: '其他', value: ZHA_JIN_HUA_CARD_TYPE.other }
 ];
 
-// 彩金牌型
-export const BONUS_CARD_TYPE = {
-  royal_flush: 'royal_flush', // 皇家同花顺
-  flush: 'flush', // 同花顺
-  same_flower: 'same_flower', // 同花
-  straight: 'straight', // 顺子
-  gourd: 'gourd', // 葫芦
+// 牌型-炸金花
+export const TUI_TONG_ZI_TYPE = {
+  shuang_bao: 'shuang_bao', // 双宝
+  point_9: 'point_9',
+  point_8: 'point_8',
+  point_7: 'point_7',
+  point_6: 'point_6',
+  point_5: 'point_5',
+  point_4: 'point_4',
+  point_3: 'point_3',
+  point_2: 'point_2',
+  point_1: 'point_1',
+  point_0: 'point_0',
   other: 'other' // 其他
 };
+
+// 牌型-三公-字典
+export const TUI_TONG_ZI_TYPE_DICT = [
+  { name: '双宝', value: TUI_TONG_ZI_TYPE.shuang_bao },
+  { name: '9点', value: TUI_TONG_ZI_TYPE.point_9 },
+  { name: '8点', value: TUI_TONG_ZI_TYPE.point_8 },
+  { name: '7点', value: TUI_TONG_ZI_TYPE.point_7 },
+  { name: '6点', value: TUI_TONG_ZI_TYPE.point_6 },
+  { name: '5点', value: TUI_TONG_ZI_TYPE.point_5 },
+  { name: '4点', value: TUI_TONG_ZI_TYPE.point_4 },
+  { name: '3点', value: TUI_TONG_ZI_TYPE.point_3 },
+  { name: '2点', value: TUI_TONG_ZI_TYPE.point_2 },
+  { name: '1点', value: TUI_TONG_ZI_TYPE.point_1 },
+  { name: '0点', value: TUI_TONG_ZI_TYPE.point_0 },
+  { name: '其他', value: TUI_TONG_ZI_TYPE.other }
+];
 
 // 牌型-输赢-字典
 export const CARD_WIN_DICT = [
