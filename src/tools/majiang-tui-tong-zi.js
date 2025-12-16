@@ -4,53 +4,20 @@ import { POINTS_GENERAL_LIST } from '@/values/index.js';
 
 // 点数值对应
 const tongZiValueMap = {
-  '6D': 6,
-  '6B': 6,
-  '8B': 8,
-  '9B': 9,
-  '7B': 7,
-  '4C': 4,
-  '5D': 5,
-  '2F': 0,
-  '4D': 4,
-  '3D': 3,
-  '5B': 5,
-  '7D': 7,
-  '3C': 3,
-  '2C': 2,
-  '1C': 1,
-  '8D': 8,
-  '4B': 4,
-  '9D': 9,
-  '1D': 1,
-  EW: 0,
-  '2B': 2,
-  '1B': 1,
-  '3B': 3,
-  '4S': 0,
-  '2S': 0,
-  '3F': 0,
-  '1S': 0,
-  '3S': 0,
-  '1F': 0,
-  '4F': 0,
-  NW: 0,
-  SW: 0,
-  RD: 0,
-  WW: 0,
-  WD: 0,
-  '8C': 8,
-  '6C': 6,
-  '2D': 2,
-  '5C': 5,
-  GD: 0,
-  '7C': 7,
-  '9C': 9
+  circle_1: 1,
+  circle_2: 2,
+  circle_3: 3,
+  circle_4: 4,
+  circle_5: 5,
+  circle_6: 6,
+  circle_7: 7,
+  circle_8: 8,
+  circle_9: 9
 };
 
 // 命中牌型
 function _calculateTongZi(hand) {
-  const points = hand.map((card) => tongZiValueMap[card]);
+  const points = hand.map((card) => tongZiValueMap[card] ?? 0);
 
   // 判断双宝
   if (points[0] === 0 && points[1] === 0) {

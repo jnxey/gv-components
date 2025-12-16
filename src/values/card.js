@@ -3,7 +3,7 @@ export const POKER_VALUE = ['2', '3', '4', '5', '6', '7', '8', '9', '10', 'J', '
 // 牌花色
 export const POKER_SHAPE = ['H', 'D', 'C', 'S'];
 // 麻将值-筒子
-export const MA_JIANG_VALUE = ['1D', '2D', '3D', '4D', '5D', '6D', '7D', '8D', '9D'];
+export const MA_JIANG_VALUE = ['circle_1', 'circle_2', 'circle_3', 'circle_4', 'circle_5', 'circle_6', 'circle_7', 'circle_8', 'circle_9'];
 
 // 牌型-百家乐
 export const BACCARAT_CARD_TYPE = {
