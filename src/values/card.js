@@ -131,7 +131,7 @@ export const ZHA_JIN_HUA_CARD_TYPE_DICT = [
   { name: '其他', value: ZHA_JIN_HUA_CARD_TYPE.other }
 ];
 
-// 牌型-炸金花
+// 牌型-推筒子
 export const TUI_TONG_ZI_TYPE = {
   shuang_bao: 'shuang_bao', // 双宝
   point_9: 'point_9',
@@ -147,7 +147,7 @@ export const TUI_TONG_ZI_TYPE = {
   other: 'other' // 其他
 };
 
-// 牌型-三公-字典
+// 牌型-推筒子-字典
 export const TUI_TONG_ZI_TYPE_DICT = [
   { name: '双宝', value: TUI_TONG_ZI_TYPE.shuang_bao },
   { name: '9点', value: TUI_TONG_ZI_TYPE.point_9 },
