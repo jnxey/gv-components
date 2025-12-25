@@ -3,6 +3,7 @@
   <gv-hk-connection v-if="mode === 'hk_connection'" />
   <gv-hk-select v-if="mode === 'hk_select'" />
   <gv-hk-clip v-if="mode === 'hk_clip'" />
+  <gv-hk-chip v-if="mode === 'hk_chip'" />
 </template>
 <script setup>
 import GvHkMask from '@/packages/hk-mask/index.vue';
@@ -12,6 +13,7 @@ import GvHkConnection from '@/packages/hk-connection/index.vue';
 import GvHkSelect from '@/packages/hk-select/index.vue';
 import GvHkClip from '@/packages/hk-clip/index.vue';
 import { languageSet } from '@/lang/index.js';
+import GvHkChip from '@/packages/hk-chip/index.vue';
 
 const mode = ref();
 

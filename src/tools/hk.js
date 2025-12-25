@@ -164,7 +164,7 @@ export function getDevicePort(szDeviceIdentify) {
 }
 
 // 停止预览
-function clickStopRealPlay(windowIndex = window.g_iWndIndex) {
+export function clickStopRealPlay(windowIndex = window.g_iWndIndex) {
   var oWndInfo = WebVideoCtrl.I_GetWindowStatus(windowIndex);
   var szInfo = '';
   if (oWndInfo != null) {

@@ -7,9 +7,9 @@
   "clip": {
     "use_card": "Use this card type",
     "save_area": "Save area",
-    "back_card": "Return to card type",
+    "back_card": "Return to result",
     "view_hit": "View hot zone",
-    "rescan": "Re-identify cards",
+    "rescan": "Rescan",
     "tips_scan_click": "Please click the AI identification button",
     "tips_img_err1": "Image loading failed, please try again or contact the administrator",
     "tips_img_err2": "Image analysis failed, please try again or contact the administrator",

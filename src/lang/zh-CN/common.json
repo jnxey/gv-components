@@ -7,9 +7,9 @@
   "clip": {
     "use_card": "使用此牌型",
     "save_area": "保存区域",
-    "back_card": "返回牌型",
+    "back_card": "返回结果",
     "view_hit": "查看热区",
-    "rescan": "重新识牌",
+    "rescan": "重新扫描",
     "tips_scan_click": "请点击AI识牌按钮",
     "tips_img_err1": "图片加载失败，请重试或联系管理员",
     "tips_img_err2": "图片分析失败，请重试或联系管理员",

@@ -1,22 +1,22 @@
 <template>
   <div class="hk-clip">
-    <poker ref="pokerRef" :points-map="pointsMap" :bind-info="bindInfo" @set-points-map="setPointsMap" />
+    <scan-area ref="scanAreaRef" :points-map="pointsMap" :bind-info="bindInfo" @set-points-map="setPointsMap" />
   </div>
 </template>
 <script>
-export default { name: 'gv-hk-clip' };
+export default { name: 'gv-hk-chip' };
 </script>
 <script setup>
-import Poker from './_components/poker.vue';
 import { onBeforeMount, onMounted, provide, ref, shallowRef } from 'vue';
-import { clickLogin, initHKPlugin } from '@/tools/hk.js';
-import { deepCopy } from '@/tools/index.js';
+import { clickLogin, clickStartRealPlay, clickStopRealPlay, initHKPlugin, setWindowLayout } from '@/tools/hk.js';
+import { deepCopy, delayExec } from '@/tools/index.js';
 import { IframeCommunicator } from '@/tools/iframe-communicator.js';
 import { getPointFieldName } from '@/tools/query.js';
+import ScanArea from '@/packages/hk-chip/_components/scan-area.vue';
 
 const pointsMap = ref(null);
 const bindInfo = ref(null);
-const pokerRef = shallowRef();
+const scanAreaRef = shallowRef();
 
 const messenger = { instance: null };
 
@@ -32,11 +32,25 @@ const login = async () => {
   });
 };
 
-// 获取命中项
-const getHitKind = async (hitsItem, callback) => {
-  messenger.instance.request('preview-hit-item', hitsItem ?? []).then(async (data) => {
-    if (!!callback) callback(data);
+// 预览
+const preview = async () => {
+  const info = bindInfo.value ?? {};
+  const recorder = info.recorder ?? {};
+  const camera = info.camera ?? {};
+  setWindowLayout(1);
+  clickStartRealPlay({
+    szDeviceIdentify: `${recorder.ip}_${recorder.port}`,
+    iRtspPort: window.DEVICE_PORT.iRtspPort,
+    iChannelID: camera.channelId,
+    bZeroChannel: false,
+    iStreamType: 1,
+    windowIndex: 0
   });
+};
+
+// 停止预览
+const unpreview = async () => {
+  clickStopRealPlay();
 };
 
 // 使用命中项
@@ -56,7 +70,7 @@ const saveHitArea = async (data, callback) => {
 onMounted(() => {
   initHKPlugin();
   messenger.instance = new IframeCommunicator({
-    mark: 'scan-card',
+    mark: 'scan-chip-camera',
     targetWindow: window.parent
   });
 
@@ -68,12 +82,15 @@ onMounted(() => {
     await login();
   });
 
-  messenger.instance.on('try-scan-poker', async () => {
-    pokerRef.value?.tryScanPoker();
+  messenger.instance.on('try-scan-chip', async () => {
+    preview();
+    await delayExec(300);
+    scanAreaRef.value?.tryScanChip();
   });
 
-  messenger.instance.on('clear-scan-poker', async () => {
-    pokerRef.value?.clearAllInfo();
+  messenger.instance.on('stop-scan-chip', async () => {
+    unpreview();
+    scanAreaRef.value?.stopScanChip();
   });
 });
 
@@ -88,7 +105,6 @@ onBeforeMount(() => {
   }
 });
 
-provide('getHitKind', getHitKind);
 provide('useHitKind', useHitKind);
 provide('saveHitArea', saveHitArea);
 </script>

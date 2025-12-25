@@ -177,3 +177,25 @@ export function preprocessCanvas(inputCanvas, size = 640) {
 
   return outputCanvas;
 }
+
+// 根据数值获取像素
+export function getPX(num) {
+  if (isString(num) && num.indexOf('px') > -1) return num;
+  return num + 'px';
+}
+
+/**
+ * 生成随机字符串
+ * @param {number} length - 字符串长度
+ * @param {string} [charset] - 可选，自定义字符集（默认为字母和数字）
+ * @returns {string} - 随机字符串
+ */
+export function generateRandomString(length, charset = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789') {
+  let result = '';
+  const charsetLength = charset.length;
+  for (let i = 0; i < length; i++) {
+    const randomIndex = Math.floor(Math.random() * charsetLength);
+    result += charset[randomIndex];
+  }
+  return result;
+}

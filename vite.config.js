@@ -30,6 +30,11 @@ export default defineConfig({
         changeOrigin: true,
         rewrite: (path) => path.replace(/^\/majiang-scan/, '')
       },
+      '/chip-scan': {
+        target: 'http://192.168.1.114:9981/chip-scan',
+        changeOrigin: true,
+        rewrite: (path) => path.replace(/^\/chip-scan/, '')
+      },
       '/ISAPI': {
         target: 'http://192.168.1.114:8090/ISAPI',
         changeOrigin: true,

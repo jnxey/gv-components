@@ -59,7 +59,7 @@ const pokerShow = computed(() => {
   const listMap = props.analysisInfo ?? {};
   const result = {};
   POINTS_GENERAL_LIST.forEach((name) => {
-    result[name] = { list: listMap[name], showAdd: listMap[name].length < 2 };
+    result[name] = { list: listMap[name], showAdd: listMap[name]?.length < 2 };
   });
   return result;
 });

@@ -4,12 +4,14 @@
  * @param {Window} options.targetWindow - 目标窗口（iframe.contentWindow 或 window.parent）
  * @param {string} [options.targetOrigin='*'] - 目标源（推荐指定具体域名提升安全性）
  * @param {string} [options.origin=window.location.origin] - 本窗口源（用于校验消息来源）
+ * @param {string} [options.mark] - 标记
  */
 export class IframeCommunicator {
   constructor(options) {
     this.targetWindow = options.targetWindow;
     this.targetOrigin = options.targetOrigin || '*';
     this.origin = options.origin || window.location.origin;
+    this.mark = options.mark || '';
     this.messageHandlers = new Map(); // 存储事件监听回调
     this.pendingRequests = new Map(); // 存储未完成的请求（用于回调模式）
     this.requestId = 0;
@@ -36,7 +38,7 @@ export class IframeCommunicator {
    * @param {any} data - 发送的数据（支持结构化克隆对象）
    */
   send(type, data) {
-    this.targetWindow.postMessage({ type, data, source: 'iframe-communicator' }, this.targetOrigin);
+    this.targetWindow.postMessage({ type, data, source: 'iframe-communicator', mark: this.mark }, this.targetOrigin);
   }
 
   /**
@@ -59,7 +61,8 @@ export class IframeCommunicator {
           data,
           requestId,
           isRequest: true,
-          source: 'iframe-communicator'
+          source: 'iframe-communicator',
+          mark: this.mark
         },
         this.targetOrigin
       );
@@ -114,7 +117,9 @@ export class IframeCommunicator {
 
   // 内部方法：处理接收到的消息
   _handleMessage(event) {
+    // debugger;
     // 1. 安全校验
+    if (event.data.mark !== this.mark) return;
     if (event.origin !== this.origin && this.targetOrigin !== '*') return;
     const message = event.data;
     if (!message || message.source !== 'iframe-communicator') return;
@@ -144,7 +149,8 @@ export class IframeCommunicator {
             data: responseData,
             requestId: message.requestId,
             isResponse: true,
-            source: 'iframe-communicator'
+            source: 'iframe-communicator',
+            mark: this.mark
           },
           this.targetOrigin
         );
