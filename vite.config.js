@@ -20,10 +20,15 @@ export default defineConfig({
     host: '0.0.0.0',
     port: 8888,
     proxy: {
-      '/adminapi': {
-        target: 'http://192.168.1.102/adminapi',
+      '/poker-scan': {
+        target: 'http://192.168.1.114:9981/poker-scan',
         changeOrigin: true,
-        rewrite: (path) => path.replace(/^\/adminapi/, '')
+        rewrite: (path) => path.replace(/^\/poker-scan/, '')
+      },
+      '/majiang-scan': {
+        target: 'http://192.168.1.114:9981/majiang-scan',
+        changeOrigin: true,
+        rewrite: (path) => path.replace(/^\/majiang-scan/, '')
       },
       '/ISAPI': {
         target: 'http://192.168.1.114:8090/ISAPI',
