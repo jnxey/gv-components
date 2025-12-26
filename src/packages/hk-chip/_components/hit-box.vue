@@ -3,6 +3,12 @@
     <div
       class="hit-item"
       v-for="det in hits"
+      :class="{
+        moving: moving,
+        loading: !moving && !det.detail,
+        error: !moving && !!det.detail && (!det.view || !checkInfo[det.view?.code]?.check),
+        success: !moving && !!det.detail && !!det.view && !!checkInfo[det.view?.code]?.check
+      }"
       :key="det.UUID"
       :style="{
         top: getPX(det.bbox.cy / scale.height),
@@ -17,7 +23,11 @@
 import { computed } from 'vue';
 import { getPX } from '@/tools/index.js';
 
-const props = defineProps({ hits: Array, scale: Object, pointsMap: Object });
+const props = defineProps({ hits: Array, scale: Object, details: Object, pointsMap: Object, moving: Boolean });
+
+const checkInfo = computed(() => {
+  return {};
+});
 
 const hitBox = computed(() => {
   const points = props.pointsMap?.['s']?.points;
@@ -28,7 +38,6 @@ const hitBox = computed(() => {
   const maxY = Math.max(...points.map((item) => item[1]));
   const width = maxX - minX;
   const height = maxY - minY;
-  console.log(props.hits, '-------------hits');
   return {
     value: { top: minY, left: minX, width: width, height: height },
     style: { top: getPX(minY), left: getPX(minX), width: getPX(width), height: getPX(height) }
@@ -38,13 +47,43 @@ const hitBox = computed(() => {
 <style scoped>
 .hit-box {
   position: absolute;
-  border: 1px solid red;
+  border: 1px dashed #ff9900;
   z-index: 10;
 }
 
 .hit-item {
   position: absolute;
-  border: 2px solid #6fcf09;
+  border-width: 2px;
+  border-style: solid;
+  border-color: #1f85f8;
   transform: translate(-50%, -50%);
+
+  &.moving {
+    border-style: dashed;
+  }
+
+  &.success {
+    border-color: #05ed0f;
+  }
+
+  &.error {
+    border-color: #c60c0c;
+  }
+
+  &.loading {
+    animation: pulse-glow 1.5s linear infinite alternate;
+  }
+}
+
+@keyframes pulse-glow {
+  0% {
+    border-color: #1f85f8;
+  }
+  50% {
+    border-color: #66a4ea;
+  }
+  100% {
+    border-color: #1f85f8;
+  }
 }
 </style>

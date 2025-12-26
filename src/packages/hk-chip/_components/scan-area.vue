@@ -4,7 +4,7 @@
       <div id="divPlugin"></div>
       <!--   命中项   -->
       <template v-if="!originalImage">
-        <hit-box :hits="hitChipList" :scale="hitChipScale" :points-map="pointsMap" />
+        <hit-box :hits="hitChipList" :scale="hitChipScale" :details="hitChipDetail" :moving="!isSameNow" :points-map="pointsMap" />
       </template>
       <!--   原图   -->
       <template v-if="!!originalImage">
@@ -23,21 +23,22 @@
       <button class="link-button mr-12" @click.stop="toggleOriginalImage">
         {{ originalImage ? $t('common.clip.back_card') : $t('common.clip.view_hit') }}
       </button>
-      <button v-if="!!clipTipsText" class="link-button" @click.stop="scanPoker">{{ $t('common.clip.rescan') }}</button>
     </div>
   </div>
 </template>
 <script setup>
-import { clipImageByPolygon, deepCopy, generateRandomString, resizeCanvasByMaxSide } from '@/tools/index.js';
-import { computed, inject, ref, shallowRef } from 'vue';
+import { clipImageByPolygon, deepCopy, generateRandomString, mappingArrayToObject, resizeCanvasByMaxSide } from '@/tools/index.js';
+import { computed, inject, nextTick, reactive, ref, shallowRef, watch } from 'vue';
 import BEdit from '@/packages/hk-clip/_components/b-edit.vue';
 import { $t } from '@/lang/i18n.js';
 import { clickCapturePicData } from '@/tools/hk.js';
 import axios from 'axios';
 import HitBox from '@/packages/hk-chip/_components/hit-box.vue';
+import { useIsStable } from '@/packages/hk-chip/_hooks/is-stable.js';
 
 const useHitKind = inject('useHitKind');
 const saveHitArea = inject('saveHitArea');
+const getChipInfo = inject('getChipInfo');
 
 const sWidth = 1000;
 const sHeight = 560;
@@ -48,28 +49,31 @@ const props = defineProps({ bindInfo: Object, pointsMap: Object, width: Number, 
 const imgSrc = shallowRef(null);
 const bEditRef = shallowRef(null);
 const clipTipsText = ref(null);
-const completeTips = ref({});
 const originalImage = ref(false);
 const hitChipScale = ref({ width: 1, height: 1 });
 const hitChipList = ref([]);
+const hitChipDetail = ref({});
 const runScan = ref(false);
 
 const wrapStyle = computed(() => {
   return { width: `${sWidth}px`, height: `${sHeight}px` };
 });
 
+const { isSameNow, setNewList } = useIsStable();
+
 // 清空数据
 const clearAllInfo = () => {
+  hitChipList.value = [];
+  hitChipScale.value = { width: 1, height: 1 };
   clipTipsText.value = '';
   originalImage.value = false;
   imgSrc.value = null;
-  completeTips.value = {};
+  hitChipDetail.value = {};
 };
 
 // 切图
-const handlerClip = (info) => {
+const handlerClip = (info, text = false) => {
   if (!runScan.value) return;
-  clearAllInfo();
   clickCapturePicData(
     info.recorder,
     info.camera,
@@ -87,16 +91,18 @@ const handlerClip = (info) => {
         const radioHeight = img.height / sHeight;
         const clippedCanvas = clipImageByPolygon(img, { width: sWidth, height: sHeight }, props.pointsMap[pName].points);
         const { canvas, scale } = resizeCanvasByMaxSide(clippedCanvas, 640);
-        const analysis = await handlerAnalysis(canvas, info.token);
+        const analysis = await handlerAnalysis(canvas, info.token, text);
         // 如果图片过大，则缩小一点
         if (!!analysis) {
-          useHitItem(
-            analysis.map((item) => ({ ...item, UUID: generateRandomString(10) })),
-            { width: radioWidth * scale, height: radioHeight * scale }
-          );
+          const hList = analysis.map((item) => ({ ...item, UUID: generateRandomString(10), detail: !!text }));
+          setNewList(hList);
+          await nextTick();
+          if (!isSameNow.value || !!text) useHitItem(hList, { width: radioWidth * scale, height: radioHeight * scale });
+          if (!!text) syncChipInfo(hList);
         } else {
           clipTipsText.value = $t('common.clip.tips_img_err2');
         }
+        if (!!props.bindInfo && !text) handlerClip(props.bindInfo);
       };
     },
     () => {
@@ -107,7 +113,7 @@ const handlerClip = (info) => {
 };
 
 // 分析图片
-const handlerAnalysis = (canvas, token) => {
+const handlerAnalysis = (canvas, token, text) => {
   return new Promise((resolve) => {
     canvas.toBlob(
       function (blob) {
@@ -115,6 +121,7 @@ const handlerAnalysis = (canvas, token) => {
         const formData = new FormData();
         const scanUrl = '/chip-scan';
         formData.append('file', blob, 'canvas_image.jpg'); // 字段名需与后端一致
+        formData.append('scan_text', !!text ? 'yes' : 'no'); // 字段名需与后端一致
         axios
           .post(scanUrl, formData, {
             headers: { 'Content-Type': 'multipart/form-data', token: token } // 必须设置[9](@ref)
@@ -134,9 +141,9 @@ const handlerAnalysis = (canvas, token) => {
 
 // 尝试扫码
 const tryScanChip = () => {
-  if (!props.bindInfo) return;
+  clearAllInfo();
   runScan.value = true;
-  handlerClip(props.bindInfo);
+  if (!!props.bindInfo) handlerClip(props.bindInfo);
 };
 
 // 停止扫码
@@ -149,8 +156,17 @@ const useHitItem = (hits, scale) => {
   hitChipList.value = hits;
   hitChipScale.value = scale;
   useHitKind(hits);
-  if (!props.bindInfo) return;
-  handlerClip(props.bindInfo);
+};
+
+// 请求筹码信息
+const syncChipInfo = async (hits) => {
+  const chips = [];
+  hits.forEach((item) => {
+    if (!!item.view) chips.push(item.view.code);
+  });
+  getChipInfo(chips, (list) => {
+    hitChipDetail.value = mappingArrayToObject(list ?? [], 'unique_code');
+  });
 };
 
 // 保存区域
@@ -169,7 +185,16 @@ const toggleOriginalImage = () => {
   originalImage.value = !originalImage.value;
 };
 
-defineExpose({ handlerClip, tryScanChip, stopScanChip, clearAllInfo });
+watch(
+  () => isSameNow.value,
+  () => {
+    if (isSameNow.value) {
+      if (!!props.bindInfo) handlerClip(props.bindInfo, true);
+    }
+  }
+);
+
+defineExpose({ tryScanChip, stopScanChip, clearAllInfo });
 </script>
 <style scoped>
 .scan-area {

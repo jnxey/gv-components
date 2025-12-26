@@ -290,7 +290,7 @@ export async function clickCapturePicData(recorder, camera, success, error, prev
     }).then(
       function () {
         if (!preview) WebVideoCtrl.I_Stop({ iWndIndex: window.g_iWndIndex });
-        console.log('showOPInfo', fileName + ' 抓图数据打印成功！');
+        // console.log('showOPInfo', fileName + ' 抓图数据打印成功！');
       },
       function () {
         if (error) error();

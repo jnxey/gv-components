@@ -60,6 +60,13 @@ const useHitKind = async (hits, callback) => {
   });
 };
 
+// 获取筹码信息
+const getChipInfo = async (chips, callback) => {
+  messenger.instance.request('get-chip-info', chips).then(async (list) => {
+    callback(list);
+  });
+};
+
 // 保存区域
 const saveHitArea = async (data, callback) => {
   messenger.instance.request('save-hit-area', data).then(async (status) => {
@@ -107,6 +114,7 @@ onBeforeMount(() => {
 
 provide('useHitKind', useHitKind);
 provide('saveHitArea', saveHitArea);
+provide('getChipInfo', getChipInfo);
 </script>
 <style scoped>
 .hk-clip {
