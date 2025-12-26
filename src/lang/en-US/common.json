@@ -22,5 +22,8 @@
     "tips_err_4": "No new card is needed",
     "tips_err_5": "Please check the number of recognized playing cards",
     "tips_err_6": "Playing card recognition error, please check"
+  },
+  "chip": {
+    "not_bind": "未绑定"
   }
 }

@@ -16,14 +16,26 @@
         width: getPX(det.bbox.w / scale.width),
         height: getPX(det.bbox.h / scale.height)
       }"
-    ></div>
+    >
+      <template v-if="!!chipsDetails && !!det.view">
+        <div v-if="!!chipsDetails[det.view?.code]" class="chip-info flex-1 fz-14">
+          <div class="mb-4">{{ chipsDetails[det.view?.code].value }}</div>
+          <div class="mb-4">{{ chipsDetails[det.view?.code].currency }}</div>
+          <div>{{ chipsDetails[det.view?.code].bind_user || $t('common.chip.not_bind') }}</div>
+        </div>
+      </template>
+    </div>
   </div>
 </template>
 <script setup>
-import { computed } from 'vue';
+import { computed, inject } from 'vue';
 import { getPX } from '@/tools/index.js';
+import { $t } from '@/lang/i18n.js';
 
-const props = defineProps({ hits: Array, scale: Object, details: Object, pointsMap: Object, moving: Boolean });
+const filterCheck = inject('filterCheck');
+const chipsDetails = inject('chipsDetails');
+
+const props = defineProps({ hits: Array, scale: Object, pointsMap: Object, moving: Boolean });
 
 const checkInfo = computed(() => {
   return {};
@@ -55,6 +67,7 @@ const hitBox = computed(() => {
   position: absolute;
   border-width: 2px;
   border-style: solid;
+  color: #1f85f8;
   border-color: #1f85f8;
   transform: translate(-50%, -50%);
 
@@ -63,10 +76,12 @@ const hitBox = computed(() => {
   }
 
   &.success {
+    color: #05ed0f;
     border-color: #05ed0f;
   }
 
   &.error {
+    color: #c60c0c;
     border-color: #c60c0c;
   }
 

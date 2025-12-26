@@ -4,7 +4,7 @@
       <div id="divPlugin"></div>
       <!--   命中项   -->
       <template v-if="!originalImage">
-        <hit-box :hits="hitChipList" :scale="hitChipScale" :details="hitChipDetail" :moving="!isSameNow" :points-map="pointsMap" />
+        <hit-box :hits="hitChipList" :scale="hitChipScale" :moving="!isSameNow" :points-map="pointsMap" />
       </template>
       <!--   原图   -->
       <template v-if="!!originalImage">
@@ -38,7 +38,6 @@ import { useIsStable } from '@/packages/hk-chip/_hooks/is-stable.js';
 
 const useHitKind = inject('useHitKind');
 const saveHitArea = inject('saveHitArea');
-const getChipInfo = inject('getChipInfo');
 
 const sWidth = 1000;
 const sHeight = 560;
@@ -52,7 +51,6 @@ const clipTipsText = ref(null);
 const originalImage = ref(false);
 const hitChipScale = ref({ width: 1, height: 1 });
 const hitChipList = ref([]);
-const hitChipDetail = ref({});
 const runScan = ref(false);
 
 const wrapStyle = computed(() => {
@@ -68,7 +66,6 @@ const clearAllInfo = () => {
   clipTipsText.value = '';
   originalImage.value = false;
   imgSrc.value = null;
-  hitChipDetail.value = {};
 };
 
 // 切图
@@ -97,8 +94,8 @@ const handlerClip = (info, text = false) => {
           const hList = analysis.map((item) => ({ ...item, UUID: generateRandomString(10), detail: !!text }));
           setNewList(hList);
           await nextTick();
-          if (!isSameNow.value || !!text) useHitItem(hList, { width: radioWidth * scale, height: radioHeight * scale });
-          if (!!text) syncChipInfo(hList);
+          if (!isSameNow.value || !!text) setChipList(hList, { width: radioWidth * scale, height: radioHeight * scale });
+          if (!!text) useHitItem(hList);
         } else {
           clipTipsText.value = $t('common.clip.tips_img_err2');
         }
@@ -152,21 +149,18 @@ const stopScanChip = () => {
 };
 
 // 使用命中项
-const useHitItem = (hits, scale) => {
+const setChipList = (hits, scale) => {
   hitChipList.value = hits;
   hitChipScale.value = scale;
-  useHitKind(hits);
 };
 
-// 请求筹码信息
-const syncChipInfo = async (hits) => {
+// 使用命中项
+const useHitItem = (hits) => {
   const chips = [];
   hits.forEach((item) => {
     if (!!item.view) chips.push(item.view.code);
   });
-  getChipInfo(chips, (list) => {
-    hitChipDetail.value = mappingArrayToObject(list ?? [], 'unique_code');
-  });
+  useHitKind(chips);
 };
 
 // 保存区域

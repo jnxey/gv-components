@@ -22,5 +22,8 @@
     "tips_err_4": "不需补牌",
     "tips_err_5": "请检查牌识别的张数",
     "tips_err_6": "识别错误，请检查"
+  },
+  "chip": {
+    "not_bind": "Unbind"
   }
 }
