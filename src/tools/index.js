@@ -178,6 +178,43 @@ export function preprocessCanvas(inputCanvas, size = 640) {
   return outputCanvas;
 }
 
+/**
+ * 等比缩放 canvas，使最大边不超过 maxSide
+ * @param {HTMLCanvasElement} canvas
+ * @param {number} maxSide 最大边长
+ * @returns {{ canvas: HTMLCanvasElement, scale: number }}
+ */
+export function resizeCanvasByMaxSide(canvas, maxSide) {
+  const { width, height } = canvas;
+
+  // 已满足要求，不缩放
+  if (width <= maxSide && height <= maxSide) {
+    return {
+      canvas,
+      scale: 1
+    };
+  }
+
+  // 计算缩放比例（按最大边）
+  const scale = maxSide / Math.max(width, height);
+
+  const newWidth = Math.round(width * scale);
+  const newHeight = Math.round(height * scale);
+
+  // 创建新 canvas
+  const newCanvas = document.createElement('canvas');
+  newCanvas.width = newWidth;
+  newCanvas.height = newHeight;
+
+  const ctx = newCanvas.getContext('2d');
+  ctx.drawImage(canvas, 0, 0, newWidth, newHeight);
+
+  return {
+    canvas: newCanvas,
+    scale
+  };
+}
+
 // 根据数值获取像素
 export function getPX(num) {
   if (isString(num) && num.indexOf('px') > -1) return num;

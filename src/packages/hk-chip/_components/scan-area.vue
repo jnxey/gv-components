@@ -4,7 +4,7 @@
       <div id="divPlugin"></div>
       <!--   命中项   -->
       <template v-if="!originalImage">
-        <hit-box :hits="hitChipList" :points-map="pointsMap" />
+        <hit-box :hits="hitChipList" :scale="hitChipScale" :points-map="pointsMap" />
       </template>
       <!--   原图   -->
       <template v-if="!!originalImage">
@@ -28,7 +28,7 @@
   </div>
 </template>
 <script setup>
-import { clipImageByPolygon, deepCopy, generateRandomString } from '@/tools/index.js';
+import { clipImageByPolygon, deepCopy, generateRandomString, resizeCanvasByMaxSide } from '@/tools/index.js';
 import { computed, inject, ref, shallowRef } from 'vue';
 import BEdit from '@/packages/hk-clip/_components/b-edit.vue';
 import { $t } from '@/lang/i18n.js';
@@ -50,40 +50,9 @@ const bEditRef = shallowRef(null);
 const clipTipsText = ref(null);
 const completeTips = ref({});
 const originalImage = ref(false);
-const hitChipList = ref([
-  {
-    bbox: {
-      x1: 325.5163879394531,
-      x2: 741.8914184570312,
-      y1: 152.8841552734375,
-      y2: 566.07568359375,
-      cx: 533.7039031982422,
-      cy: 359.47991943359375,
-      w: 416.3750305175781,
-      h: 413.1915283203125,
-      angle: true
-    },
-    score: 0.9581922292709351,
-    class_name: 'chip_small',
-    view: null
-  },
-  {
-    bbox: {
-      x1: 420.3887634277344,
-      x2: 829.4578247070312,
-      y1: 756.6889038085938,
-      y2: 1172.9493408203125,
-      cx: 624.9232940673828,
-      cy: 964.8191223144531,
-      w: 409.0690612792969,
-      h: 416.26043701171875,
-      angle: false
-    },
-    score: 0.9520618915557861,
-    class_name: 'chip_small',
-    view: null
-  }
-]);
+const hitChipScale = ref({ width: 1, height: 1 });
+const hitChipList = ref([]);
+const runScan = ref(false);
 
 const wrapStyle = computed(() => {
   return { width: `${sWidth}px`, height: `${sHeight}px` };
@@ -99,6 +68,7 @@ const clearAllInfo = () => {
 
 // 切图
 const handlerClip = (info) => {
+  if (!runScan.value) return;
   clearAllInfo();
   clickCapturePicData(
     info.recorder,
@@ -113,10 +83,17 @@ const handlerClip = (info) => {
       img.onload = async function () {
         const pName = 's';
         if (!props.pointsMap[pName]) return;
+        const radioWidth = img.width / sWidth;
+        const radioHeight = img.height / sHeight;
         const clippedCanvas = clipImageByPolygon(img, { width: sWidth, height: sHeight }, props.pointsMap[pName].points);
-        const analysis = await handlerAnalysis(clippedCanvas, info.token);
+        const { canvas, scale } = resizeCanvasByMaxSide(clippedCanvas, 640);
+        const analysis = await handlerAnalysis(canvas, info.token);
+        // 如果图片过大，则缩小一点
         if (!!analysis) {
-          useHitItem(analysis.map((item) => ({ ...item, UUID: generateRandomString(10) })));
+          useHitItem(
+            analysis.map((item) => ({ ...item, UUID: generateRandomString(10) })),
+            { width: radioWidth * scale, height: radioHeight * scale }
+          );
         } else {
           clipTipsText.value = $t('common.clip.tips_img_err2');
         }
@@ -157,18 +134,23 @@ const handlerAnalysis = (canvas, token) => {
 
 // 尝试扫码
 const tryScanChip = () => {
-  console.log(props.bindInfo, '--------------------props.bindInfo');
   if (!props.bindInfo) return;
+  runScan.value = true;
   handlerClip(props.bindInfo);
 };
 
 // 停止扫码
-const stopScanChip = () => {};
+const stopScanChip = () => {
+  runScan.value = false;
+};
 
 // 使用命中项
-const useHitItem = (hits) => {
-  // hitChipList.value = hits;
+const useHitItem = (hits, scale) => {
+  hitChipList.value = hits;
+  hitChipScale.value = scale;
   useHitKind(hits);
+  if (!props.bindInfo) return;
+  handlerClip(props.bindInfo);
 };
 
 // 保存区域
