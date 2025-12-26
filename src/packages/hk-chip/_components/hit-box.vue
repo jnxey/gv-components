@@ -6,8 +6,8 @@
       :class="{
         moving: moving,
         loading: !moving && !det.detail,
-        error: !moving && !!det.detail && (!det.view || !checkInfo[det.view?.code]?.check),
-        success: !moving && !!det.detail && !!det.view && !!checkInfo[det.view?.code]?.check
+        error: !moving && !!det.detail && (!det.view || !!errorInfo[det.view?.code]),
+        success: !moving && !!det.detail && !!det.view && !errorInfo[det.view?.code]
       }"
       :key="det.UUID"
       :style="{
@@ -19,9 +19,9 @@
     >
       <template v-if="!!chipsDetails && !!det.view">
         <div v-if="!!chipsDetails[det.view?.code]" class="chip-info flex-1 fz-14">
-          <div class="mb-4">{{ chipsDetails[det.view?.code].value }}</div>
-          <div class="mb-4">{{ chipsDetails[det.view?.code].currency }}</div>
-          <div>{{ chipsDetails[det.view?.code].bind_user || $t('common.chip.not_bind') }}</div>
+          <div class="chip-info-text">{{ chipsDetails[det.view?.code].value }}</div>
+          <div class="chip-info-text">{{ chipsDetails[det.view?.code].currency }}</div>
+          <div class="chip-info-text">{{ chipsDetails[det.view?.code].bind_user || $t('common.chip.not_bind') }}</div>
         </div>
       </template>
     </div>
@@ -37,8 +37,8 @@ const chipsDetails = inject('chipsDetails');
 
 const props = defineProps({ hits: Array, scale: Object, pointsMap: Object, moving: Boolean });
 
-const checkInfo = computed(() => {
-  return {};
+const errorInfo = computed(() => {
+  return filterCheck.value?.errorMap ?? {};
 });
 
 const hitBox = computed(() => {
@@ -70,6 +70,11 @@ const hitBox = computed(() => {
   color: #1f85f8;
   border-color: #1f85f8;
   transform: translate(-50%, -50%);
+
+  .chip-info-text {
+    margin-left: 4px;
+    margin-right: 4px;
+  }
 
   &.moving {
     border-style: dashed;
