@@ -22,7 +22,7 @@
         <div v-if="!!chipsInfo[det.view?.code]" class="chip-info flex-1 fz-14">
           <div class="chip-info-text">{{ chipsInfo[det.view?.code].value }}</div>
           <div class="chip-info-text">{{ chipsInfo[det.view?.code].currency }}</div>
-          <div class="chip-info-text">{{ chipsInfo[det.view?.code].bind_user || $t('common.chip.not_bind') }}</div>
+          <div class="chip-info-text">{{ chipsInfo[det.view?.code].bind || $t('common.chip.not_bind') }}</div>
         </div>
       </template>
     </div>
