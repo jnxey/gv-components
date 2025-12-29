@@ -57,7 +57,7 @@ const wrapStyle = computed(() => {
   return { width: `${sWidth}px`, height: `${sHeight}px` };
 });
 
-const { isSameNow, setNewList } = useIsStable();
+const { isSameNow, clearNewList, setNewList } = useIsStable();
 
 // 清空数据
 const clearAllInfo = () => {
@@ -66,6 +66,7 @@ const clearAllInfo = () => {
   clipTipsText.value = '';
   originalImage.value = false;
   imgSrc.value = null;
+  clearNewList();
 };
 
 // 切图

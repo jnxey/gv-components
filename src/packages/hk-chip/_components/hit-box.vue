@@ -6,8 +6,9 @@
       :class="{
         moving: moving,
         loading: !moving && !det.detail,
-        error: !moving && !!det.detail && (!det.view || !!errorInfo[det.view?.code]),
-        success: !moving && !!det.detail && !!det.view && !errorInfo[det.view?.code]
+        error: !moving && !!det.detail && (!det.view || !!errorInfo[det.view?.code] || !chipsInfo[det.view?.code]),
+        success: !moving && !!det.detail && !!det.view && !!chipsInfo[det.view?.code] && !errorInfo[det.view?.code],
+        ignore: !moving && !!det.detail && !!det.view && !!chipsInfo[det.view?.code]?.ignore
       }"
       :key="det.UUID"
       :style="{
@@ -17,11 +18,11 @@
         height: getPX(det.bbox.h / scale.height)
       }"
     >
-      <template v-if="!!chipsDetails && !!det.view">
-        <div v-if="!!chipsDetails[det.view?.code]" class="chip-info flex-1 fz-14">
-          <div class="chip-info-text">{{ chipsDetails[det.view?.code].value }}</div>
-          <div class="chip-info-text">{{ chipsDetails[det.view?.code].currency }}</div>
-          <div class="chip-info-text">{{ chipsDetails[det.view?.code].bind_user || $t('common.chip.not_bind') }}</div>
+      <template v-if="!!det.view">
+        <div v-if="!!chipsInfo[det.view?.code]" class="chip-info flex-1 fz-14">
+          <div class="chip-info-text">{{ chipsInfo[det.view?.code].value }}</div>
+          <div class="chip-info-text">{{ chipsInfo[det.view?.code].currency }}</div>
+          <div class="chip-info-text">{{ chipsInfo[det.view?.code].bind_user || $t('common.chip.not_bind') }}</div>
         </div>
       </template>
     </div>
@@ -40,6 +41,8 @@ const props = defineProps({ hits: Array, scale: Object, pointsMap: Object, movin
 const errorInfo = computed(() => {
   return filterCheck.value?.errorMap ?? {};
 });
+
+const chipsInfo = computed(() => chipsDetails.value ?? {});
 
 const hitBox = computed(() => {
   const points = props.pointsMap?.['s']?.points;
@@ -92,6 +95,10 @@ const hitBox = computed(() => {
 
   &.loading {
     animation: pulse-glow 1.5s linear infinite alternate;
+  }
+
+  &.ignore {
+    opacity: 0;
   }
 }
 

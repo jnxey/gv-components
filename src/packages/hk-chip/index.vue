@@ -89,7 +89,7 @@ onMounted(() => {
 
   messenger.instance.on('try-scan-chip', async () => {
     preview();
-    await delayExec(300);
+    await delayExec(500);
     scanAreaRef.value?.tryScanChip();
   });
 

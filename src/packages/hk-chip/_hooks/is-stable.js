@@ -9,6 +9,11 @@ export function useIsStable() {
 
   let isSameNow = computed(() => sameCount.value > 5);
 
+  const clearNewList = () => {
+    lastList = [];
+    newList = [];
+  };
+
   const setNewList = (list) => {
     lastList = newList;
     newList = list.map((point) => {
@@ -22,7 +27,7 @@ export function useIsStable() {
     }
   };
 
-  return { isSameNow, setNewList };
+  return { isSameNow, clearNewList, setNewList };
 }
 
 /**
