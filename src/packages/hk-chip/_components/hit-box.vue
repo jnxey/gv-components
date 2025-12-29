@@ -24,6 +24,18 @@
           <div class="chip-info-text">{{ chipsInfo[det.view?.code].currency }}</div>
           <div class="chip-info-text">{{ chipsInfo[det.view?.code].bind || $t('common.chip.not_bind') }}</div>
         </div>
+        <template v-if="!moving && !!det.detail && !!det.view && !chipsInfo[det.view?.code]">
+          <div class="chip-info flex-1 fz-14">
+            <div class="chip-info-text">{{ $t('common.chip.not_enter') }}</div>
+          </div>
+        </template>
+      </template>
+      <template v-if="!moving && !det.view && !!det.detail">
+        <div class="chip-info flex-1 fz-14">
+          <div class="chip-info flex-1 fz-14">
+            <div class="chip-info-text">{{ $t('common.chip.not_match') }}</div>
+          </div>
+        </div>
       </template>
     </div>
   </div>

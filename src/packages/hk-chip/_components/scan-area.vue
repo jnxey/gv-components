@@ -160,6 +160,7 @@ const useHitItem = (hits) => {
   const chips = [];
   hits.forEach((item) => {
     if (!!item.view) chips.push(item.view.code);
+    else chips.push('PLACE_VALUE');
   });
   useHitKind(chips);
 };

@@ -24,6 +24,8 @@
     "tips_err_6": "识别错误，请检查"
   },
   "chip": {
-    "not_bind": "未绑定"
+    "not_bind": "未绑定",
+    "not_match": "未识别",
+    "not_enter": "未录入"
   }
 }

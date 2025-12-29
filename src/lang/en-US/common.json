@@ -24,6 +24,8 @@
     "tips_err_6": "Playing card recognition error, please check"
   },
   "chip": {
-    "not_bind": "Unbind"
+    "not_bind": "Unbind",
+    "not_match": "Unidentified",
+    "not_enter": "Not recorded"
   }
 }
