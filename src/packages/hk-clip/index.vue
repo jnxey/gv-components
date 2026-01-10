@@ -9,8 +9,8 @@ export default { name: 'gv-hk-clip' };
 <script setup>
 import Poker from './_components/poker.vue';
 import { onBeforeMount, onMounted, provide, ref, shallowRef } from 'vue';
-import { clickLogin, initHKPlugin } from '@/tools/hk.js';
-import { deepCopy } from '@/tools/index.js';
+import { clickLogin, clickStartRealPlay, clickStopRealPlay, initHKPlugin, setWindowLayout } from '@/tools/hk.js';
+import { deepCopy, delayExec } from '@/tools/index.js';
 import { IframeCommunicator } from '@/tools/iframe-communicator.js';
 import { getPointFieldName } from '@/tools/query.js';
 
@@ -30,6 +30,27 @@ const login = async () => {
     szUsername: recorder.account,
     szPassword: recorder.password
   });
+};
+
+// 预览
+const preview = async () => {
+  const info = bindInfo.value ?? {};
+  const recorder = info.recorder ?? {};
+  const camera = info.camera ?? {};
+  setWindowLayout(1);
+  clickStartRealPlay({
+    szDeviceIdentify: `${recorder.ip}_${recorder.port}`,
+    iRtspPort: window.DEVICE_PORT.iRtspPort,
+    iChannelID: camera.channelId,
+    bZeroChannel: false,
+    iStreamType: 1,
+    windowIndex: 0
+  });
+};
+
+// 停止预览
+const unpreview = async () => {
+  clickStopRealPlay();
 };
 
 // 获取命中项
@@ -73,7 +94,13 @@ onMounted(() => {
   });
 
   messenger.instance.on('try-scan-poker', async () => {
+    preview();
+    await delayExec(500);
     pokerRef.value?.tryScanPoker();
+  });
+
+  messenger.instance.on('stop-scan-poker', async () => {
+    unpreview();
   });
 
   messenger.instance.on('clear-scan-poker', async () => {

@@ -3,9 +3,9 @@
     <div class="poker-box" :style="wrapStyle">
       <div id="divPlugin"></div>
       <!--   loading   -->
-      <loading v-if="!!clipLoading" />
+      <loading v-if="!!clipLoading" class="loading-box" />
       <!--   牌型   -->
-      <template v-else-if="completeInfo && !originalImage">
+      <template v-else-if="completeInfo && bindInfo && !originalImage">
         <poker-baccarat
           ref="pokerBaccaratRef"
           v-if="bindInfo.game_model === GAME_MODEL.baccarat"
@@ -177,7 +177,8 @@ const handlerClip = (info, isFirst) => {
     () => {
       clipLoading.value = false;
       clipTipsText.value = $t('common.clip.tips_img_err3');
-    }
+    },
+    true
   );
 };
 
@@ -218,7 +219,7 @@ const scanPoker = (isFirst) => {
 
 // 若识别数据则扫拍
 const tryScanPoker = (isFirst = true) => {
-  if (!!completeInfo.value) return;
+  if (!!completeInfo.value && isFirst) return;
   scanPoker(isFirst);
 };
 
@@ -247,7 +248,7 @@ const useHitItem = () => {
 
 // 自动尝试命中
 const autoHitItem = async () => {
-  await delayExec(100);
+  await delayExec(300);
   useHitItem();
 };
 
@@ -314,6 +315,14 @@ defineExpose({ handlerClip, scanPoker, tryScanPoker, clearAllInfo });
 .poker {
   .poker-box {
     position: relative;
+  }
+
+  .loading-box {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100px;
+    height: 30px;
   }
 
   #divPlugin {
