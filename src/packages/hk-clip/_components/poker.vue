@@ -3,9 +3,9 @@
     <div class="poker-box" :style="wrapStyle">
       <div id="divPlugin"></div>
       <!--   loading   -->
-      <loading v-if="!!clipLoading" class="loading-box" />
+      <!--            <loading v-if="!!clipLoading" class="loading-box" />-->
       <!--   牌型   -->
-      <template v-else-if="completeInfo && bindInfo && !originalImage">
+      <template v-if="completeInfo && bindInfo && !originalImage">
         <poker-baccarat
           ref="pokerBaccaratRef"
           v-if="bindInfo.game_model === GAME_MODEL.baccarat"
@@ -128,6 +128,7 @@ const clearAllInfo = () => {
   completeInfo.value = null;
   clipTipsText.value = '';
   completeTips.value = {};
+  console.log('--------------------------clear-------------------------');
 };
 
 // 检查点位信息
@@ -165,13 +166,13 @@ const handlerClip = (info, isFirst) => {
             checkAllPoint(() => {
               clipLoading.value = false;
               setCompleteInfo(unref(analysisInfo));
-              if (props.autoSelect) autoHitItem();
             });
           } else {
             clipLoading.value = false;
             clipTipsText.value = $t('common.clip.tips_img_err2');
           }
         }
+        if (props.autoSelect) autoHitItem();
       };
     },
     () => {

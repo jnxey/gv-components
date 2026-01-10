@@ -1,6 +1,6 @@
 <template>
   <div class="hk-clip">
-    <poker ref="pokerRef" auto-select :points-map="pointsMap" :bind-info="bindInfo" @set-points-map="setPointsMap" />
+    <poker ref="pokerRef" :auto-select="autoSelect" :points-map="pointsMap" :bind-info="bindInfo" @set-points-map="setPointsMap" />
   </div>
 </template>
 <script>
@@ -17,6 +17,8 @@ import { getPointFieldName } from '@/tools/query.js';
 const pointsMap = ref(null);
 const bindInfo = ref(null);
 const pokerRef = shallowRef();
+
+const autoSelect = ref(false);
 
 const messenger = { instance: null };
 
@@ -96,10 +98,12 @@ onMounted(() => {
   messenger.instance.on('try-scan-poker', async () => {
     preview();
     await delayExec(500);
+    autoSelect.value = true;
     pokerRef.value?.tryScanPoker(true);
   });
 
   messenger.instance.on('stop-scan-poker', async () => {
+    autoSelect.value = false;
     unpreview();
   });
 
