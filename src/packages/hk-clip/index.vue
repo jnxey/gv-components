@@ -41,13 +41,13 @@ const getHitKind = async (hitsItem, callback) => {
 
 // 使用命中项
 const useHitKind = async (hits, isAuto, callback) => {
+  if (!!isAuto && !hits?.length) {
+    // 自动扫且无数据，再扫一遍
+    return pokerRef.value?.tryScanPoker(false);
+  }
   messenger.instance.request('use-hit-item', hits ?? []).then(async (status) => {
     if (!!callback) callback(status);
   });
-  if (!!isAuto && !hits?.length) {
-    // 自动扫且无数据，再扫一遍
-    pokerRef.value?.tryScanPoker(false);
-  }
 };
 
 // 保存区域
