@@ -73,7 +73,7 @@
 </template>
 <script setup>
 import { clickCapturePicData } from '@/tools/hk.js';
-import { clipImageByPolygon, deepCopy, preprocessCanvas } from '@/tools/index.js';
+import { clipImageByPolygon, deepCopy, delayExec, preprocessCanvas } from '@/tools/index.js';
 import axios from 'axios';
 import { computed, inject, ref, shallowRef, unref } from 'vue';
 import { GAME_MODEL } from '@/values/index.js';
@@ -100,7 +100,7 @@ const sHeight = 560;
 
 const emits = defineEmits(['setPointsMap']);
 
-const props = defineProps({ bindInfo: Object, pointsMap: Object, width: Number, height: Number });
+const props = defineProps({ bindInfo: Object, pointsMap: Object, width: Number, height: Number, autoSelect: Boolean });
 const imgSrc = shallowRef(null);
 const pokerBaccaratRef = shallowRef(null);
 const pokerLongHuRef = shallowRef(null);
@@ -123,10 +123,10 @@ const wrapStyle = computed(() => {
 // 清空数据
 const clearAllInfo = () => {
   clipLoading.value = false;
-  completeInfo.value = null;
-  clipTipsText.value = '';
   originalImage.value = false;
   imgSrc.value = null;
+  completeInfo.value = null;
+  clipTipsText.value = '';
   completeTips.value = {};
 };
 
@@ -141,8 +141,8 @@ const checkAllPoint = (callback) => {
 };
 
 // 切图
-const handlerClip = (info) => {
-  clearAllInfo();
+const handlerClip = (info, isFirst) => {
+  if (isFirst) clearAllInfo();
   clipLoading.value = true;
   clickCapturePicData(
     info.recorder,
@@ -165,6 +165,7 @@ const handlerClip = (info) => {
             checkAllPoint(() => {
               clipLoading.value = false;
               setCompleteInfo(unref(analysisInfo));
+              if (props.autoSelect) autoHitItem();
             });
           } else {
             clipLoading.value = false;
@@ -209,39 +210,45 @@ const handlerAnalysis = (canvas, token) => {
 };
 
 // 扫牌
-const scanPoker = () => {
+const scanPoker = (isFirst) => {
   if (!props.bindInfo) return;
   const info = props.bindInfo ?? {};
-  handlerClip(info);
+  handlerClip(info, isFirst);
 };
 
 // 若识别数据则扫拍
-const tryScanPoker = () => {
+const tryScanPoker = (isFirst = true) => {
   if (!!completeInfo.value) return;
-  scanPoker();
+  scanPoker(isFirst);
 };
 
 // 使用命中项
 const useHitItem = () => {
   if (props.bindInfo.game_model === GAME_MODEL.baccarat) {
     const hits = pokerBaccaratRef.value?.getHitItem();
-    useHitKind(hits);
+    useHitKind(hits, props.autoSelect);
   } else if (props.bindInfo.game_model === GAME_MODEL.long_hu) {
     const hits = pokerLongHuRef.value?.getHitItem();
-    useHitKind(hits);
+    useHitKind(hits, props.autoSelect);
   } else if (props.bindInfo.game_model === GAME_MODEL.niu_niu) {
     const hits = pokerNiuRef.value?.getHitItem();
-    useHitKind(hits);
+    useHitKind(hits, props.autoSelect);
   } else if (props.bindInfo.game_model === GAME_MODEL.san_gong) {
     const hits = pokerSanGongRef.value?.getHitItem();
-    useHitKind(hits);
+    useHitKind(hits, props.autoSelect);
   } else if (props.bindInfo.game_model === GAME_MODEL.zha_jin_hua) {
     const hits = pokerZhaJinHuaRef.value?.getHitItem();
-    useHitKind(hits);
+    useHitKind(hits, props.autoSelect);
   } else if (props.bindInfo.game_model === GAME_MODEL.tong_zi) {
     const hits = majiangTuiTongZiRef.value?.getHitItem();
-    useHitKind(hits);
+    useHitKind(hits, props.autoSelect);
   }
+};
+
+// 自动尝试命中
+const autoHitItem = async () => {
+  await delayExec(100);
+  useHitItem();
 };
 
 // 保存区域

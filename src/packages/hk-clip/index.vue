@@ -1,6 +1,6 @@
 <template>
   <div class="hk-clip">
-    <poker ref="pokerRef" :points-map="pointsMap" :bind-info="bindInfo" @set-points-map="setPointsMap" />
+    <poker ref="pokerRef" auto-select :points-map="pointsMap" :bind-info="bindInfo" @set-points-map="setPointsMap" />
   </div>
 </template>
 <script>
@@ -40,10 +40,14 @@ const getHitKind = async (hitsItem, callback) => {
 };
 
 // 使用命中项
-const useHitKind = async (hits, callback) => {
+const useHitKind = async (hits, isAuto, callback) => {
   messenger.instance.request('use-hit-item', hits ?? []).then(async (status) => {
     if (!!callback) callback(status);
   });
+  if (!!isAuto && !hits?.length) {
+    // 自动扫且无数据，再扫一遍
+    pokerRef.value?.tryScanPoker(false);
+  }
 };
 
 // 保存区域
