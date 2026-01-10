@@ -96,7 +96,7 @@ onMounted(() => {
   messenger.instance.on('try-scan-poker', async () => {
     preview();
     await delayExec(500);
-    pokerRef.value?.tryScanPoker();
+    pokerRef.value?.tryScanPoker(true);
   });
 
   messenger.instance.on('stop-scan-poker', async () => {
