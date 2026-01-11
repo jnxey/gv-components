@@ -47,7 +47,7 @@ const pokerShow = computed(() => {
   const listMap = props.analysisInfo ?? {};
   const result = {};
   POINTS_BACCARAT_LIST.forEach((name) => {
-    result[name] = { list: listMap[name], class: 'box-n' + listMap[name].length, showAdd: listMap[name].length < 3 };
+    result[name] = { list: listMap[name], class: 'box-n' + listMap[name]?.length, showAdd: listMap[name]?.length < 3 };
   });
   return result;
 });
@@ -97,6 +97,7 @@ watch(
       pokerKindHit.value = null;
     } else {
       checkRuleTips.value = checkBaccaratPokerRule(listMap, pokerCheck);
+      if (!!checkRuleTips.value) return;
       getHitKind(pokerCheck?.hitItem ?? [], (data) => {
         pokerKindHit.value = data;
       });

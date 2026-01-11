@@ -5,7 +5,7 @@
       <!--   loading   -->
       <loading class="loading-box" />
       <!--   牌型   -->
-      <template v-if="completeInfo && bindInfo && !originalImage">
+      <template v-if="!!bindInfo && !originalImage">
         <poker-baccarat
           ref="pokerBaccaratRef"
           v-if="bindInfo.game_model === GAME_MODEL.baccarat"
@@ -50,7 +50,7 @@
         />
       </template>
       <!--   原图   -->
-      <template v-else-if="!!completeInfo && !!originalImage">
+      <template v-else-if="!!originalImage">
         <div class="show-pic">
           <b-edit v-if="!!pointsMap" ref="bEditRef" :style="wrapStyle" :points-map-init="pointsMap" :bind-info-init="bindInfo" :img-src="imgSrc" />
         </div>
