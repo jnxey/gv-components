@@ -3,7 +3,7 @@
     <div class="poker-box" :style="wrapStyle">
       <div id="divPlugin"></div>
       <!--   loading   -->
-      <!--            <loading v-if="!!clipLoading" class="loading-box" />-->
+      <loading class="loading-box" />
       <!--   牌型   -->
       <template v-if="completeInfo && bindInfo && !originalImage">
         <poker-baccarat
@@ -50,14 +50,10 @@
         />
       </template>
       <!--   原图   -->
-      <template v-else-if="completeInfo && !!originalImage">
+      <template v-else-if="!!completeInfo && !!originalImage">
         <div class="show-pic">
           <b-edit v-if="!!pointsMap" ref="bEditRef" :style="wrapStyle" :points-map-init="pointsMap" :bind-info-init="bindInfo" :img-src="imgSrc" />
         </div>
-      </template>
-      <!--   提示信息   -->
-      <template v-else>
-        <div class="info-text">{{ clipTipsText ?? $t('common.clip.tips_scan_click') }}</div>
       </template>
     </div>
     <!--  按钮区域  -->
@@ -128,7 +124,6 @@ const clearAllInfo = () => {
   completeInfo.value = null;
   clipTipsText.value = '';
   completeTips.value = {};
-  console.log('--------------------------clear-------------------------');
 };
 
 // 检查点位信息
@@ -179,7 +174,7 @@ const handlerClip = (info, isFirst) => {
       clipLoading.value = false;
       clipTipsText.value = $t('common.clip.tips_img_err3');
     },
-    true
+    false
   );
 };
 
@@ -323,7 +318,7 @@ defineExpose({ handlerClip, scanPoker, tryScanPoker, clearAllInfo });
     top: 0;
     left: 0;
     width: 100px;
-    height: 30px;
+    height: 60px;
   }
 
   #divPlugin {

@@ -92,13 +92,11 @@ watch(
   () => {
     const listMap = props.analysisInfo ?? {};
     const pokerCheck = pokerCheckBaccarat(listMap);
-
     if (!pokerCheck?.check) {
       checkRuleTips.value = pokerCheck.msg;
       pokerKindHit.value = null;
     } else {
       checkRuleTips.value = checkBaccaratPokerRule(listMap, pokerCheck);
-      console.log(checkRuleTips.value, '---------------------------change');
       getHitKind(pokerCheck?.hitItem ?? [], (data) => {
         pokerKindHit.value = data;
       });

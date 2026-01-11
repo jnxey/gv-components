@@ -21,32 +21,32 @@ export default defineConfig({
     port: 8888,
     proxy: {
       '/poker-scan': {
-        target: 'http://192.168.1.114:9981/poker-scan',
+        target: 'http://jr17130507.iok.la/poker-scan',
         changeOrigin: true,
         rewrite: (path) => path.replace(/^\/poker-scan/, '')
       },
       '/majiang-scan': {
-        target: 'http://192.168.1.114:9981/majiang-scan',
+        target: 'http://jr17130507.iok.la/majiang-scan',
         changeOrigin: true,
         rewrite: (path) => path.replace(/^\/majiang-scan/, '')
       },
       '/chip-scan': {
-        target: 'http://192.168.1.114:9981/chip-scan',
+        target: 'http://jr17130507.iok.la/chip-scan',
         changeOrigin: true,
         rewrite: (path) => path.replace(/^\/chip-scan/, '')
       },
       '/ISAPI': {
-        target: 'http://192.168.1.114:8090/ISAPI',
+        target: 'http://192.168.10.70:8090/ISAPI',
         changeOrigin: true,
         rewrite: (path) => path.replace(/^\/ISAPI/, '')
       },
       '/SDK': {
-        target: 'http://192.168.1.114:8090/SDK',
+        target: 'http://192.168.10.70:8090/SDK',
         changeOrigin: true,
         rewrite: (path) => path.replace(/^\/SDK/, '')
       },
       '/webSocketVideoCtrlProxy': {
-        target: 'http://192.168.1.114:8090/webSocketVideoCtrlProxy',
+        target: 'http://192.168.10.70:8090/webSocketVideoCtrlProxy',
         changeOrigin: true,
         rewrite: (path) => path.replace(/^\/webSocketVideoCtrlProxy/, '')
       }

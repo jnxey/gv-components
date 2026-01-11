@@ -34,27 +34,6 @@ const login = async () => {
   });
 };
 
-// 预览
-const preview = async () => {
-  const info = bindInfo.value ?? {};
-  const recorder = info.recorder ?? {};
-  const camera = info.camera ?? {};
-  setWindowLayout(1);
-  clickStartRealPlay({
-    szDeviceIdentify: `${recorder.ip}_${recorder.port}`,
-    iRtspPort: window.DEVICE_PORT.iRtspPort,
-    iChannelID: camera.channelId,
-    bZeroChannel: false,
-    iStreamType: 1,
-    windowIndex: 0
-  });
-};
-
-// 停止预览
-const unpreview = async () => {
-  clickStopRealPlay();
-};
-
 // 获取命中项
 const getHitKind = async (hitsItem, callback) => {
   messenger.instance.request('preview-hit-item', hitsItem ?? []).then(async (data) => {
@@ -96,15 +75,15 @@ onMounted(() => {
   });
 
   messenger.instance.on('try-scan-poker', async () => {
-    preview();
-    await delayExec(500);
+    // preview();
+    // await delayExec(500);
     autoSelect.value = true;
     pokerRef.value?.tryScanPoker(true);
   });
 
   messenger.instance.on('stop-scan-poker', async () => {
     autoSelect.value = false;
-    unpreview();
+    // unpreview();
   });
 
   messenger.instance.on('clear-scan-poker', async () => {
