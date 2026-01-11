@@ -1,6 +1,6 @@
 <template>
   <div class="hk-clip">
-    <poker ref="pokerRef" :auto-select="false" :points-map="pointsMap" :bind-info="bindInfo" @set-points-map="setPointsMap" />
+    <poker ref="pokerRef" :auto-select="autoSelect" :points-map="pointsMap" :bind-info="bindInfo" @set-points-map="setPointsMap" />
   </div>
 </template>
 <script>
