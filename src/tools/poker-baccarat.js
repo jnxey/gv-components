@@ -75,11 +75,9 @@ export const checkBaccaratPokerRule = (analysisInfo, countResult) => {
     const p3 = getPokerInfo(analysisInfo.p[2]);
     const two = (baccaratValueMap[p1.value] + baccaratValueMap[p2.value]) % 10;
     const three = baccaratValueMap[p3.value] % 10;
-    console.log(two, '-------------');
-    console.log(three, '-------------');
     if (two >= 7) return { b: $t('common.tools.tips_err_4') };
     if (two === 3 && !![8].includes(three)) return { b: $t('common.tools.tips_err_4') };
-    if (two && !![0, 1, 8, 9].includes(three)) return { b: $t('common.tools.tips_err_4') };
+    if (two === 4 && !![0, 1, 8, 9].includes(three)) return { b: $t('common.tools.tips_err_4') };
     if (two === 5 && !![0, 1, 2, 3, 8, 9].includes(three)) return { b: $t('common.tools.tips_err_4') };
     if (two === 6 && !![0, 1, 2, 3, 4, 5, 8, 9].includes(three)) return { b: $t('common.tools.tips_err_4') };
   }
