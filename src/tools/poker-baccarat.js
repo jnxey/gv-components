@@ -40,11 +40,15 @@ export const getPokerReplenish = (pokers) => {
 export const checkBaccaratPokerRule = (analysisInfo, countResult) => {
   if (analysisInfo.b.length <= 1) return { b: $t('common.tools.tips_err_2') }; // 未识别牌型
   if (analysisInfo.p.length <= 1) return { p: $t('common.tools.tips_err_2') }; // 未识别牌型
-  // ---- 庄 2张牌
+
+  // ---- 需要补牌情况
+  // ---- 庄 2张牌 闲 2张牌
   if (analysisInfo.b.length === 2 && analysisInfo.p.length === 2) {
-    // 庄 2张牌 闲 2张牌
-    if (countResult.bCountValue <= 5) return { b: $t('common.tools.tips_err_3') };
+    if (countResult.pCountValue <= 5 && countResult.bCountValue <= 7) return { p: $t('common.tools.tips_err_3') };
+    if (countResult.bCountValue <= 5 && [6, 7].includes(countResult.pCountValue)) return { p: $t('common.tools.tips_err_3') };
+    if (countResult.bCountValue <= 2 && countResult.pCountValue <= 7) return { p: $t('common.tools.tips_err_3') };
   }
+  // ---- 庄 2张牌 闲 3张牌
   if (analysisInfo.b.length === 2 && analysisInfo.p.length === 3) {
     // 庄 2张牌 闲 3张牌
     const tInfo = getPokerInfo(analysisInfo.p[2]);
@@ -55,38 +59,29 @@ export const checkBaccaratPokerRule = (analysisInfo, countResult) => {
     if (countResult.bCountValue === 5 && ![0, 1, 2, 3, 8, 9].includes(three)) return { b: $t('common.tools.tips_err_3') };
     if (countResult.bCountValue === 6 && ![0, 1, 2, 3, 4, 5, 8, 9].includes(three)) return { b: $t('common.tools.tips_err_3') };
   }
-  // ---- 庄 3张牌
-  if (analysisInfo.b.length === 3 && analysisInfo.p.length === 2) {
-    // 庄 3张牌 闲 2张牌
-    if (countResult.bCountValue >= 7) return { b: $t('common.tools.tips_err_4') };
-  }
-  if (analysisInfo.b.length === 3 && analysisInfo.p.length === 3) {
-    // 庄 3张牌 闲 3张牌
-    const tInfo = getPokerInfo(analysisInfo.p[2]);
-    const oInfo = getPokerInfo(analysisInfo.b[0]);
-    const wInfo = getPokerInfo(analysisInfo.b[1]);
-    const three = baccaratValueMap[tInfo.value] % 10; // 闲 第三张点数
-    const one = baccaratValueMap[oInfo.value]; // 庄 第1张点数
-    const two = baccaratValueMap[wInfo.value]; // 庄 第2张点数
-    const countValue = (one + two) % 10;
-    if (countValue === 3 && [8].includes(three)) return { b: $t('common.tools.tips_err_4') };
-    if (countValue === 4 && [0, 1, 8, 9].includes(three)) return { b: $t('common.tools.tips_err_4') };
-    if (countValue === 5 && [0, 1, 2, 3, 8, 9].includes(three)) return { b: $t('common.tools.tips_err_4') };
-    if (countValue === 6 && [0, 1, 2, 3, 4, 5, 8, 9].includes(three)) return { b: $t('common.tools.tips_err_4') };
-    if (countValue >= 7) return { b: $t('common.tools.tips_err_4') };
-  }
-  // ---- 闲 2张牌
-  if (analysisInfo.p.length === 2) {
-    if (countResult.pCountValue <= 5) return { p: $t('common.tools.tips_err_4') };
-  }
-  // ---- 闲 3张牌
+
+  // ---- 不需要补牌，但补了的情况
   if (analysisInfo.p.length === 3) {
-    const oInfo = getPokerInfo(analysisInfo.p[0]);
-    const wInfo = getPokerInfo(analysisInfo.p[1]);
-    const one = baccaratValueMap[oInfo.value]; // 闲 第1张点数
-    const two = baccaratValueMap[wInfo.value]; // 闲 第2张点数
-    const countValue = (one + two) % 10;
-    if (countValue >= 6) return { p: $t('common.tools.tips_err_4') };
+    // 闲 3张牌
+    const p1 = getPokerInfo(analysisInfo.p[0]);
+    const p2 = getPokerInfo(analysisInfo.p[1]);
+    const two = (baccaratValueMap[p1.value] + baccaratValueMap[p2.value]) % 10;
+    if (two >= 6) return { p: $t('common.tools.tips_err_4') };
+  }
+  if (analysisInfo.b.length === 3) {
+    // 庄 3张牌
+    const p1 = getPokerInfo(analysisInfo.b[0]);
+    const p2 = getPokerInfo(analysisInfo.b[1]);
+    const p3 = getPokerInfo(analysisInfo.p[2]);
+    const two = (baccaratValueMap[p1.value] + baccaratValueMap[p2.value]) % 10;
+    const three = baccaratValueMap[p3.value] % 10;
+    console.log(two, '-------------');
+    console.log(three, '-------------');
+    if (two >= 7) return { b: $t('common.tools.tips_err_4') };
+    if (two === 3 && !![8].includes(three)) return { b: $t('common.tools.tips_err_4') };
+    if (two && !![0, 1, 8, 9].includes(three)) return { b: $t('common.tools.tips_err_4') };
+    if (two === 5 && !![0, 1, 2, 3, 8, 9].includes(three)) return { b: $t('common.tools.tips_err_4') };
+    if (two === 6 && !![0, 1, 2, 3, 4, 5, 8, 9].includes(three)) return { b: $t('common.tools.tips_err_4') };
   }
   return null;
 };
