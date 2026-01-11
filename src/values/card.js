@@ -17,7 +17,10 @@ export const BACCARAT_CARD_TYPE = {
   luck_6: 'luck_6', // 幸运6
   luck_6_2: 'luck_6_2', // 幸运6两张牌
   luck_6_3: 'luck_6_3', // 幸运6三张牌
-  luck_7: 'luck_7', // 幸运7
+  long_7: 'long_7', // 龙7 --- 测试RFID用
+  xiong_8: 'xiong_8', // 熊8 --- 测试RFID用
+  big_tiger: 'big_tiger', // 大老虎 --- 测试RFID用
+  small_tiger: 'small_tiger', // 小老虎 --- 测试RFID用
   other: 'other' // 其他
 };
 

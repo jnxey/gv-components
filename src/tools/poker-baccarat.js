@@ -121,14 +121,15 @@ export const pokerCheckBaccarat = (analysisInfo) => {
       hitItem.push(BACCARAT_CARD_TYPE.master);
       if (bCountValue === 6) {
         hitItem.push(BACCARAT_CARD_TYPE.luck_6); // 命中 幸运6
-        if (bList.length === 2) hitItem.push(BACCARAT_CARD_TYPE.luck_6_2); // 命中 幸运6两张牌
-        if (bList.length === 3) hitItem.push(BACCARAT_CARD_TYPE.luck_6_3); // 命中 幸运6三张牌
+        if (bList.length === 2) hitItem.push(BACCARAT_CARD_TYPE.luck_6_2, BACCARAT_CARD_TYPE.small_tiger); // 命中 幸运6两张牌，小老虎
+        if (bList.length === 3) hitItem.push(BACCARAT_CARD_TYPE.luck_6_3, BACCARAT_CARD_TYPE.big_tiger); // 命中 幸运6三张牌，大老虎
       }
+      if (bCountValue === 7) hitItem.push(BACCARAT_CARD_TYPE.long_7); // 命中 龙7
     }
     // 命中 闲赢
     if (bCountValue < pCountValue) {
       hitItem.push(BACCARAT_CARD_TYPE.player);
-      if (pCountValue === 7) hitItem.push(BACCARAT_CARD_TYPE.luck_7); // 命中 幸运7
+      if (pCountValue === 8) hitItem.push(BACCARAT_CARD_TYPE.xiong_8); // 命中 熊8
     }
     // 命中 和局
     if (bCountValue === pCountValue) {
