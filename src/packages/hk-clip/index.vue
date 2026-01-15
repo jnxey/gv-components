@@ -75,15 +75,12 @@ onMounted(() => {
   });
 
   messenger.instance.on('try-scan-poker', async () => {
-    // preview();
-    // await delayExec(500);
     autoSelect.value = true;
     pokerRef.value?.tryScanPoker(true);
   });
 
   messenger.instance.on('stop-scan-poker', async () => {
     autoSelect.value = false;
-    // unpreview();
   });
 
   messenger.instance.on('clear-scan-poker', async () => {

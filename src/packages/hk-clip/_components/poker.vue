@@ -5,7 +5,7 @@
       <!--   loading   -->
       <loading class="loading-box" />
       <!--   牌型   -->
-      <template v-if="!!bindInfo && !originalImage">
+      <template v-if="!!bindInfo">
         <poker-baccarat
           ref="pokerBaccaratRef"
           v-if="bindInfo.game_model === GAME_MODEL.baccarat"
@@ -49,21 +49,6 @@
           @set-type-complete-info="setTypeCompleteInfo"
         />
       </template>
-      <!--   原图   -->
-      <template v-else-if="!!originalImage">
-        <div class="show-pic">
-          <b-edit v-if="!!pointsMap" ref="bEditRef" :style="wrapStyle" :points-map-init="pointsMap" :bind-info-init="bindInfo" :img-src="imgSrc" />
-        </div>
-      </template>
-    </div>
-    <!--  按钮区域  -->
-    <div class="button-wrap">
-      <button v-if="!!completeInfo && !originalImage" class="gv-button big mr-12" @click.stop="useHitItem">{{ $t('common.clip.use_card') }}</button>
-      <button v-if="!!completeInfo && !!originalImage" class="gv-button big mr-12" @click.stop="saveArea">{{ $t('common.clip.save_area') }}</button>
-      <button v-if="!!completeInfo" class="link-button mr-12" @click.stop="toggleOriginalImage">
-        {{ originalImage ? $t('common.clip.back_card') : $t('common.clip.view_hit') }}
-      </button>
-      <button v-if="!clipLoading" class="link-button" @click.stop="scanPoker">{{ $t('common.clip.rescan') }}</button>
     </div>
   </div>
 </template>
@@ -86,7 +71,6 @@ import PokerZhaJinHua from '@/packages/hk-clip/_components/poker-zha-jin-hua.vue
 import MajiangTuiTongZi from '@/packages/hk-clip/_components/majiang-tui-tong-zi.vue';
 
 const useHitKind = inject('useHitKind');
-const saveHitArea = inject('saveHitArea');
 
 const POKER_SCAN_MODEL = [GAME_MODEL.baccarat, GAME_MODEL.niu_niu, GAME_MODEL.long_hu, GAME_MODEL.san_gong, GAME_MODEL.zha_jin_hua];
 const MA_JIANG_SCAN_MODEL = [GAME_MODEL.tong_zi];
@@ -110,7 +94,6 @@ const clipTipsText = ref(null);
 const analysisInfo = ref({});
 const completeInfo = ref(null);
 const completeTips = ref({});
-const originalImage = ref(false);
 
 const wrapStyle = computed(() => {
   return { width: `${sWidth}px`, height: `${sHeight}px` };
@@ -119,7 +102,6 @@ const wrapStyle = computed(() => {
 // 清空数据
 const clearAllInfo = () => {
   clipLoading.value = false;
-  originalImage.value = false;
   imgSrc.value = null;
   completeInfo.value = null;
   clipTipsText.value = '';
@@ -215,7 +197,7 @@ const scanPoker = (isFirst) => {
 
 // 若识别数据则扫拍
 const tryScanPoker = (isFirst = true) => {
-  if (!!completeInfo.value && isFirst) return;
+  if (isFirst) return;
   scanPoker(isFirst);
 };
 
@@ -246,17 +228,6 @@ const useHitItem = () => {
 const autoHitItem = async () => {
   await delayExec(300);
   useHitItem();
-};
-
-// 保存区域
-const saveArea = () => {
-  const data = deepCopy(bEditRef.value?.getPointsMap());
-  saveHitArea(data, (status) => {
-    if (status) {
-      emits('setPointsMap', data);
-      toggleOriginalImage();
-    }
-  });
 };
 
 // 根据返回的分析数据填入完整牌型数据
@@ -298,11 +269,6 @@ const setCompleteInfo = (aInfo) => {
 const setTypeCompleteInfo = (name, list) => {
   const info = completeInfo.value ?? {};
   completeInfo.value = { ...info, [name]: list };
-};
-
-// 查看原图 / 扫牌信息
-const toggleOriginalImage = () => {
-  originalImage.value = !originalImage.value;
 };
 
 defineExpose({ handlerClip, scanPoker, tryScanPoker, clearAllInfo });

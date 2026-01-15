@@ -45,7 +45,7 @@ export const checkBaccaratPokerRule = (analysisInfo, countResult) => {
   // ---- 庄 2张牌 闲 2张牌
   if (analysisInfo.b.length === 2 && analysisInfo.p.length === 2) {
     if (countResult.pCountValue <= 5 && countResult.bCountValue <= 7) return { p: $t('common.tools.tips_err_3') };
-    if (countResult.bCountValue <= 5 && [6, 7].includes(countResult.pCountValue)) return { p: $t('common.tools.tips_err_3') };
+    if (countResult.bCountValue <= 5 && [6, 7].includes(countResult.pCountValue)) return { b: $t('common.tools.tips_err_3') };
     if (countResult.bCountValue <= 2 && countResult.pCountValue <= 7) return { p: $t('common.tools.tips_err_3') };
   }
   // ---- 庄 2张牌 闲 3张牌
@@ -61,15 +61,17 @@ export const checkBaccaratPokerRule = (analysisInfo, countResult) => {
   }
 
   // ---- 不需要补牌，但补了的情况
-  if (analysisInfo.p.length === 3) {
-    // 闲 3张牌
+  // 庄 3张牌
+  if (analysisInfo.p.length === 3 && analysisInfo.p.length === 2) {
+    // 闲 2张牌
     const p1 = getPokerInfo(analysisInfo.p[0]);
     const p2 = getPokerInfo(analysisInfo.p[1]);
     const two = (baccaratValueMap[p1.value] + baccaratValueMap[p2.value]) % 10;
-    if (two >= 6) return { p: $t('common.tools.tips_err_4') };
+    if (two >= 6) return { b: $t('common.tools.tips_err_4') };
   }
-  if (analysisInfo.b.length === 3) {
-    // 庄 3张牌
+  // 庄 3张牌
+  if (analysisInfo.b.length === 3 && analysisInfo.p.length === 3) {
+    // 闲 3张牌
     const p1 = getPokerInfo(analysisInfo.b[0]);
     const p2 = getPokerInfo(analysisInfo.b[1]);
     const p3 = getPokerInfo(analysisInfo.p[2]);
@@ -80,6 +82,13 @@ export const checkBaccaratPokerRule = (analysisInfo, countResult) => {
     if (two === 4 && !![0, 1, 8, 9].includes(three)) return { b: $t('common.tools.tips_err_4') };
     if (two === 5 && !![0, 1, 2, 3, 8, 9].includes(three)) return { b: $t('common.tools.tips_err_4') };
     if (two === 6 && !![0, 1, 2, 3, 4, 5, 8, 9].includes(three)) return { b: $t('common.tools.tips_err_4') };
+  }
+  if (analysisInfo.p.length === 3) {
+    // 闲 2张牌
+    const p1 = getPokerInfo(analysisInfo.p[0]);
+    const p2 = getPokerInfo(analysisInfo.p[1]);
+    const two = (baccaratValueMap[p1.value] + baccaratValueMap[p2.value]) % 10;
+    if (two >= 6) return { p: $t('common.tools.tips_err_4') };
   }
   return null;
 };
