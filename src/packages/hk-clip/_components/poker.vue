@@ -197,7 +197,6 @@ const scanPoker = (isFirst) => {
 
 // 若识别数据则扫拍
 const tryScanPoker = (isFirst = true) => {
-  if (isFirst) return;
   scanPoker(isFirst);
 };
 
