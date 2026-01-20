@@ -44,10 +44,11 @@ export async function getIpcChannelsNames({ ip, admin, password }) {
 }
 
 // 设备截图
-export async function captureSnapshot({ channelId, subStream, ip, admin, password }) {
+export async function captureSnapshot({ channelId, ip, admin, password }) {
   try {
+    const rtspUrl = `rtsp://${admin}:${password}@${ip}:554/Streaming/Channels/${getChannelValue(channelId, false)}`;
     const res = await axios.get(HK_SERVER_BASE + '/captureSnapshot', {
-      params: { channelId, subStream, ip, admin, password },
+      params: { rtspUrl },
       responseType: 'blob'
     });
     const blob = res.data;

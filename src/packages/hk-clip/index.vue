@@ -9,8 +9,7 @@ export default { name: 'gv-hk-clip' };
 <script setup>
 import Poker from './_components/poker.vue';
 import { onBeforeMount, onMounted, provide, ref, shallowRef } from 'vue';
-import { clickLogin, clickStartRealPlay, clickStopRealPlay, initHKPlugin, setWindowLayout } from '@/tools/hk.js';
-import { deepCopy, delayExec } from '@/tools/index.js';
+import { deepCopy } from '@/tools/index.js';
 import { IframeCommunicator } from '@/tools/iframe-communicator.js';
 import { getPointFieldName } from '@/tools/query.js';
 
@@ -21,18 +20,6 @@ const pokerRef = shallowRef();
 const autoSelect = ref(false);
 
 const messenger = { instance: null };
-
-// 登录
-const login = async () => {
-  const info = bindInfo.value ?? {};
-  const recorder = info.recorder ?? {};
-  await clickLogin({
-    szIP: recorder.ip,
-    szPort: String(recorder.port),
-    szUsername: recorder.account,
-    szPassword: recorder.password
-  });
-};
 
 // 获取命中项
 const getHitKind = async (hitsItem, callback) => {
@@ -60,7 +47,6 @@ const saveHitArea = async (data, callback) => {
 };
 
 onMounted(() => {
-  initHKPlugin();
   messenger.instance = new IframeCommunicator({
     mark: 'scan-card',
     targetWindow: window.parent
@@ -71,7 +57,6 @@ onMounted(() => {
   messenger.instance.request('recorder-info').then(async (data) => {
     bindInfo.value = deepCopy(data);
     pointsMap.value = deepCopy(data[getPointFieldName()]);
-    await login();
   });
 
   messenger.instance.on('try-scan-poker', async () => {

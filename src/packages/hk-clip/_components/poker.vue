@@ -69,6 +69,7 @@ import { $t } from '@/lang/i18n.js';
 import PokerSanGong from '@/packages/hk-clip/_components/poker-san-gong.vue';
 import PokerZhaJinHua from '@/packages/hk-clip/_components/poker-zha-jin-hua.vue';
 import MajiangTuiTongZi from '@/packages/hk-clip/_components/majiang-tui-tong-zi.vue';
+import { captureSnapshot } from '@/tools/hk-server.js';
 
 const useHitKind = inject('useHitKind');
 
@@ -119,45 +120,44 @@ const checkAllPoint = (callback) => {
 };
 
 // 切图
-const handlerClip = (info, isFirst) => {
+const handlerClip = async (info, isFirst) => {
   if (isFirst) clearAllInfo();
   clipLoading.value = true;
-  clickCapturePicData(
-    info.recorder,
-    info.camera,
-    (base64String) => {
-      const img = new Image();
-      img.src = 'data:image/jpeg;base64,' + base64String;
-      imgSrc.value = img.src;
-      img.onerror = function () {
+  const recorder = info.recorder ?? {};
+  const camera = info.camera ?? {};
+  const imgUrl = await captureSnapshot({
+    ip: recorder.ip,
+    admin: recorder.account,
+    password: recorder.password,
+    channelName: camera.channelName,
+    channelId: camera.channelId
+  });
+  console.log(imgUrl, '---------------------------base64String');
+  const img = new Image();
+  img.src = imgUrl;
+  imgSrc.value = img.src;
+  img.onerror = function () {
+    clipLoading.value = false;
+    clipTipsText.value = $t('common.clip.tips_img_err1');
+  };
+  img.onload = async function () {
+    const keysPoints = Object.keys(props.pointsMap);
+    for (let p of keysPoints) {
+      const clippedCanvas = clipImageByPolygon(img, { width: sWidth, height: sHeight }, props.pointsMap[p].points);
+      const analysis = await handlerAnalysis(clippedCanvas, info.token);
+      if (!!analysis) {
+        analysisInfo.value[p] = analysis;
+        checkAllPoint(() => {
+          clipLoading.value = false;
+          setCompleteInfo(unref(analysisInfo));
+        });
+      } else {
         clipLoading.value = false;
-        clipTipsText.value = $t('common.clip.tips_img_err1');
-      };
-      img.onload = async function () {
-        const keysPoints = Object.keys(props.pointsMap);
-        for (let p of keysPoints) {
-          const clippedCanvas = clipImageByPolygon(img, { width: sWidth, height: sHeight }, props.pointsMap[p].points);
-          const analysis = await handlerAnalysis(clippedCanvas, info.token);
-          if (!!analysis) {
-            analysisInfo.value[p] = analysis;
-            checkAllPoint(() => {
-              clipLoading.value = false;
-              setCompleteInfo(unref(analysisInfo));
-            });
-          } else {
-            clipLoading.value = false;
-            clipTipsText.value = $t('common.clip.tips_img_err2');
-          }
-        }
-        if (props.autoSelect) autoHitItem();
-      };
-    },
-    () => {
-      clipLoading.value = false;
-      clipTipsText.value = $t('common.clip.tips_img_err3');
-    },
-    false
-  );
+        clipTipsText.value = $t('common.clip.tips_img_err2');
+      }
+    }
+    if (props.autoSelect) autoHitItem();
+  };
 };
 
 // 分析图片

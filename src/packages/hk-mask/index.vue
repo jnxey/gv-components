@@ -14,8 +14,7 @@ export default { name: 'gv-hk-mask' };
 import BMask from './_components/b-mask.vue';
 import BPlace from './_components/b-place.vue';
 import { computed, nextTick, onBeforeMount, onMounted, ref } from 'vue';
-import { initHKPlugin } from '@/tools/hk.js';
-import { deepCopy, getPX } from '@/tools/index.js';
+import { deepCopy } from '@/tools/index.js';
 import { IframeCommunicator } from '@/tools/iframe-communicator.js';
 import { getPointFieldName } from '@/tools/query.js';
 import HkPreview from '@/packages/_components/hk-preview.vue';
@@ -43,7 +42,6 @@ const init = () => {
     ip: recorder.ip,
     admin: recorder.account,
     password: recorder.password,
-    channelName: camera.channelName,
     channelId: camera.channelId
   };
 };
@@ -60,7 +58,6 @@ const setSave = (point) => {
 };
 
 onMounted(() => {
-  initHKPlugin();
   messenger.instance = new IframeCommunicator({
     targetWindow: window.parent
   });
