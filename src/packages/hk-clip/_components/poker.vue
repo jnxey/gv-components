@@ -232,6 +232,9 @@ const setCompleteInfo = (aInfo) => {
   Object.keys(aInfo).forEach((name) => {
     const markLen = MA_JIANG_SCAN_MODEL.includes(props.bindInfo?.game_model) ? 1 : 2;
     const aList = aInfo[name].filter((item) => item.bbox?.length === markLen);
+    // 从上到下，从左到右排个序
+    aList.sort((a, b) => a.bbox?.[0].cy - b.bbox?.[0].cy);
+    aList.sort((a, b) => a.bbox?.[0].cx - b.bbox?.[0].cx);
     let list = aList.map((item) => item.class_name);
     if (props.bindInfo?.game_model === GAME_MODEL.baccarat) {
       list = list.slice(0, 3);

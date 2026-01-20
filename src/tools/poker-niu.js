@@ -8,7 +8,6 @@ const niuValueMap = { 2: 2, 3: 3, 4: 4, 5: 5, 6: 6, 7: 7, 8: 8, 9: 9, 10: 10, J:
 
 // 获取扑克牌的排序方式
 export const getPokerSort = (pokers) => {
-  console.log(pokers, '-------------------pokers');
   // 确定比y还是x
   const dBox = pokers[0].bbox[0];
   const xDistance = Math.abs(dBox.x1 - dBox.x2);
