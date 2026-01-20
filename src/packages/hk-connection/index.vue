@@ -8,9 +8,9 @@ export default { name: 'gv-hk-connection' };
 </script>
 <script setup>
 import { onBeforeMount, onMounted, ref } from 'vue';
-import { clickLogin, initHKPlugin } from '@/tools/hk.js';
 import { IframeCommunicator } from '@/tools/iframe-communicator.js';
 import Loading from '@/components/loading.vue';
+import { getDeviceInfo } from '@/tools/hk-server.js';
 
 const bindInfo = ref(null);
 
@@ -19,12 +19,7 @@ const messenger = { instance: null };
 const checkConnection = () => {
   const info = bindInfo.value ?? {};
   const recorder = info.recorder ?? {};
-  clickLogin({
-    szIP: recorder.ip,
-    szPort: String(recorder.port),
-    szUsername: recorder.account,
-    szPassword: recorder.password
-  })
+  getDeviceInfo({ ip: recorder.ip, admin: recorder.account, password: recorder.password })
     .then(() => {
       messenger.instance.send('recorder-connection-success');
     })
@@ -34,7 +29,6 @@ const checkConnection = () => {
 };
 
 onMounted(() => {
-  initHKPlugin();
   messenger.instance = new IframeCommunicator({
     targetWindow: window.parent
   });
