@@ -27,10 +27,8 @@ const getChannels = async () => {
   const camera = info.camera ?? {};
   const loginInfo = { ip: recorder.ip, admin: recorder.account, password: recorder.password };
   current.value = Number(camera.channelId);
-  console.log(current.value, '--------------------------current.value');
   getIpcChannelsNames(loginInfo)
     .then((res) => {
-      console.log(res, '----------------------getIpcChannelsNames');
       deviceList.value = res?.map((item) => ({ ...loginInfo, channelName: item.name, channelId: item.id }));
     })
     .catch(() => {
@@ -40,7 +38,6 @@ const getChannels = async () => {
 
 // 设置选中
 const setSelected = (item) => {
-  console.log(item, '---------------------item');
   if (!current.value === item.channelId) {
     current.value = null;
     messenger.instance.send('send-recorder-selected', null);

@@ -2,7 +2,7 @@
   <div class="hk-preview">
     <div class="camera-name">{{ previewInfo.channelName }}</div>
     <video class="show-video" ref="videoRef" :controls="false" muted />
-    <div class="video-mask" :class="{ active }" @click="handlerClick"></div>
+    <div class="video-mask" :class="{ active, noborder: !!hideBorder }" @click="handlerClick"></div>
   </div>
 </template>
 <script setup>
@@ -12,7 +12,7 @@ import { generateRandomString } from '@/tools/index.js';
 
 const emits = defineEmits(['click']);
 
-const props = defineProps({ previewInfo: Object, isSmall: Boolean, active: Boolean });
+const props = defineProps({ previewInfo: Object, isSmall: Boolean, active: Boolean, hideBorder: Boolean });
 
 const videoRef = shallowRef(null);
 const deviceParams = shallowRef({});
@@ -107,6 +107,10 @@ onBeforeUnmount(() => {
 
 .video-mask.active {
   box-shadow: 0 0 0 4px #028ff4 inset;
+}
+
+.video-mask.noborder {
+  box-shadow: none;
 }
 
 .camera-name {

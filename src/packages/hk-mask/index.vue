@@ -1,6 +1,6 @@
 <template>
   <div class="hk-mask" :style="wrapStyle">
-    <stream :width="sWidth" :height="sHeight" />
+    <hk-preview v-if="!!deviceParams" class="preview-box" :style="wrapStyle" :preview-info="deviceParams" hide-border />
     <b-place v-if="!!pointsMap" :current="current" :points-map="pointsMap" @selected="setCurrent" />
     <template v-if="!!pointsMap && !!current">
       <b-mask :points-info="pointsMap[current]" @cancel="setCurrent" @save="setSave" />
@@ -12,13 +12,13 @@ export default { name: 'gv-hk-mask' };
 </script>
 <script setup>
 import BMask from './_components/b-mask.vue';
-import Stream from './_components/stream.vue';
 import BPlace from './_components/b-place.vue';
 import { computed, nextTick, onBeforeMount, onMounted, ref } from 'vue';
-import { clickLogin, clickStartRealPlay, initHKPlugin, setWindowLayout } from '@/tools/hk.js';
-import { deepCopy, delayExec } from '@/tools/index.js';
+import { initHKPlugin } from '@/tools/hk.js';
+import { deepCopy, getPX } from '@/tools/index.js';
 import { IframeCommunicator } from '@/tools/iframe-communicator.js';
 import { getPointFieldName } from '@/tools/query.js';
+import HkPreview from '@/packages/_components/hk-preview.vue';
 
 const sWidth = 1000;
 const sHeight = 560;
@@ -30,37 +30,22 @@ const wrapStyle = computed(() => {
 });
 
 const pointsMap = ref(null);
-
 const bindInfo = ref(null);
-
 const messenger = { instance: null };
+const deviceParams = ref(null);
 
-// 登录
-const login = async () => {
-  const info = bindInfo.value ?? {};
-  const recorder = info.recorder ?? {};
-  await clickLogin({
-    szIP: recorder.ip,
-    szPort: String(recorder.port),
-    szUsername: recorder.account,
-    szPassword: recorder.password
-  });
-};
-
-// 预览
-const preview = async () => {
+// 初始化
+const init = () => {
   const info = bindInfo.value ?? {};
   const recorder = info.recorder ?? {};
   const camera = info.camera ?? {};
-  setWindowLayout(1);
-  clickStartRealPlay({
-    szDeviceIdentify: `${recorder.ip}_${recorder.port}`,
-    iRtspPort: window.DEVICE_PORT.iRtspPort,
-    iChannelID: camera.channelId,
-    bZeroChannel: false,
-    iStreamType: 1,
-    windowIndex: 0
-  });
+  deviceParams.value = {
+    ip: recorder.ip,
+    admin: recorder.account,
+    password: recorder.password,
+    channelName: camera.channelName,
+    channelId: camera.channelId
+  };
 };
 
 const setCurrent = async (p) => {
@@ -84,9 +69,7 @@ onMounted(() => {
     console.log('recorder-info------');
     bindInfo.value = data;
     pointsMap.value = deepCopy(data[getPointFieldName()]);
-    await login();
-    await delayExec(300);
-    await preview();
+    await init();
   });
 
   messenger.instance.on('get-point-map', async (_, respond) => {
@@ -108,5 +91,14 @@ onBeforeMount(() => {
   height: 560px;
   user-select: none;
   overflow: hidden;
+}
+
+.preview-box {
+  position: absolute;
+  top: 0;
+  left: 0;
+  overflow: hidden;
+  background-color: #4c4b4b;
+  z-index: 5;
 }
 </style>
