@@ -53,8 +53,7 @@
   </div>
 </template>
 <script setup>
-import { clickCapturePicData } from '@/tools/hk.js';
-import { clipImageByPolygon, deepCopy, delayExec, preprocessCanvas } from '@/tools/index.js';
+import { clipImageByPolygon, delayExec } from '@/tools/index.js';
 import axios from 'axios';
 import { computed, inject, ref, shallowRef, unref } from 'vue';
 import { GAME_MODEL } from '@/values/index.js';
@@ -64,7 +63,6 @@ import { getPokerReplenish } from '@/tools/poker-baccarat.js';
 import PokerLongHu from '@/packages/hk-clip/_components/poker-long-hu.vue';
 import PokerNiu from '@/packages/hk-clip/_components/poker-niu.vue';
 import { getPokerSort } from '@/tools/poker-niu.js';
-import BEdit from '@/packages/hk-clip/_components/b-edit.vue';
 import { $t } from '@/lang/i18n.js';
 import PokerSanGong from '@/packages/hk-clip/_components/poker-san-gong.vue';
 import PokerZhaJinHua from '@/packages/hk-clip/_components/poker-zha-jin-hua.vue';
@@ -132,7 +130,6 @@ const handlerClip = async (info, isFirst) => {
     channelName: camera.channelName,
     channelId: camera.channelId
   });
-  console.log(imgUrl, '---------------------------base64String');
   const img = new Image();
   img.src = imgUrl;
   imgSrc.value = img.src;
