@@ -7,7 +7,7 @@ export function useIsStable() {
 
   let sameCount = ref(0);
 
-  let isSameNow = computed(() => sameCount.value > 5);
+  let isSameNow = computed(() => sameCount.value > 3);
 
   const clearNewList = () => {
     lastList = [];
