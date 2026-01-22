@@ -2,12 +2,13 @@ import { computed, ref } from 'vue';
 
 // 判断两组物体坐标是否发生大的变化
 export function useIsStable() {
+  const maxJudge = 3;
   let lastList = [];
   let newList = [];
 
   let sameCount = ref(0);
 
-  let isSameNow = computed(() => sameCount.value > 3);
+  let isSameNow = computed(() => sameCount.value > maxJudge);
 
   const clearNewList = () => {
     lastList = [];
@@ -27,7 +28,11 @@ export function useIsStable() {
     }
   };
 
-  return { isSameNow, clearNewList, setNewList };
+  const setPrevSame = () => {
+    sameCount.value = maxJudge - 1;
+  };
+
+  return { isSameNow, clearNewList, setNewList, setPrevSame };
 }
 
 /**

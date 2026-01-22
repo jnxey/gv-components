@@ -57,7 +57,7 @@ const wrapStyle = computed(() => {
   return { width: `${sWidth}px`, height: `${sHeight}px` };
 });
 
-const { isSameNow, clearNewList, setNewList } = useIsStable();
+const { isSameNow, clearNewList, setNewList, setPrevSame } = useIsStable();
 
 // 清空数据
 const clearAllInfo = () => {
@@ -125,7 +125,12 @@ const handlerAnalysis = (canvas, token, text) => {
             headers: { 'Content-Type': 'multipart/form-data', token: token } // 必须设置[9](@ref)
           })
           .then((response) => {
-            resolve(response.data.data);
+            const cpList = response?.data?.data ?? [];
+            if (!!text) {
+              const exitUnMark = !!cpList.filter((item) => !item.view).length;
+              if (exitUnMark) setPrevSame(); // 存在未标识的筹码，再试一次
+            }
+            resolve(cpList);
           })
           .catch((error) => {
             resolve(null);
