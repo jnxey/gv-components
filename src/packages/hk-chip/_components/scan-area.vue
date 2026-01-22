@@ -191,6 +191,8 @@ watch(
   () => {
     if (isSameNow.value) {
       if (!!props.bindInfo) handlerClip(props.bindInfo, true);
+    } else {
+      useHitItem([]);
     }
   }
 );
