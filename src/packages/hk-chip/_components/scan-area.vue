@@ -14,7 +14,7 @@
       </template>
       <!--   提示信息   -->
       <template v-if="clipTipsText">
-        <div class="info-text">{{ clipTipsText ?? $t('common.clip.tips_scan_click') }}</div>
+        <div class="info-text">{{ clipTipsText }}</div>
       </template>
     </div>
     <!--  按钮区域  -->
@@ -88,7 +88,7 @@ const handlerClip = (info, text = false) => {
         const radioWidth = img.width / sWidth;
         const radioHeight = img.height / sHeight;
         const clippedCanvas = clipImageByPolygon(img, { width: sWidth, height: sHeight }, props.pointsMap[pName].points);
-        const { canvas, scale } = resizeCanvasByMaxSide(clippedCanvas, 640);
+        const { canvas, scale } = resizeCanvasByMaxSide(clippedCanvas, 1520);
         const analysis = await handlerAnalysis(canvas, info.token, text);
         // 如果图片过大，则缩小一点
         if (!!analysis) {
