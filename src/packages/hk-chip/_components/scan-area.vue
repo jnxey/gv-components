@@ -3,33 +3,17 @@
     <div class="scan-area-box" :style="wrapStyle">
       <div id="divPlugin"></div>
       <!--   命中项   -->
-      <template v-if="!originalImage">
-        <hit-box :hits="hitChipList" :scale="hitChipScale" :moving="!isSameNow" :points-map="pointsMap" />
-      </template>
-      <!--   原图   -->
-      <template v-if="!!originalImage">
-        <div class="show-pic">
-          <b-edit v-if="!!pointsMap" ref="bEditRef" :style="wrapStyle" :points-map-init="pointsMap" :bind-info-init="bindInfo" :img-src="imgSrc" />
-        </div>
-      </template>
+      <hit-box :hits="hitChipList" :scale="hitChipScale" :moving="!isSameNow" :points-map="pointsMap" />
       <!--   提示信息   -->
       <template v-if="clipTipsText">
         <div class="info-text">{{ clipTipsText }}</div>
       </template>
     </div>
-    <!--  按钮区域  -->
-    <div class="button-wrap">
-      <button v-if="!!originalImage" class="gv-button big mr-12" @click.stop="saveArea">{{ $t('common.clip.save_area') }}</button>
-      <button class="link-button mr-12" @click.stop="toggleOriginalImage">
-        {{ originalImage ? $t('common.clip.back_card') : $t('common.clip.view_hit') }}
-      </button>
-    </div>
   </div>
 </template>
 <script setup>
-import { clipImageByPolygon, deepCopy, generateRandomString, mappingArrayToObject, resizeCanvasByMaxSide } from '@/tools/index.js';
-import { computed, inject, nextTick, reactive, ref, shallowRef, watch } from 'vue';
-import BEdit from '@/packages/hk-clip/_components/b-edit.vue';
+import { clipImageByPolygon, deepCopy, generateRandomString, resizeCanvasByMaxSide } from '@/tools/index.js';
+import { computed, inject, nextTick, ref, shallowRef, watch } from 'vue';
 import { $t } from '@/lang/i18n.js';
 import { clickCapturePicData } from '@/tools/hk.js';
 import axios from 'axios';
@@ -48,7 +32,6 @@ const props = defineProps({ bindInfo: Object, pointsMap: Object, width: Number, 
 const imgSrc = shallowRef(null);
 const bEditRef = shallowRef(null);
 const clipTipsText = ref(null);
-const originalImage = ref(false);
 const hitChipScale = ref({ width: 1, height: 1 });
 const hitChipList = ref([]);
 const runScan = ref(false);
@@ -64,7 +47,6 @@ const clearAllInfo = () => {
   hitChipList.value = [];
   hitChipScale.value = { width: 1, height: 1 };
   clipTipsText.value = '';
-  originalImage.value = false;
   imgSrc.value = null;
   clearNewList();
 };
@@ -88,7 +70,7 @@ const handlerClip = (info, text = false) => {
         const radioWidth = img.width / sWidth;
         const radioHeight = img.height / sHeight;
         const clippedCanvas = clipImageByPolygon(img, { width: sWidth, height: sHeight }, props.pointsMap[pName].points);
-        const { canvas, scale } = resizeCanvasByMaxSide(clippedCanvas, 1520);
+        const { canvas, scale } = resizeCanvasByMaxSide(clippedCanvas, 1520); // 注意图片尺寸变了，判定是否有移动的标准也是要变的
         const analysis = await handlerAnalysis(canvas, info.token, text);
         // 如果图片过大，则缩小一点
         if (!!analysis) {
@@ -179,11 +161,6 @@ const saveArea = () => {
       toggleOriginalImage();
     }
   });
-};
-
-// 查看原图 / 扫牌信息
-const toggleOriginalImage = () => {
-  originalImage.value = !originalImage.value;
 };
 
 watch(

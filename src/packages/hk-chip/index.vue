@@ -17,8 +17,7 @@ import ScanArea from '@/packages/hk-chip/_components/scan-area.vue';
 const pointsMap = ref(null);
 const bindInfo = ref(null);
 const scanAreaRef = shallowRef();
-const filterCheck = shallowRef();
-const chipsDetails = shallowRef();
+const chipsDetailsMap = shallowRef();
 
 const messenger = { instance: null };
 
@@ -58,8 +57,7 @@ const unpreview = async () => {
 // 使用命中项
 const useHitKind = async (hits, callback) => {
   // 清空检查项
-  filterCheck.value = null;
-  chipsDetails.value = null;
+  chipsDetailsMap.value = null;
   messenger.instance.request('use-hit-item', hits ?? []).then(async (status) => {
     if (!!callback) callback(status);
   });
@@ -93,14 +91,9 @@ onMounted(() => {
     scanAreaRef.value?.tryScanChip();
   });
 
-  messenger.instance.on('sync-filter-check', async (_filterCheck) => {
-    console.log(_filterCheck, '-----------_filterCheck');
-    filterCheck.value = _filterCheck;
-  });
-
-  messenger.instance.on('sync-chips-detail', async (_chipsDetails) => {
-    console.log(_chipsDetails, '-----------_chipsDetails');
-    chipsDetails.value = _chipsDetails;
+  messenger.instance.on('sync-chips-detail', async (_chipsDetailsMap) => {
+    console.log(_chipsDetailsMap, '-----------_chipsDetailsMap');
+    chipsDetailsMap.value = _chipsDetailsMap;
   });
 
   messenger.instance.on('stop-scan-chip', async () => {
@@ -122,8 +115,7 @@ onBeforeMount(() => {
 
 provide('useHitKind', useHitKind);
 provide('saveHitArea', saveHitArea);
-provide('filterCheck', filterCheck);
-provide('chipsDetails', chipsDetails);
+provide('chipsDetailsMap', chipsDetailsMap);
 </script>
 <style scoped>
 .hk-clip {

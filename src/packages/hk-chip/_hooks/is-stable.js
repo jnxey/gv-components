@@ -44,7 +44,7 @@ export function useIsStable() {
  * @param {number} sizeThreshold - 宽高变化阈值
  * @returns {boolean} - 如果没有发生大的改变返回 true，否则返回 false
  */
-function isStable(coordsOld, coordsNew, positionThreshold = 8, sizeThreshold = 8) {
+function isStable(coordsOld, coordsNew, positionThreshold = 20, sizeThreshold = 20) {
   if (!coordsOld.length && !coordsNew.length) return false;
   if (coordsOld.length !== coordsNew.length) return false;
 

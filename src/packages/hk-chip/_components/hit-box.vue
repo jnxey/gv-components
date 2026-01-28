@@ -6,8 +6,8 @@
       :class="{
         moving: moving,
         loading: !moving && !det.detail,
-        error: !moving && !!det.detail && (!det.view || !!errorInfo[det.view?.code] || !chipsInfo[det.view?.code]),
-        success: !moving && !!det.detail && !!det.view && !!chipsInfo[det.view?.code] && !errorInfo[det.view?.code],
+        error: !moving && !!det.detail && (!det.view || !chipsInfo[det.view?.code]),
+        success: !moving && !!det.detail && !!det.view && !!chipsInfo[det.view?.code],
         ignore: !moving && !!det.detail && !!det.view && !!chipsInfo[det.view?.code]?.ignore
       }"
       :key="det.UUID"
@@ -19,20 +19,19 @@
       }"
     >
       <template v-if="!!det.view">
-        <div v-if="!!chipsInfo[det.view?.code]" class="chip-info flex-1 fz-14">
-          <div class="chip-info-text">{{ chipsInfo[det.view?.code].value }}</div>
-          <div class="chip-info-text">{{ chipsInfo[det.view?.code].currency }}</div>
-          <div class="chip-info-text">{{ chipsInfo[det.view?.code].bind || $t('common.chip.not_bind') }}</div>
+        <div v-if="!!chipsInfo[det.view?.code]" class="chip-info flex-1">
+          <div class="chip-info-text amount">{{ chipsInfo[det.view?.code].icon }}{{ chipsInfo[det.view?.code].value }}</div>
+          <div class="chip-info-text username">{{ chipsInfo[det.view?.code].bind || $t('common.chip.not_bind') }}</div>
         </div>
         <template v-if="!moving && !!det.detail && !!det.view && !chipsInfo[det.view?.code]">
-          <div class="chip-info flex-1 fz-14">
+          <div class="chip-info flex-1">
             <div class="chip-info-text">{{ $t('common.chip.not_enter') }}</div>
           </div>
         </template>
       </template>
       <template v-if="!moving && !det.view && !!det.detail">
-        <div class="chip-info flex-1 fz-14">
-          <div class="chip-info flex-1 fz-14">
+        <div class="chip-info flex-1">
+          <div class="chip-info flex-1">
             <div class="chip-info-text">{{ $t('common.chip.not_match') }}</div>
           </div>
         </div>
@@ -45,16 +44,11 @@ import { computed, inject } from 'vue';
 import { getPX } from '@/tools/index.js';
 import { $t } from '@/lang/i18n.js';
 
-const filterCheck = inject('filterCheck');
-const chipsDetails = inject('chipsDetails');
+const chipsDetailsMap = inject('chipsDetailsMap');
 
 const props = defineProps({ hits: Array, scale: Object, pointsMap: Object, moving: Boolean });
 
-const errorInfo = computed(() => {
-  return filterCheck.value?.errorMap ?? {};
-});
-
-const chipsInfo = computed(() => chipsDetails.value ?? {});
+const chipsInfo = computed(() => chipsDetailsMap.value ?? {});
 
 const hitBox = computed(() => {
   const points = props.pointsMap?.['s']?.points;
@@ -89,6 +83,16 @@ const hitBox = computed(() => {
   .chip-info-text {
     margin-left: 4px;
     margin-right: 4px;
+
+    &.amount {
+      font-size: 24px;
+      font-weight: bold;
+      margin-bottom: 12px;
+    }
+
+    &.username {
+      font-size: 16px;
+    }
   }
 
   &.moving {
